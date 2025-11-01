@@ -12,10 +12,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SchemaFX',
-      home: Container(
-        color: Color.fromARGB(255, 229, 229, 229),
-        child: Center(child: Text('Hello World!')),
-      ),
+      home: Container(color: Color.fromARGB(255, 229, 229, 229), child: App()),
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
