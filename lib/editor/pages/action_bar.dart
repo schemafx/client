@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../components/dialog.dart';
 
 class ActionBar extends StatelessWidget {
   const ActionBar({super.key});
@@ -32,7 +33,10 @@ class ActionBar extends StatelessWidget {
           IconButton.filledTonal(
             visualDensity: VisualDensity(vertical: -2),
             onPressed: () {
-              // TODO: Handle Share
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => const ShareDialog(),
+              );
             },
             icon: Icon(Icons.person_add),
           ),
