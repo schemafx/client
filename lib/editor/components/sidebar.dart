@@ -259,3 +259,124 @@ class SourceSettingsSideSheet extends StatelessWidget {
     );
   }
 }
+
+class ColumnSettingsSideSheet extends StatefulWidget {
+  const ColumnSettingsSideSheet({super.key});
+
+  @override
+  State<ColumnSettingsSideSheet> createState() =>
+      _ColumnSettingsSideSheetState();
+}
+
+class _ColumnSettingsSideSheetState extends State<ColumnSettingsSideSheet> {
+  String? _type = 'Text';
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_outlined),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            forceMaterialTransparency: true,
+            title: Text('Column'),
+            actions: [Container()],
+          ),
+
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsetsGeometry.symmetric(vertical: 16),
+              child: Column(
+                spacing: 16,
+                children: [
+                  TextFormField(
+                    initialValue: 'Column',
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  DropdownButtonFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'Type',
+                      border: OutlineInputBorder(),
+                    ),
+                    initialValue: _type,
+                    onChanged: (newValue) => setState(() {
+                      _type = newValue;
+                    }),
+                    items: ['Text', 'Number', 'Percent', 'Date']
+                        .map(
+                          (value) => DropdownMenuItem(
+                            value: value,
+                            child: Text(value),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  TextFormField(
+                    initialValue: '1',
+                    decoration: InputDecoration(
+                      labelText: 'Min. Length',
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  TextFormField(
+                    initialValue: '20',
+                    decoration: InputDecoration(
+                      labelText: 'Max. Length',
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  TextFormField(
+                    initialValue: 'Text',
+                    decoration: InputDecoration(
+                      labelText: 'Default Value',
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: Handle Save
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
+                ),
+                child: const Text('Save'),
+              ),
+
+              OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: colorScheme.onSurface,
+                  side: BorderSide(color: colorScheme.outline),
+                ),
+                child: const Text('Cancel'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
