@@ -142,3 +142,120 @@ class NewRowSideSheet extends StatelessWidget {
     );
   }
 }
+
+class SourceSettingsSideSheet extends StatelessWidget {
+  const SourceSettingsSideSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        spacing: 16,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: DefaultTabController(
+              length: 2,
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                appBar: AppBar(
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back_outlined),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  forceMaterialTransparency: true,
+                  title: Text('Source Settings'),
+                  actions: [Container()],
+                  bottom: TabBar(
+                    tabs: <Widget>[
+                      Tab(text: "Source"),
+                      Tab(text: "Performance"),
+                    ],
+                  ),
+                ),
+
+                body: TabBarView(
+                  children: <Widget>[
+                    SingleChildScrollView(
+                      child: Column(
+                        spacing: 16,
+                        children: [
+                          const SizedBox(height: 0),
+                          TextFormField(
+                            initialValue: 'Name',
+                            decoration: InputDecoration(
+                              labelText: 'Name',
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+                          TextFormField(
+                            initialValue: 'Create , Update , Delete',
+                            decoration: InputDecoration(
+                              labelText: 'Update Modes',
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+                          TextFormField(
+                            initialValue: 'English (UK)',
+                            decoration: InputDecoration(
+                              labelText: 'Locale',
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SingleChildScrollView(
+                      child: Column(
+                        spacing: 16,
+                        children: [
+                          const SizedBox(height: 0),
+                          TextFormField(
+                            initialValue: 'Filter',
+                            decoration: InputDecoration(
+                              labelText: 'Row-Level Security',
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+                          TextFormField(
+                            initialValue: '3,600',
+                            decoration: InputDecoration(
+                              labelText: 'Cache Expiry (s)',
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: Handle Save
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                ),
+                child: const Text('Save'),
+              ),
+
+              OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
