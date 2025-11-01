@@ -380,3 +380,77 @@ class _ColumnSettingsSideSheetState extends State<ColumnSettingsSideSheet> {
     );
   }
 }
+
+class BrandingSideSheet extends StatelessWidget {
+  const BrandingSideSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_outlined),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            forceMaterialTransparency: true,
+            title: Text('Branding'),
+            actions: [Container()],
+          ),
+
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsetsGeometry.symmetric(vertical: 16),
+              child: Column(
+                spacing: 16,
+                children: [
+                  TextFormField(
+                    initialValue: 'Column',
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  TextFormField(
+                    initialValue: 'Roboto',
+                    decoration: InputDecoration(
+                      labelText: 'Font',
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: Handle Save
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                ),
+                child: const Text('Save'),
+              ),
+
+              OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('Cancel'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
