@@ -154,3 +154,44 @@ class CreateVersionDialog extends StatelessWidget {
     );
   }
 }
+
+class ConnectDataDialog extends StatelessWidget {
+  const ConnectDataDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text("Connect Data"),
+      content: SingleChildScrollView(
+        child: Column(
+          spacing: 16,
+          mainAxisSize: MainAxisSize.min,
+          children: List.generate(
+            5,
+            (index) => OutlinedButton(
+              onPressed: () {
+                // TODO: Handle Connector
+                Navigator.of(context).pop();
+              },
+              child: Center(
+                child: Row(
+                  spacing: 8,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [Icon(Icons.square_outlined), Text("Connector")],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+
+      actionsAlignment: MainAxisAlignment.start,
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text("Cancel"),
+        ),
+      ],
+    );
+  }
+}
