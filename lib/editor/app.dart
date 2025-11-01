@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './pages/properties.dart';
 import './pages/action_bar.dart';
 import './pages/design.dart';
 
@@ -17,6 +18,13 @@ class App extends StatelessWidget {
           child: DesignScreen(),
         ),
         Positioned(right: 10, top: 10, child: ActionBar()),
+        Positioned(
+          bottom: 0,
+          right: 10,
+          height: 500,
+          width: 300,
+          child: PropertiesPanel(),
+        ),
       ],
     );
   }
