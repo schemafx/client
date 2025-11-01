@@ -1,4 +1,7 @@
+import '../components/sidebar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../models/drawer_state.dart';
 import '../components/dialog.dart';
 
 class ActionBar extends StatelessWidget {
@@ -40,9 +43,9 @@ class ActionBar extends StatelessWidget {
           ),
           IconButton.filledTonal(
             visualDensity: VisualDensity(vertical: -2),
-            onPressed: () {
-              // TODO: Handle Branding
-            },
+            onPressed: () => context.read<DrawerStateModel>().showDrawer(
+              const BrandingSideSheet(),
+            ),
             icon: Icon(Icons.color_lens),
           ),
           Row(
