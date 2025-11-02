@@ -18,6 +18,8 @@ class NewRowSideSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -29,13 +31,13 @@ class NewRowSideSheet extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             ),
             forceMaterialTransparency: true,
-            title: Text('New Row'),
+            title: const Text('New Row'),
             actions: [Container()],
           ),
 
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsetsDirectional.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               child: Column(
                 spacing: 16,
                 children: [
@@ -63,8 +65,8 @@ class NewRowSideSheet extends StatelessWidget {
                       Navigator.of(context).pop();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
                       shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(1000),
@@ -88,12 +90,8 @@ class NewRowSideSheet extends StatelessWidget {
                                 ? controller.close()
                                 : controller.open(),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.primary,
-                              foregroundColor: Theme.of(
-                                context,
-                              ).colorScheme.onPrimary,
+                              backgroundColor: colorScheme.primary,
+                              foregroundColor: colorScheme.onPrimary,
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
                                   topRight: Radius.circular(1000),
@@ -110,20 +108,20 @@ class NewRowSideSheet extends StatelessWidget {
                     menuChildren: [
                       const SizedBox(height: 5),
                       MenuItemButton(
-                        leadingIcon: Icon(Icons.wrap_text_outlined),
+                        leadingIcon: const Icon(Icons.wrap_text_outlined),
                         onPressed: () {
                           // TODO: Handle Insert & New
                           Navigator.of(context).pop();
                         },
-                        child: Text('Insert & New'),
+                        child: const Text('Insert & New'),
                       ),
                       MenuItemButton(
-                        leadingIcon: Icon(Icons.file_upload_outlined),
+                        leadingIcon: const Icon(Icons.file_upload_outlined),
                         onPressed: () {
                           // TODO: Handle Import
                           Navigator.of(context).pop();
                         },
-                        child: Text('Import'),
+                        child: const Text('Import'),
                       ),
                       const SizedBox(height: 5),
                     ],
@@ -148,6 +146,8 @@ class SourceSettingsSideSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -165,9 +165,9 @@ class SourceSettingsSideSheet extends StatelessWidget {
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                   forceMaterialTransparency: true,
-                  title: Text('Source Settings'),
+                  title: const Text('Source Settings'),
                   actions: [Container()],
-                  bottom: TabBar(
+                  bottom: const TabBar(
                     tabs: <Widget>[
                       Tab(text: "Source"),
                       Tab(text: "Performance"),
@@ -184,23 +184,23 @@ class SourceSettingsSideSheet extends StatelessWidget {
                           const SizedBox(height: 0),
                           TextFormField(
                             initialValue: 'Name',
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Name',
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(),
                             ),
                           ),
                           TextFormField(
                             initialValue: 'Create , Update , Delete',
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Update Modes',
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(),
                             ),
                           ),
                           TextFormField(
                             initialValue: 'English (UK)',
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Locale',
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(),
                             ),
                           ),
                         ],
@@ -213,16 +213,16 @@ class SourceSettingsSideSheet extends StatelessWidget {
                           const SizedBox(height: 0),
                           TextFormField(
                             initialValue: 'Filter',
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Row-Level Security',
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(),
                             ),
                           ),
                           TextFormField(
                             initialValue: '3,600',
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Cache Expiry (s)',
-                              border: const OutlineInputBorder(),
+                              border: OutlineInputBorder(),
                             ),
                           ),
                         ],
@@ -242,8 +242,8 @@ class SourceSettingsSideSheet extends StatelessWidget {
                   // TODO: Handle Save
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                 ),
                 child: const Text('Save'),
               ),
@@ -273,8 +273,7 @@ class _ColumnSettingsSideSheetState extends State<ColumnSettingsSideSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -287,21 +286,21 @@ class _ColumnSettingsSideSheetState extends State<ColumnSettingsSideSheet> {
               onPressed: () => Navigator.of(context).pop(),
             ),
             forceMaterialTransparency: true,
-            title: Text('Column'),
+            title: const Text('Column'),
             actions: [Container()],
           ),
 
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsetsGeometry.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               child: Column(
                 spacing: 16,
                 children: [
                   TextFormField(
                     initialValue: 'Column',
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Name',
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                     ),
                   ),
                   DropdownButtonFormField(
@@ -324,23 +323,23 @@ class _ColumnSettingsSideSheetState extends State<ColumnSettingsSideSheet> {
                   ),
                   TextFormField(
                     initialValue: '1',
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Min. Length',
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                     ),
                   ),
                   TextFormField(
                     initialValue: '20',
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Max. Length',
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                     ),
                   ),
                   TextFormField(
                     initialValue: 'Text',
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Default Value',
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ],
@@ -386,6 +385,8 @@ class BrandingSideSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -397,28 +398,28 @@ class BrandingSideSheet extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             ),
             forceMaterialTransparency: true,
-            title: Text('Branding'),
+            title: const Text('Branding'),
             actions: [Container()],
           ),
 
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsetsGeometry.symmetric(vertical: 16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               child: Column(
                 spacing: 16,
                 children: [
                   TextFormField(
                     initialValue: 'Column',
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Name',
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                     ),
                   ),
                   TextFormField(
                     initialValue: 'Roboto',
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Font',
-                      border: const OutlineInputBorder(),
+                      border: OutlineInputBorder(),
                     ),
                   ),
                 ],
@@ -437,8 +438,8 @@ class BrandingSideSheet extends StatelessWidget {
                   // TODO: Handle Save
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                 ),
                 child: const Text('Save'),
               ),

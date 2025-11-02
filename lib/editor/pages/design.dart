@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../components/dialog.dart';
-import './data.dart';
+
+import 'package:schemafx/editor/components/dialog.dart';
+import 'package:schemafx/editor/pages/data.dart';
 
 class DesignScreen extends StatefulWidget {
   const DesignScreen({super.key});
@@ -14,17 +15,20 @@ class _DesignScreenState extends State<DesignScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.vertical(
+        color: theme.cardColor,
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(28),
           bottom: Radius.zero,
         ),
       ),
       clipBehavior: Clip.antiAlias,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
         child: Scaffold(
           appBar: AppBar(
             forceMaterialTransparency: true,
@@ -44,13 +48,15 @@ class _DesignScreenState extends State<DesignScreen> {
                   size: 28,
                 ),
                 tooltip: 'New Source',
-                onPressed: () {
-                  showDialog(
+                onPressed: () async {
+                  await showDialog(
                     context: context,
                     builder: (BuildContext context) => const DataScreen(),
                   );
 
-                  showDialog(
+                  if (!context.mounted) return;
+
+                  await showDialog(
                     context: context,
                     builder: (BuildContext context) =>
                         const ConnectDataDialog(),
@@ -71,26 +77,30 @@ class _DesignScreenState extends State<DesignScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     InputChip(
-                      label: Text('Pages'),
-                      avatar: Icon(Icons.splitscreen_outlined),
+                      label: const Text('Pages'),
+                      avatar: const Icon(Icons.splitscreen_outlined),
                       selected: mode == 'Pages',
-                      onSelected: (value) => {
-                        value ? setState(() => mode = 'Pages') : Null,
+                      onSelected: (value) {
+                        if (value) {
+                          setState(() => mode = 'Pages');
+                        }
                       },
                       showCheckmark: false,
                     ),
                     InputChip(
-                      label: Text('Assets'),
-                      avatar: Icon(Icons.grid_view_outlined),
+                      label: const Text('Assets'),
+                      avatar: const Icon(Icons.grid_view_outlined),
                       selected: mode == 'Assets',
-                      onSelected: (value) => {
-                        value ? setState(() => mode = 'Assets') : Null,
+                      onSelected: (value) {
+                        if (value) {
+                          setState(() => mode = 'Assets');
+                        }
                       },
                       showCheckmark: false,
                     ),
                     InputChip(
-                      label: Text('Data'),
-                      avatar: Icon(Icons.layers_outlined),
+                      label: const Text('Data'),
+                      avatar: const Icon(Icons.layers_outlined),
                       selected: false,
                       onSelected: (value) => {
                         value
@@ -108,8 +118,8 @@ class _DesignScreenState extends State<DesignScreen> {
                 const SizedBox(height: 20),
                 SearchBar(
                   elevation: WidgetStateProperty.all(0.0),
-                  leading: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  leading: const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Icon(Icons.search_outlined),
                   ),
                   hintText: mode == 'Assets'
@@ -134,7 +144,7 @@ class _DesignScreenState extends State<DesignScreen> {
                           itemBuilder: (BuildContext context, int index) {
                             return Container(
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF0EFF2),
+                                color: theme.colorScheme.surfaceContainerHigh,
                                 borderRadius: BorderRadius.circular(18.0),
                               ),
                               child: Stack(
@@ -144,9 +154,7 @@ class _DesignScreenState extends State<DesignScreen> {
                                     bottom: 10,
                                     child: Text(
                                       'Name',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.labelMedium,
+                                      style: textTheme.labelMedium,
                                     ),
                                   ),
                                 ],
@@ -181,7 +189,7 @@ class _PageElement extends StatelessWidget {
           hasChild ? Icons.keyboard_arrow_down_outlined : Icons.remove_outlined,
           size: 24,
         ),
-        Icon(Icons.crop_16_9_outlined, size: 24),
+        const Icon(Icons.crop_16_9_outlined, size: 24),
         const SizedBox(width: 8.0),
         Text('Onboarding', style: Theme.of(context).textTheme.bodyLarge),
       ],
@@ -192,7 +200,7 @@ class _PageElement extends StatelessWidget {
             children: [
               row,
               Padding(
-                padding: EdgeInsetsGeometry.only(left: 24),
+                padding: const EdgeInsets.only(left: 24),
                 child: _PageElement(),
               ),
             ],

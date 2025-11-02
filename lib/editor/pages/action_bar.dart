@@ -1,53 +1,57 @@
-import '../components/sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/drawer_state.dart';
-import '../components/dialog.dart';
-import '../pages/history.dart';
+
+import 'package:schemafx/editor/components/sidebar.dart';
+import 'package:schemafx/editor/models/drawer_state.dart';
+import 'package:schemafx/editor/components/dialog.dart';
+import 'package:schemafx/editor/pages/history.dart';
 
 class ActionBar extends StatelessWidget {
   const ActionBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final visualDensity = const VisualDensity(vertical: -2);
+
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadiusGeometry.all(Radius.circular(1000)),
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(1000),
       ),
-      padding: EdgeInsetsGeometry.all(8),
+      padding: const EdgeInsets.all(8),
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
         children: [
           IconButton.filledTonal(
-            visualDensity: VisualDensity(vertical: -2),
+            visualDensity: visualDensity,
             onPressed: () {
               // TODO: Handle Undo
             },
-            icon: Icon(Icons.undo),
+            icon: const Icon(Icons.undo),
           ),
           IconButton.filledTonal(
-            visualDensity: VisualDensity(vertical: -2),
+            visualDensity: visualDensity,
             onPressed: () {
               // TODO: Handle Redo
             },
-            icon: Icon(Icons.redo),
+            icon: const Icon(Icons.redo),
           ),
           IconButton.filledTonal(
-            visualDensity: VisualDensity(vertical: -2),
+            visualDensity: visualDensity,
             onPressed: () => showDialog(
               context: context,
               builder: (BuildContext context) => const ShareDialog(),
             ),
-            icon: Icon(Icons.person_add),
+            icon: const Icon(Icons.person_add),
           ),
           IconButton.filledTonal(
-            visualDensity: VisualDensity(vertical: -2),
+            visualDensity: visualDensity,
             onPressed: () => context.read<DrawerStateModel>().showDrawer(
               const BrandingSideSheet(),
             ),
-            icon: Icon(Icons.color_lens),
+            icon: const Icon(Icons.color_lens),
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -58,8 +62,8 @@ class ActionBar extends StatelessWidget {
                   // TODO: Handle Publish
                 },
                 style: TextButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(1000),
@@ -69,7 +73,7 @@ class ActionBar extends StatelessWidget {
                     ),
                   ),
                 ),
-                icon: Icon(Icons.rocket_launch),
+                icon: const Icon(Icons.rocket_launch),
                 label: const Text('Publish'),
               ),
               TextButton(
@@ -78,8 +82,8 @@ class ActionBar extends StatelessWidget {
                   builder: (BuildContext context) => const HistoryScreen(),
                 ),
                 style: TextButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.only(
                       topRight: Radius.circular(1000),

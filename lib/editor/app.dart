@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import './models/drawer_state.dart';
-import './pages/properties.dart';
-import './pages/action_bar.dart';
-import './pages/design.dart';
+
+import 'package:schemafx/editor/models/drawer_state.dart';
+import 'package:schemafx/editor/pages/properties.dart';
+import 'package:schemafx/editor/pages/action_bar.dart';
+import 'package:schemafx/editor/pages/design.dart';
 
 class App extends StatefulWidget {
   const App({super.key});
@@ -20,14 +21,14 @@ class _AppState extends State<App> {
     return ChangeNotifierProvider(
       create: (_) => DrawerStateModel()..setScaffoldKey(_scaffoldKey),
       builder: (context, child) => Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFFE5E5E5),
         key: _scaffoldKey,
         endDrawer: Drawer(
           child: Consumer<DrawerStateModel>(
             builder: (context, model, child) => model.child ?? Container(),
           ),
         ),
-        body: Stack(
+        body: const Stack(
           children: [
             Positioned(
               left: 10,

@@ -100,6 +100,8 @@ class _MainContent extends StatelessWidget {
 class _ApplicationListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
     return Padding(
       padding: const EdgeInsets.only(),
       child: Container(
@@ -121,16 +123,10 @@ class _ApplicationListItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Owner', style: Theme.of(context).textTheme.labelSmall),
-                  Text(
-                    'Application',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
+                  Text('Owner', style: textTheme.labelSmall),
+                  Text('Application', style: textTheme.bodyLarge),
                   SizedBox(height: 2),
-                  Text(
-                    'Status · Description',
-                    style: Theme.of(context).textTheme.labelMedium,
-                  ),
+                  Text('Status · Description', style: textTheme.labelMedium),
                 ],
               ),
             ),
@@ -173,14 +169,14 @@ class _ApplicationListItem extends StatelessWidget {
 class _ConnectDataDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+
     return AlertDialog(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: theme.colorScheme.surface,
       contentPadding: EdgeInsets.zero,
 
-      title: Text(
-        'Connect Data',
-        style: Theme.of(context).textTheme.headlineMedium,
-      ),
+      title: Text('Connect Data', style: textTheme.headlineMedium),
       content: SingleChildScrollView(
         padding: EdgeInsets.all(28),
         child: ListBody(
@@ -195,10 +191,7 @@ class _ConnectDataDialog extends StatelessWidget {
                 children: <Widget>[
                   Icon(Icons.square_outlined, size: 24.0),
                   SizedBox(width: 8.0),
-                  Text(
-                    'Connector',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                  Text('Connector', style: textTheme.bodyMedium),
                 ],
               ),
             ),

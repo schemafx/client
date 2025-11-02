@@ -10,7 +10,7 @@ class PropertiesPanel extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadiusGeometry.directional(
+        borderRadius: const BorderRadiusGeometry.directional(
           topStart: Radius.circular(24),
           topEnd: Radius.circular(24),
         ),
@@ -19,9 +19,9 @@ class PropertiesPanel extends StatelessWidget {
         length: 2,
         child: Scaffold(
           appBar: AppBar(
-            leading: Icon(Icons.build_outlined),
-            title: Text('Properties'),
-            bottom: TabBar(
+            leading: const Icon(Icons.build_outlined),
+            title: const Text('Properties'),
+            bottom: const TabBar(
               tabs: [
                 Tab(text: "Data"),
                 Tab(text: "Settings"),
@@ -30,96 +30,104 @@ class PropertiesPanel extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              // Data
-              SingleChildScrollView(
-                padding: EdgeInsetsGeometry.symmetric(vertical: 16),
-                child: Column(
-                  spacing: 16,
-                  children: [
-                    List.generate(
-                      15,
-                      // TODO: Appropriate fields.
-                      (index) => TextFormField(
-                        initialValue: 'Name',
-                        decoration: InputDecoration(
-                          labelText: 'Name',
-                          border: const OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    [
-                      ExpansionTile(
-                        title: const Text('Advanced'),
-                        shape: Border(),
-                        childrenPadding: EdgeInsetsGeometry.only(top: 16),
-                        children: [
-                          Column(
-                            spacing: 16,
-                            children: List.generate(
-                              5,
-                              // TODO: Appropriate fields.
-                              (index) => TextFormField(
-                                initialValue: 'Name',
-                                decoration: InputDecoration(
-                                  labelText: 'Name',
-                                  border: const OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ].expand((innerList) => innerList).toList(),
-                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: _PropertiesDataPanel(),
               ),
-              // Settings
-              SingleChildScrollView(
-                padding: EdgeInsetsGeometry.symmetric(vertical: 16),
-                child: Column(
-                  spacing: 16,
-                  children: [
-                    List.generate(
-                      15,
-                      // TODO: Handle Appropriate Fields
-                      (index) => TextFormField(
-                        initialValue: 'Name',
-                        decoration: InputDecoration(
-                          labelText: 'Name',
-                          border: const OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    [
-                      ExpansionTile(
-                        title: const Text('Advanced'),
-                        shape: Border(),
-                        childrenPadding: EdgeInsetsGeometry.only(top: 16),
-                        children: [
-                          Column(
-                            spacing: 16,
-                            children: List.generate(
-                              5,
-                              // TODO: Appropriate fields.
-                              (index) => TextFormField(
-                                initialValue: 'Name',
-                                decoration: InputDecoration(
-                                  labelText: 'Name',
-                                  border: const OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ].expand((innerList) => innerList).toList(),
-                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: _PropertiesSettingsPanel(),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _PropertiesDataPanel extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final len = 15;
+
+    return ListView.separated(
+      itemBuilder: (context, index) => index == 0
+          ? const SizedBox()
+          : index == len + 1
+          ? ExpansionTile(
+              title: const Text('Advanced'),
+              shape: const Border(),
+              childrenPadding: const EdgeInsets.only(top: 16),
+              children: [
+                Column(
+                  spacing: 16,
+                  children: List.generate(
+                    5,
+                    // TODO: Appropriate fields.
+                    (index) => TextFormField(
+                      initialValue: 'Name',
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : TextFormField(
+              initialValue: 'Name',
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+      separatorBuilder: (context, index) => const SizedBox(height: 16),
+      itemCount: len + 2,
+    );
+  }
+}
+
+class _PropertiesSettingsPanel extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final len = 15;
+
+    return ListView.separated(
+      itemBuilder: (context, index) => index == 0
+          ? const SizedBox()
+          : index == len + 1
+          ? ExpansionTile(
+              title: const Text('Advanced'),
+              shape: const Border(),
+              childrenPadding: const EdgeInsets.only(top: 16),
+              children: [
+                Column(
+                  spacing: 16,
+                  children: List.generate(
+                    5,
+                    // TODO: Appropriate fields.
+                    (index) => TextFormField(
+                      initialValue: 'Name',
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : TextFormField(
+              initialValue: 'Name',
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+      separatorBuilder: (context, index) => const SizedBox(height: 16),
+      itemCount: len + 2,
     );
   }
 }

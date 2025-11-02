@@ -7,8 +7,8 @@ class DeleteVersionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Delete Version"),
-      content: Text(
+      title: const Text("Delete Version"),
+      content: const Text(
         "Do you wish to abandon this version?\nYou can still recover it later.",
       ),
       actions: [
@@ -38,11 +38,9 @@ class AbandonChangesDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Abandon Changes"),
-      content: SingleChildScrollView(
-        child: Text(
-          "Do you wish to abandon these changes?\nYou will still be able to recover them later.",
-        ),
+      title: const Text("Abandon Changes"),
+      content: const Text(
+        "Do you wish to abandon these changes?\nYou will still be able to recover them later.",
       ),
       actions: [
         TextButton(
@@ -71,11 +69,9 @@ class PublishChangesDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Publish Changes"),
-      content: SingleChildScrollView(
-        child: Text(
-          "Do you wish to publish changes?\nThose will be directly available to your users.",
-        ),
+      title: const Text("Publish Changes"),
+      content: const Text(
+        "Do you wish to publish changes?\nThose will be directly available to your users.",
       ),
       actions: [
         TextButton(
@@ -107,28 +103,28 @@ class CreateVersionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text("Create Version"),
+      title: const Text("Create Version"),
       content: SingleChildScrollView(
         child: Column(
           spacing: 16,
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "A version lets you work on features without affecting the live, published application.",
             ),
             TextFormField(
               initialValue: "Name",
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Name",
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(),
               ),
             ),
             TextFormField(
               initialValue: "Description",
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: "Description",
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(),
               ),
             ),
           ],
@@ -173,7 +169,7 @@ class ConnectDataDialog extends StatelessWidget {
                 // TODO: Handle Connector
                 Navigator.of(context).pop();
               },
-              child: Center(
+              child: const Center(
                 child: Row(
                   spacing: 8,
                   mainAxisSize: MainAxisSize.min,
@@ -201,15 +197,17 @@ class ShareDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return AlertDialog(
-      title: Text("Share"),
+      title: const Text("Share"),
       content: SizedBox(
         width: 400,
         child: DefaultTabController(
           length: 2,
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            appBar: TabBar(
+            appBar: const TabBar(
               tabs: [
                 Tab(text: "Users"),
                 Tab(text: "Identity"),
@@ -225,7 +223,7 @@ class ShareDialog extends StatelessWidget {
                     SearchBar(
                       hintText: 'Add or Search',
                       backgroundColor: WidgetStateProperty.all(
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                        colorScheme.surfaceContainerHighest,
                       ),
                       elevation: WidgetStateProperty.all(0),
                       trailing: [Icon(Icons.search), SizedBox(width: 8)],
@@ -238,8 +236,8 @@ class ShareDialog extends StatelessWidget {
                             15,
                             // TODO: Handle Users Generation.
                             (index) => ListTile(
-                              title: Text('user@example.com'),
-                              subtitle: Text('Role'),
+                              title: const Text('user@example.com'),
+                              subtitle: const Text('Role'),
                               trailing: MenuAnchor(
                                 builder:
                                     (
@@ -251,15 +249,19 @@ class ShareDialog extends StatelessWidget {
                                         onPressed: () => controller.isOpen
                                             ? controller.close()
                                             : controller.open(),
-                                        icon: Icon(Icons.more_vert_outlined),
+                                        icon: const Icon(
+                                          Icons.more_vert_outlined,
+                                        ),
                                       );
                                     },
                                 menuChildren: [
                                   const SizedBox(height: 5),
                                   MenuItemButton(
-                                    leadingIcon: Icon(Icons.square_outlined),
+                                    leadingIcon: const Icon(
+                                      Icons.square_outlined,
+                                    ),
                                     onPressed: () {},
-                                    child: Text('Option'),
+                                    child: const Text('Option'),
                                   ),
                                   const SizedBox(height: 5),
                                 ],
@@ -279,10 +281,10 @@ class ShareDialog extends StatelessWidget {
                     SearchBar(
                       hintText: 'Search',
                       backgroundColor: WidgetStateProperty.all(
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                        colorScheme.surfaceContainerHighest,
                       ),
                       elevation: WidgetStateProperty.all(0),
-                      trailing: [Icon(Icons.search), SizedBox(width: 8)],
+                      trailing: const [Icon(Icons.search), SizedBox(width: 8)],
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -292,8 +294,8 @@ class ShareDialog extends StatelessWidget {
                             15,
                             // TODO: Handle Connectors
                             (index) => ListTile(
-                              leading: Icon(Icons.square_outlined),
-                              title: Text('Connector'),
+                              leading: const Icon(Icons.square_outlined),
+                              title: const Text('Connector'),
                               trailing: Switch(
                                 value: false,
                                 onChanged: (value) {},
@@ -314,7 +316,7 @@ class ShareDialog extends StatelessWidget {
       actions: [
         IconButton(
           onPressed: () {},
-          icon: Icon(Icons.link_outlined),
+          icon: const Icon(Icons.link_outlined),
           tooltip: 'Copy Sharing Link',
         ),
         TextButton(
