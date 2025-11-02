@@ -18,6 +18,13 @@ class MainApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: Color.fromARGB(255, 103, 80, 164),
         ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          actionsPadding: EdgeInsetsGeometry.only(right: 8),
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+        ),
       ),
     );
   }
