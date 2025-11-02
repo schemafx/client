@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../components/dialog.dart';
+import './data.dart';
 
 class DesignScreen extends StatefulWidget {
   const DesignScreen({super.key});
@@ -41,8 +43,18 @@ class _DesignScreenState extends State<DesignScreen> {
                   Icons.control_point_duplicate_outlined,
                   size: 28,
                 ),
+                tooltip: 'New Source',
                 onPressed: () {
-                  // TODO: Handle connect button press
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) => const DataScreen(),
+                  );
+
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) =>
+                        const ConnectDataDialog(),
+                  );
                 },
               ),
               const SizedBox(width: 4),
@@ -81,7 +93,13 @@ class _DesignScreenState extends State<DesignScreen> {
                       avatar: Icon(Icons.layers_outlined),
                       selected: false,
                       onSelected: (value) => {
-                        value ? /* TODO: Open the Data view */ Null : Null,
+                        value
+                            ? showDialog(
+                                context: context,
+                                builder: (BuildContext context) =>
+                                    const DataScreen(),
+                              )
+                            : Null,
                       },
                       showCheckmark: false,
                     ),
