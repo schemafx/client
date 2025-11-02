@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/drawer_state.dart';
 import '../components/dialog.dart';
+import '../pages/history.dart';
 
 class ActionBar extends StatelessWidget {
   const ActionBar({super.key});
@@ -72,9 +73,10 @@ class ActionBar extends StatelessWidget {
                 label: const Text('Publish'),
               ),
               TextButton(
-                onPressed: () {
-                  // TODO: Handle Advanced Publish
-                },
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (BuildContext context) => const HistoryScreen(),
+                ),
                 style: TextButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   foregroundColor: Theme.of(context).colorScheme.onPrimary,
