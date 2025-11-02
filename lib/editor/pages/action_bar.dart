@@ -32,12 +32,10 @@ class ActionBar extends StatelessWidget {
           ),
           IconButton.filledTonal(
             visualDensity: VisualDensity(vertical: -2),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) => const ShareDialog(),
-              );
-            },
+            onPressed: () => showDialog(
+              context: context,
+              builder: (BuildContext context) => const ShareDialog(),
+            ),
             icon: Icon(Icons.person_add),
           ),
           IconButton.filledTonal(
