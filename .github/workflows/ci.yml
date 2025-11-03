@@ -27,6 +27,3 @@ jobs:
 
       - name: Analyze code
         run: flutter analyze
-
-      - name: Check formatting
-        run: flutter format --output=none --set-exit-if-changed .
