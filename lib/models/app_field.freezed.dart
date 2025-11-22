@@ -1,0 +1,337 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'app_field.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// dart format off
+T _$identity<T>(T value) => value;
+
+/// @nodoc
+mixin _$AppField {
+
+/// The unique identifier for this field.
+ String get id;/// The name of this field.
+ String get name;/// The data type of this field.
+ AppFieldType get type;/// The ID of the table this field is related to, if [type] is [AppFieldType.reference].
+ String? get referenceTo;/// Whether this field is required to have a value.
+ bool get isRequired;/// The minimum length of the text, if [type] is [AppFieldType.text].
+ int? get minLength;/// The maximum length of the text, if [type] is [AppFieldType.text].
+ int? get maxLength;/// The minimum value of the number, if [type] is [AppFieldType.number].
+ double? get minValue;/// The maximum value of the number, if [type] is [AppFieldType.number].
+ double? get maxValue;/// The start date, if [type] is [AppFieldType.date].
+ DateTime? get startDate;/// The end date, if [type] is [AppFieldType.date].
+ DateTime? get endDate;/// The list of options for a dropdown field.
+ List<String>? get options;
+/// Create a copy of AppField
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$AppFieldCopyWith<AppField> get copyWith => _$AppFieldCopyWithImpl<AppField>(this as AppField, _$identity);
+
+  /// Serializes this AppField to a JSON map.
+  Map<String, dynamic> toJson();
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppField&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.referenceTo, referenceTo) || other.referenceTo == referenceTo)&&(identical(other.isRequired, isRequired) || other.isRequired == isRequired)&&(identical(other.minLength, minLength) || other.minLength == minLength)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other.options, options));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,type,referenceTo,isRequired,minLength,maxLength,minValue,maxValue,startDate,endDate,const DeepCollectionEquality().hash(options));
+
+@override
+String toString() {
+  return 'AppField(id: $id, name: $name, type: $type, referenceTo: $referenceTo, isRequired: $isRequired, minLength: $minLength, maxLength: $maxLength, minValue: $minValue, maxValue: $maxValue, startDate: $startDate, endDate: $endDate, options: $options)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $AppFieldCopyWith<$Res>  {
+  factory $AppFieldCopyWith(AppField value, $Res Function(AppField) _then) = _$AppFieldCopyWithImpl;
+@useResult
+$Res call({
+ String id, String name, AppFieldType type, String? referenceTo, bool isRequired, int? minLength, int? maxLength, double? minValue, double? maxValue, DateTime? startDate, DateTime? endDate, List<String>? options
+});
+
+
+
+
+}
+/// @nodoc
+class _$AppFieldCopyWithImpl<$Res>
+    implements $AppFieldCopyWith<$Res> {
+  _$AppFieldCopyWithImpl(this._self, this._then);
+
+  final AppField _self;
+  final $Res Function(AppField) _then;
+
+/// Create a copy of AppField
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? type = null,Object? referenceTo = freezed,Object? isRequired = null,Object? minLength = freezed,Object? maxLength = freezed,Object? minValue = freezed,Object? maxValue = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? options = freezed,}) {
+  return _then(_self.copyWith(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as AppFieldType,referenceTo: freezed == referenceTo ? _self.referenceTo : referenceTo // ignore: cast_nullable_to_non_nullable
+as String?,isRequired: null == isRequired ? _self.isRequired : isRequired // ignore: cast_nullable_to_non_nullable
+as bool,minLength: freezed == minLength ? _self.minLength : minLength // ignore: cast_nullable_to_non_nullable
+as int?,maxLength: freezed == maxLength ? _self.maxLength : maxLength // ignore: cast_nullable_to_non_nullable
+as int?,minValue: freezed == minValue ? _self.minValue : minValue // ignore: cast_nullable_to_non_nullable
+as double?,maxValue: freezed == maxValue ? _self.maxValue : maxValue // ignore: cast_nullable_to_non_nullable
+as double?,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,options: freezed == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
+as List<String>?,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [AppField].
+extension AppFieldPatterns on AppField {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _AppField value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _AppField() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _AppField value)  $default,){
+final _that = this;
+switch (_that) {
+case _AppField():
+return $default(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _AppField value)?  $default,){
+final _that = this;
+switch (_that) {
+case _AppField() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  String? referenceTo,  bool isRequired,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _AppField() when $default != null:
+return $default(_that.id,_that.name,_that.type,_that.referenceTo,_that.isRequired,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  String? referenceTo,  bool isRequired,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options)  $default,) {final _that = this;
+switch (_that) {
+case _AppField():
+return $default(_that.id,_that.name,_that.type,_that.referenceTo,_that.isRequired,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  AppFieldType type,  String? referenceTo,  bool isRequired,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options)?  $default,) {final _that = this;
+switch (_that) {
+case _AppField() when $default != null:
+return $default(_that.id,_that.name,_that.type,_that.referenceTo,_that.isRequired,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+@JsonSerializable()
+
+class _AppField extends AppField {
+  const _AppField({required this.id, required this.name, required this.type, this.referenceTo, this.isRequired = false, this.minLength, this.maxLength, this.minValue, this.maxValue, this.startDate, this.endDate, final  List<String>? options}): _options = options,super._();
+  factory _AppField.fromJson(Map<String, dynamic> json) => _$AppFieldFromJson(json);
+
+/// The unique identifier for this field.
+@override final  String id;
+/// The name of this field.
+@override final  String name;
+/// The data type of this field.
+@override final  AppFieldType type;
+/// The ID of the table this field is related to, if [type] is [AppFieldType.reference].
+@override final  String? referenceTo;
+/// Whether this field is required to have a value.
+@override@JsonKey() final  bool isRequired;
+/// The minimum length of the text, if [type] is [AppFieldType.text].
+@override final  int? minLength;
+/// The maximum length of the text, if [type] is [AppFieldType.text].
+@override final  int? maxLength;
+/// The minimum value of the number, if [type] is [AppFieldType.number].
+@override final  double? minValue;
+/// The maximum value of the number, if [type] is [AppFieldType.number].
+@override final  double? maxValue;
+/// The start date, if [type] is [AppFieldType.date].
+@override final  DateTime? startDate;
+/// The end date, if [type] is [AppFieldType.date].
+@override final  DateTime? endDate;
+/// The list of options for a dropdown field.
+ final  List<String>? _options;
+/// The list of options for a dropdown field.
+@override List<String>? get options {
+  final value = _options;
+  if (value == null) return null;
+  if (_options is EqualUnmodifiableListView) return _options;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
+}
+
+
+/// Create a copy of AppField
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$AppFieldCopyWith<_AppField> get copyWith => __$AppFieldCopyWithImpl<_AppField>(this, _$identity);
+
+@override
+Map<String, dynamic> toJson() {
+  return _$AppFieldToJson(this, );
+}
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppField&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.referenceTo, referenceTo) || other.referenceTo == referenceTo)&&(identical(other.isRequired, isRequired) || other.isRequired == isRequired)&&(identical(other.minLength, minLength) || other.minLength == minLength)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other._options, _options));
+}
+
+@JsonKey(includeFromJson: false, includeToJson: false)
+@override
+int get hashCode => Object.hash(runtimeType,id,name,type,referenceTo,isRequired,minLength,maxLength,minValue,maxValue,startDate,endDate,const DeepCollectionEquality().hash(_options));
+
+@override
+String toString() {
+  return 'AppField(id: $id, name: $name, type: $type, referenceTo: $referenceTo, isRequired: $isRequired, minLength: $minLength, maxLength: $maxLength, minValue: $minValue, maxValue: $maxValue, startDate: $startDate, endDate: $endDate, options: $options)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$AppFieldCopyWith<$Res> implements $AppFieldCopyWith<$Res> {
+  factory _$AppFieldCopyWith(_AppField value, $Res Function(_AppField) _then) = __$AppFieldCopyWithImpl;
+@override @useResult
+$Res call({
+ String id, String name, AppFieldType type, String? referenceTo, bool isRequired, int? minLength, int? maxLength, double? minValue, double? maxValue, DateTime? startDate, DateTime? endDate, List<String>? options
+});
+
+
+
+
+}
+/// @nodoc
+class __$AppFieldCopyWithImpl<$Res>
+    implements _$AppFieldCopyWith<$Res> {
+  __$AppFieldCopyWithImpl(this._self, this._then);
+
+  final _AppField _self;
+  final $Res Function(_AppField) _then;
+
+/// Create a copy of AppField
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? type = null,Object? referenceTo = freezed,Object? isRequired = null,Object? minLength = freezed,Object? maxLength = freezed,Object? minValue = freezed,Object? maxValue = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? options = freezed,}) {
+  return _then(_AppField(
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
+as AppFieldType,referenceTo: freezed == referenceTo ? _self.referenceTo : referenceTo // ignore: cast_nullable_to_non_nullable
+as String?,isRequired: null == isRequired ? _self.isRequired : isRequired // ignore: cast_nullable_to_non_nullable
+as bool,minLength: freezed == minLength ? _self.minLength : minLength // ignore: cast_nullable_to_non_nullable
+as int?,maxLength: freezed == maxLength ? _self.maxLength : maxLength // ignore: cast_nullable_to_non_nullable
+as int?,minValue: freezed == minValue ? _self.minValue : minValue // ignore: cast_nullable_to_non_nullable
+as double?,maxValue: freezed == maxValue ? _self.maxValue : maxValue // ignore: cast_nullable_to_non_nullable
+as double?,startDate: freezed == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,endDate: freezed == endDate ? _self.endDate : endDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,options: freezed == options ? _self._options : options // ignore: cast_nullable_to_non_nullable
+as List<String>?,
+  ));
+}
+
+
+}
+
+// dart format on
