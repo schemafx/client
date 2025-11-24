@@ -1,29 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:schemafx/editor/app.dart';
+import 'package:go_router/go_router.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schemafx/app.dart';
 
+/// The main entry point of the application.
 void main() {
-  runApp(const MainApp());
-}
+  usePathUrlStrategy();
+  GoRouter.optionURLReflectsImperativeAPIs = true;
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  WidgetsFlutterBinding.ensureInitialized();
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SchemaFX',
-      home: const App(),
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4)),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          actionsPadding: EdgeInsets.only(right: 8),
-          scrolledUnderElevation: 0,
-          surfaceTintColor: Colors.transparent,
-          elevation: 0,
-        ),
-      ),
-    );
-  }
+  // Wrap the app in a ProviderScope for Riverpod
+  runApp(const ProviderScope(child: SchemaFxApp()));
 }
