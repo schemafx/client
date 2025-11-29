@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/providers/base_notifier.dart';
 import 'package:schemafx/repositories/data_repository.dart';
+import 'package:schemafx/services/api_service.dart';
 
 /// A type definition for the application's data.
 ///
@@ -14,6 +15,7 @@ typedef AppData = Map<String, List<Map<String, dynamic>>>;
 /// which includes all the rows for all the tables.
 class DataNotifier extends BaseNotifier<AppData> {
   late final _repo = DataRepository(ref);
+  late final _apiService = ApiService();
 
   @override
   Future<AppData> build() async {
@@ -21,53 +23,44 @@ class DataNotifier extends BaseNotifier<AppData> {
   }
 
   /// Adds a [row] to the table with the given [tableId].
-  Future<void> addRow(String tableId, Map<String, dynamic> row) async {
-    final oldState = await future;
-    final newState = {...oldState};
-    if (!newState.containsKey(tableId)) {
-      newState[tableId] = [];
-    }
-
-    newState[tableId]!.add(row);
-
-    await mutate(() async {
-      await _repo.saveData(newState);
-      return newState;
-    }, 'Row added successfully');
-  }
+  Future<void> addRow(String tableId, Map<String, dynamic> row) => _updateTable(
+    tableId,
+    _apiService.post('apps/appId/data/$tableId', {'action': 'add', 'row': row}),
+  );
 
   /// Updates the [row] at the given [rowIndex] in the table with the given [tableId].
   Future<void> updateRow(
     String tableId,
     int rowIndex,
     Map<String, dynamic> row,
-  ) async {
-    final oldState = await future;
-    final newState = {...oldState};
-
-    if (newState.containsKey(tableId) && newState[tableId]!.length > rowIndex) {
-      newState[tableId]![rowIndex] = row;
-
-      await mutate(() async {
-        await _repo.saveData(newState);
-        return newState;
-      }, 'Row updated successfully');
-    }
-  }
+  ) => _updateTable(
+    tableId,
+    _apiService.post('apps/appId/data/$tableId', {
+      'action': 'update',
+      'rowIndex': rowIndex,
+      'row': row,
+    }),
+  );
 
   /// Deletes the row at the given [rowIndex] from the table with the given [tableId].
-  Future<void> deleteRow(String tableId, int rowIndex) async {
+  Future<void> deleteRow(String tableId, int rowIndex) => _updateTable(
+    tableId,
+    _apiService.post('apps/appId/data/$tableId', {
+      'action': 'delete',
+      'rowIndex': rowIndex,
+    }),
+  );
+
+  Future<void> _updateTable(String tableId, Future<dynamic> query) async {
     final oldState = await future;
     final newState = {...oldState};
 
-    if (newState.containsKey(tableId) && newState[tableId]!.length > rowIndex) {
-      newState[tableId]!.removeAt(rowIndex);
+    newState[tableId] = List<Map<String, dynamic>>.from(await query);
 
-      await mutate(() async {
-        await _repo.saveData(newState);
-        return newState;
-      }, 'Row deleted successfully');
-    }
+    await mutate(() async {
+      await _repo.saveData(newState);
+      return newState;
+    }, 'Saved');
   }
 }
 

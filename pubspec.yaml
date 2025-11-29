@@ -22,6 +22,7 @@ dependencies:
   uuid: ^4.0.0
   csv: ^5.0.1
   side_sheet: ^1.0.4+1
+  http: ^1.2.2
 
 dev_dependencies:
   flutter_lints: ^6.0.0
