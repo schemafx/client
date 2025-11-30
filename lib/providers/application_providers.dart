@@ -4,15 +4,6 @@ import 'package:schemafx/repositories/data_repository.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/services/api_service.dart';
 
-/// Defines the current mode of the application.
-enum AppMode {
-  /// The user is editing the application schema.
-  editor,
-
-  /// The user is interacting with the application's data.
-  runtime,
-}
-
 /// A notifier that manages the entire application schema.
 ///
 /// This notifier is responsible for loading, saving, and modifying the

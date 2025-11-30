@@ -9,8 +9,7 @@ import 'package:schemafx/ui/screens/runtime_mode_screen.dart';
 /// The root widget of the application.
 ///
 /// This widget is responsible for setting up the [MaterialApp] and switching
-/// between the [EditorModeScreen] and [RuntimeModeScreen] based on the
-/// current [AppMode].
+/// between the [EditorModeScreen] and [RuntimeModeScreen].
 class SchemaFxApp extends ConsumerWidget {
   /// Creates a new [SchemaFxApp].
   const SchemaFxApp({super.key});
