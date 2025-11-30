@@ -59,7 +59,7 @@ class SchemaFxApp extends ConsumerWidget {
           ),
         ],
         redirect: (context, state) {
-          final authState = ref.read(authProvider);
+          final authState = ref.watch(authProvider);
           final isAuthenticated =
               authState.asData?.value == AuthState.authenticated;
           final isLoggingIn = state.matchedLocation == '/login';
