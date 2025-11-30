@@ -4,28 +4,7 @@ part 'app_field.freezed.dart';
 part 'app_field.g.dart';
 
 /// Defines the data type of a field in a table.
-enum AppFieldType {
-  /// A plain text field.
-  text,
-
-  /// A numeric field.
-  number,
-
-  /// A date field.
-  date,
-
-  /// An email address field.
-  email,
-
-  /// A dropdown field with a list of options.
-  dropdown,
-
-  /// A boolean field.
-  boolean,
-
-  /// A reference field.
-  reference,
-}
+enum AppFieldType { text, number, date, email, dropdown, boolean, reference }
 
 /// Represents a single field within a table.
 ///

@@ -4,13 +4,7 @@ part 'app_view.freezed.dart';
 part 'app_view.g.dart';
 
 /// The type of view to display.
-enum AppViewType {
-  /// A view that displays a table of records.
-  table,
-
-  /// A view that displays a form for creating a new record.
-  form,
-}
+enum AppViewType { table, form }
 
 /// A view is a user-definable screen or layout for displaying and interacting
 /// with data from a table.
