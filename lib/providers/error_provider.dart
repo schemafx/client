@@ -19,6 +19,6 @@ class ErrorNotifier extends Notifier<String?> {
 }
 
 /// A provider that exposes the current error message and allows it to be modified.
-final errorProvider = NotifierProvider<ErrorNotifier, String?>(() {
-  return ErrorNotifier();
-});
+final errorProvider = NotifierProvider<ErrorNotifier, String?>(
+  ErrorNotifier.new,
+);
