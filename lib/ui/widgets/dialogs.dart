@@ -158,32 +158,30 @@ class Dialogs {
     BuildContext context,
     WidgetRef ref,
     AppTable table,
-  ) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Delete Table'),
-        content: Text('Are you sure you want to delete "${table.name}"?'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            child: const Text('Delete'),
-            onPressed: () async {
-              await ref
-                  .read(schemaProvider.notifier)
-                  .deleteElement(table.id, 'tables');
+  ) => showDialog<void>(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('Delete Table'),
+      content: Text('Are you sure you want to delete "${table.name}"?'),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        TextButton(
+          child: const Text('Delete'),
+          onPressed: () async {
+            await ref
+                .read(schemaProvider.notifier)
+                .deleteElement(table.id, 'tables');
 
-              if (!context.mounted) return;
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    ),
+  );
 
   /// Shows a dialog for deleting a view.
   static Future<void> showDeleteView(

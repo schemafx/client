@@ -31,7 +31,6 @@ class XFormViewState extends ConsumerState<XFormView> {
   @override
   void didUpdateWidget(covariant XFormView oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (oldWidget.table.id != widget.table.id) _initControllers();
   }
 
@@ -95,136 +94,126 @@ class XFormViewState extends ConsumerState<XFormView> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _formKey,
-        onChanged: () => setState(
-          () => _isFormValid = _formKey.currentState?.validate() ?? false,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...widget.view.fields
-                .map(
-                  (fieldId) =>
-                      widget.table.fields.firstWhere((f) => f.id == fieldId),
-                )
-                .map((field) {
-                  switch (field.type) {
-                    case AppFieldType.reference:
-                      return _buildReferenceDropdown(field);
-                    case AppFieldType.date:
-                      return _buildDatePicker(field);
-                    case AppFieldType.dropdown:
-                      return _buildDropdownField(field);
-                    case AppFieldType.boolean:
-                      return _buildBooleanField(field);
-                    default:
-                      return _buildTextField(field);
-                  }
-                }),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FilledButton(
-                  onPressed: _isFormValid ? _handleSubmit : null,
-                  child: const Text('Create Record'),
-                ),
-              ],
-            ),
-          ],
-        ),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Form(
+      key: _formKey,
+      onChanged: () => setState(
+        () => _isFormValid = _formKey.currentState?.validate() ?? false,
       ),
-    );
-  }
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ...widget.view.fields
+              .map(
+                (fieldId) =>
+                    widget.table.fields.firstWhere((f) => f.id == fieldId),
+              )
+              .map((field) {
+                switch (field.type) {
+                  case AppFieldType.reference:
+                    return _buildReferenceDropdown(field);
+                  case AppFieldType.date:
+                    return _buildDatePicker(field);
+                  case AppFieldType.dropdown:
+                    return _buildDropdownField(field);
+                  case AppFieldType.boolean:
+                    return _buildBooleanField(field);
+                  default:
+                    return _buildTextField(field);
+                }
+              }),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              FilledButton(
+                onPressed: _isFormValid ? _handleSubmit : null,
+                child: const Text('Create Record'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
 
   /// Builds a text field for a generic field.
-  Widget _buildTextField(AppField field, {bool readOnly = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: TextFormField(
-        controller: _controllers[field.id],
-        readOnly: readOnly,
-        decoration: InputDecoration(
-          labelText: field.name,
-          border: const OutlineInputBorder(),
-        ),
-        validator: field.validate,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+  Widget _buildTextField(AppField field, {bool readOnly = false}) => Padding(
+    padding: const EdgeInsets.only(bottom: 12.0),
+    child: TextFormField(
+      controller: _controllers[field.id],
+      readOnly: readOnly,
+      decoration: InputDecoration(
+        labelText: field.name,
+        border: const OutlineInputBorder(),
       ),
-    );
-  }
+      validator: field.validate,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+    ),
+  );
 
   /// Builds a dropdown for a dropdown field.
-  Widget _buildDropdownField(AppField field) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: DropdownButtonFormField<String>(
-        decoration: InputDecoration(
-          labelText: field.name,
-          border: const OutlineInputBorder(),
-        ),
-        items: field.options
-            ?.map(
-              (option) => DropdownMenuItem(value: option, child: Text(option)),
-            )
-            .toList(),
-        onChanged: (String? newValue) =>
-            _controllers[field.id]?.text = newValue ?? '',
-        validator: field.validate,
+  Widget _buildDropdownField(AppField field) => Padding(
+    padding: const EdgeInsets.only(bottom: 12.0),
+    child: DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        labelText: field.name,
+        border: const OutlineInputBorder(),
       ),
-    );
-  }
+      items: field.options
+          ?.map(
+            (option) => DropdownMenuItem(value: option, child: Text(option)),
+          )
+          .toList(),
+      onChanged: (String? newValue) =>
+          _controllers[field.id]?.text = newValue ?? '',
+      validator: field.validate,
+    ),
+  );
 
   /// Builds a checkbox for a boolean field.
-  Widget _buildBooleanField(AppField field) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: CheckboxListTile(
-        title: Text(field.name),
-        value: _booleanValues[field.id],
-        onChanged: (newValue) =>
-            setState(() => _booleanValues[field.id] = newValue ?? false),
-      ),
-    );
-  }
+  Widget _buildBooleanField(AppField field) => Padding(
+    padding: const EdgeInsets.only(bottom: 12.0),
+    child: CheckboxListTile(
+      title: Text(field.name),
+      value: _booleanValues[field.id],
+      onChanged: (newValue) =>
+          setState(() => _booleanValues[field.id] = newValue ?? false),
+    ),
+  );
 
   /// Builds a date picker for a date field.
-  Widget _buildDatePicker(AppField field) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: TextFormField(
-        controller: _controllers[field.id],
-        readOnly: true,
-        decoration: InputDecoration(
-          labelText: field.name,
-          border: const OutlineInputBorder(),
-          suffixIcon: const Icon(Icons.calendar_today),
-        ),
-        onTap: () async {
-          final selectedDate = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: field.startDate ?? DateTime(2000),
-            lastDate: field.endDate ?? DateTime(2101),
-          );
-
-          if (selectedDate != null) {
-            setState(
-              () => _controllers[field.id]?.text = selectedDate
-                  .toIso8601String()
-                  .substring(0, 10),
-            );
-          }
-        },
-        validator: field.validate,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
+  Widget _buildDatePicker(AppField field) => Padding(
+    padding: const EdgeInsets.only(bottom: 12.0),
+    child: TextFormField(
+      controller: _controllers[field.id],
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: field.name,
+        border: const OutlineInputBorder(),
+        suffixIcon: const Icon(Icons.calendar_today),
       ),
-    );
-  }
+      onTap: () async {
+        final selectedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: field.startDate ?? DateTime(2000),
+          lastDate: field.endDate ?? DateTime(2101),
+        );
+
+        if (selectedDate != null) {
+          setState(
+            () => _controllers[field.id]?.text = selectedDate
+                .toIso8601String()
+                .substring(0, 10),
+          );
+        }
+      },
+      validator: field.validate,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+    ),
+  );
 
   /// Builds a dropdown for a reference field.
   Widget _buildReferenceDropdown(AppField field) {

@@ -9,10 +9,7 @@ class PropertiesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final view = ref.watch(selectedEditorViewProvider);
-
-    if (view == null) {
-      return Container();
-    }
+    if (view == null) return Container();
 
     return ref
         .watch(schemaProvider)

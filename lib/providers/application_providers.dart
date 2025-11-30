@@ -25,7 +25,6 @@ class SchemaNotifier extends BaseNotifier<AppSchema> {
   @override
   Future<AppSchema> build() async {
     final schema = await _repo.loadSchema();
-
     if (schema != null) return schema;
 
     await _repo.saveSchema(demoSchema);

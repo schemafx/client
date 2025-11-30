@@ -5,9 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// This is used to display errors to the user in a consistent way.
 class ErrorNotifier extends Notifier<String?> {
   @override
-  String? build() {
-    return null;
-  }
+  String? build() => null;
 
   /// Sets the error message to [message].
   void showError(String message) {

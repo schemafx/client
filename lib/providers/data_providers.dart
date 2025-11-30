@@ -18,9 +18,7 @@ class DataNotifier extends BaseNotifier<AppData> {
   late final _apiService = ApiService();
 
   @override
-  Future<AppData> build() async {
-    return await _repo.loadData() ?? {};
-  }
+  Future<AppData> build() async => (await _repo.loadData() ?? {});
 
   /// Adds a [row] to the table with the given [tableId].
   Future<void> addRow(String tableId, Map<String, dynamic> row) => _updateTable(
@@ -74,21 +72,19 @@ final dataProvider = AsyncNotifierProvider<DataNotifier, AppData>(
 /// The `family` modifier is used to pass the table and record IDs to the provider.
 final recordByIdProvider =
     Provider.family<Map<String, dynamic>?, ({String tableId, String recordId})>(
-      (ref, ids) {
-        return ref
-            .watch(dataProvider)
-            .when(
-              data: (allData) {
-                final records = allData[ids.tableId] ?? [];
+      (ref, ids) => ref
+          .watch(dataProvider)
+          .when(
+            data: (allData) {
+              final records = allData[ids.tableId] ?? [];
 
-                try {
-                  return records.firstWhere((r) => r['_id'] == ids.recordId);
-                } catch (e) {
-                  return null;
-                }
-              },
-              loading: () => null,
-              error: (_, _) => null,
-            );
-      },
+              try {
+                return records.firstWhere((r) => r['_id'] == ids.recordId);
+              } catch (e) {
+                return null;
+              }
+            },
+            loading: () => null,
+            error: (_, _) => null,
+          ),
     );
