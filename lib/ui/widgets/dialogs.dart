@@ -37,6 +37,7 @@ class Dialogs {
                 final newTable = AppTable(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
                   name: controller.text,
+                  connector: 'memory',
                 );
 
                 await ref
