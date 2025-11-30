@@ -14,6 +14,7 @@ sealed class AppTable with _$AppTable {
   const factory AppTable({
     required String id,
     required String name,
+    required String connector,
     @Default([]) List<AppField> fields,
   }) = _AppTable;
 
