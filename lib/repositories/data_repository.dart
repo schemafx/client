@@ -1,10 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schemafx/services/api_service.dart';
 import 'package:schemafx/services/shared_preferences_storage_service.dart';
 import 'package:schemafx/services/storage_service.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/providers/providers.dart';
-
-const String _appDataKey = 'app_data';
 
 final storageServiceProvider = Provider<StorageService>(
   (ref) => SharedPreferencesStorageService(),
@@ -12,35 +11,33 @@ final storageServiceProvider = Provider<StorageService>(
 
 class DataRepository {
   final Ref ref;
-  final StorageService _storageService;
-  DataRepository(this.ref) : _storageService = ref.read(storageServiceProvider);
+  DataRepository(this.ref);
+  late final _apiService = ApiService();
 
-  Future<Map<String, dynamic>?> _loadAppData() =>
-      _storageService.load(_appDataKey);
-
-  Future<AppSchema?> loadSchema() async {
+  Future<AppSchema> loadSchema() async {
     try {
-      final appData = await _loadAppData();
-
-      if (appData == null || !appData.containsKey('schema')) return null;
-      return AppSchema.fromJson(appData['schema']);
+      return AppSchema.fromJson(await _apiService.get('apps/appId/schema'));
     } catch (e) {
       ref.read(errorProvider.notifier).showError('Failed to load schema: $e');
       rethrow;
     }
   }
 
-  Future<AppData?> loadData() async {
+  Future<AppData> loadData() async {
     try {
-      final appData = await _loadAppData();
-      if (appData == null || !appData.containsKey('data')) return null;
+      final AppData appData = {};
+      final schema = await loadSchema();
 
-      return appData['data'].map(
-        (tableId, List rows) => MapEntry(
-          tableId,
-          rows.map((row) => Map<String, dynamic>.from(row)).toList(),
+      (await Future.wait(
+        schema.tables.map(
+          (table) => _apiService.get('apps/appId/data/${table.id}'),
         ),
+      )).asMap().forEach(
+        (idx, data) => appData[schema.tables[idx].id] =
+            List<Map<String, dynamic>>.from(data),
       );
+
+      return appData;
     } catch (e) {
       ref.read(errorProvider.notifier).showError('Failed to load data: $e');
       rethrow;

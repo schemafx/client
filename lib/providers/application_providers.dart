@@ -3,7 +3,6 @@ import 'package:schemafx/providers/base_notifier.dart';
 import 'package:schemafx/repositories/data_repository.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/services/api_service.dart';
-import 'mock_data.dart';
 
 /// Defines the current mode of the application.
 enum AppMode {
@@ -23,11 +22,7 @@ class SchemaNotifier extends BaseNotifier<AppSchema> {
   late final _apiService = ApiService();
 
   @override
-  Future<AppSchema> build() async {
-    final schema = await _repo.loadSchema();
-
-    await _repo.saveSchema(demoSchema);
-  }
+  Future<AppSchema> build() => _repo.loadSchema();
 
   Future<void> addElement(dynamic element, String partOf, {String? parentId}) =>
       _updateSchema(

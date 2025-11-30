@@ -18,7 +18,7 @@ class DataNotifier extends BaseNotifier<AppData> {
   late final _apiService = ApiService();
 
   @override
-  Future<AppData> build() async => (await _repo.loadData() ?? {});
+  Future<AppData> build() => _repo.loadData();
 
   /// Adds a [row] to the table with the given [tableId].
   Future<void> addRow(String tableId, Map<String, dynamic> row) => _updateTable(
