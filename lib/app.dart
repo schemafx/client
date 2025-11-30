@@ -21,15 +21,17 @@ class SchemaFxApp extends ConsumerWidget {
 
       // We use a post frame callback to ensure the ScaffoldMessenger is available.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref
-            .read(scaffoldMessengerKeyProvider)
-            .currentState
-            ?.showSnackBar(
-              SnackBar(content: Text(next), backgroundColor: Colors.red),
-            );
+        try {
+          ref
+              .read(scaffoldMessengerKeyProvider)
+              .currentState
+              ?.showSnackBar(
+                SnackBar(content: Text(next), backgroundColor: Colors.red),
+              );
 
-        // Clear the error after showing it.
-        ref.read(errorProvider.notifier).clearError();
+          // Clear the error after showing it.
+          ref.read(errorProvider.notifier).clearError();
+        } catch (_) {}
       });
     });
 
