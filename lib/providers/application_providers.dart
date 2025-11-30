@@ -25,10 +25,8 @@ class SchemaNotifier extends BaseNotifier<AppSchema> {
   @override
   Future<AppSchema> build() async {
     final schema = await _repo.loadSchema();
-    if (schema != null) return schema;
 
     await _repo.saveSchema(demoSchema);
-    return demoSchema;
   }
 
   Future<void> addElement(dynamic element, String partOf, {String? parentId}) =>
@@ -85,11 +83,7 @@ class SchemaNotifier extends BaseNotifier<AppSchema> {
 
   Future<void> _updateSchema(Future<dynamic> query) async {
     final newState = AppSchema.fromJson(await query);
-
-    return mutate(() async {
-      await _repo.saveSchema(newState);
-      return newState;
-    }, 'Saved');
+    return mutate(() async => newState, 'Saved');
   }
 }
 

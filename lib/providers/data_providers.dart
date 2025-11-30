@@ -54,11 +54,7 @@ class DataNotifier extends BaseNotifier<AppData> {
     final newState = {...oldState};
 
     newState[tableId] = List<Map<String, dynamic>>.from(await query);
-
-    await mutate(() async {
-      await _repo.saveData(newState);
-      return newState;
-    }, 'Saved');
+    return mutate(() async => newState, 'Saved');
   }
 }
 

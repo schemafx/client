@@ -46,29 +46,4 @@ class DataRepository {
       rethrow;
     }
   }
-
-  /// Saves the application [schema] to storage.
-  Future<void> saveSchema(AppSchema schema) async {
-    try {
-      final appData = await _loadAppData() ?? {};
-      appData['schema'] = schema.toJson();
-
-      await _storageService.save(_appDataKey, appData);
-    } catch (e) {
-      ref.read(errorProvider.notifier).showError('Failed to save schema: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> saveData(AppData data) async {
-    try {
-      final appData = await _loadAppData() ?? {};
-      appData['data'] = data;
-
-      await _storageService.save(_appDataKey, appData);
-    } catch (e) {
-      ref.read(errorProvider.notifier).showError('Failed to save data: $e');
-      rethrow;
-    }
-  }
 }
