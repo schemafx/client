@@ -12,13 +12,8 @@ part 'app_table.g.dart';
 sealed class AppTable with _$AppTable {
   /// Creates a new [AppTable].
   const factory AppTable({
-    /// The unique identifier for this table.
     required String id,
-
-    /// The name of this table.
     required String name,
-
-    /// The list of fields in this table.
     @Default([]) List<AppField> fields,
   }) = _AppTable;
 
