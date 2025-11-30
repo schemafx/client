@@ -6,7 +6,6 @@ class ApiService {
 
   Future<dynamic> _query(Future<http.Response> query) async {
     try {
-      //return [];
       final response = await query;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
