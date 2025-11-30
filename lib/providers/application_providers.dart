@@ -3,6 +3,17 @@ import 'package:schemafx/providers/base_notifier.dart';
 import 'package:schemafx/repositories/data_repository.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/services/api_service.dart';
+import 'package:schemafx/services/secure_storage_service.dart';
+
+class SecureStorageServiceNotifier extends Notifier<SecureStorageService> {
+  @override
+  SecureStorageService build() => SecureStorageService();
+}
+
+final secureStorageServiceProvider =
+    NotifierProvider<SecureStorageServiceNotifier, SecureStorageService>(
+      SecureStorageServiceNotifier.new,
+    );
 
 /// A notifier that manages the application Id.
 class AppIdNotifier extends Notifier<String?> {

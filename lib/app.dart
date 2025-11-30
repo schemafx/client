@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/providers/providers.dart';
 import 'package:schemafx/ui/screens/editor_mode_screen.dart';
 import 'package:schemafx/ui/screens/runtime_mode_screen.dart';
+import 'package:schemafx/ui/screens/login_screen.dart';
 
 /// The root widget of the application.
 ///
@@ -47,6 +48,7 @@ class SchemaFxApp extends ConsumerWidget {
         initialLocation: '/edit/123',
         routes: [
           GoRoute(path: '/', builder: (context, state) => RuntimeModeScreen()),
+          GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
           GoRoute(
             path: '/start/:appId',
             builder: (context, state) => RuntimeModeScreen(),
@@ -57,12 +59,28 @@ class SchemaFxApp extends ConsumerWidget {
           ),
         ],
         redirect: (context, state) {
+          final authState = ref.read(authProvider);
+          final isAuthenticated =
+              authState.asData?.value == AuthState.authenticated;
+          final isLoggingIn = state.matchedLocation == '/login';
+
+          if (authState.isLoading || authState.isReloading) return null;
+          if (!isAuthenticated && !isLoggingIn) {
+            Future.microtask(
+              () => ref.read(redirectUrlProvider.notifier).set(state.uri),
+            );
+            return '/login';
+          }
+
+          if (isAuthenticated && isLoggingIn) {
+            final redirectUrl = ref.read(redirectUrlProvider);
+            return (redirectUrl != null) ? redirectUrl.toString() : '/';
+          }
+
           Future.microtask(
-            () => context.mounted
-                ? ProviderScope.containerOf(context)
-                      .read(appIdProvider.notifier)
-                      .setId(state.pathParameters['appId'])
-                : null,
+            () => ref
+                .read(appIdProvider.notifier)
+                .setId(state.pathParameters['appId']),
           );
 
           return null;
