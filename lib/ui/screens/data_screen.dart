@@ -11,37 +11,35 @@ class DataScreen extends StatelessWidget {
   const DataScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 600,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.arrow_back_outlined),
-          ),
-          title: const Text('Data'),
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(1),
-            child: Divider(height: 1, thickness: 1),
-          ),
+  Widget build(BuildContext context) => SizedBox(
+    width: 600,
+    child: Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.arrow_back_outlined),
         ),
-        body: Row(
-          children: [
-            SizedBox(
-              width: 300,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: _DataScreenSource(),
-              ),
-            ),
-            const VerticalDivider(width: 1, thickness: 1),
-            Expanded(child: _DataScreenTable()),
-          ],
+        title: const Text('Data'),
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(height: 1, thickness: 1),
         ),
       ),
-    );
-  }
+      body: Row(
+        children: [
+          SizedBox(
+            width: 300,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: _DataScreenSource(),
+            ),
+          ),
+          const VerticalDivider(width: 1, thickness: 1),
+          Expanded(child: _DataScreenTable()),
+        ],
+      ),
+    ),
+  );
 }
 
 class _DataScreenSource extends ConsumerWidget {

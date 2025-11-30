@@ -18,20 +18,20 @@ class SchemaFxApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen<String?>(errorProvider, (previous, next) {
-      if (next != null) {
-        // We use a post frame callback to ensure the ScaffoldMessenger is available.
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref
-              .read(scaffoldMessengerKeyProvider)
-              .currentState
-              ?.showSnackBar(
-                SnackBar(content: Text(next), backgroundColor: Colors.red),
-              );
+      if (next == null) return;
 
-          // Clear the error after showing it.
-          ref.read(errorProvider.notifier).clearError();
-        });
-      }
+      // We use a post frame callback to ensure the ScaffoldMessenger is available.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
+            .read(scaffoldMessengerKeyProvider)
+            .currentState
+            ?.showSnackBar(
+              SnackBar(content: Text(next), backgroundColor: Colors.red),
+            );
+
+        // Clear the error after showing it.
+        ref.read(errorProvider.notifier).clearError();
+      });
     });
 
     return MaterialApp.router(

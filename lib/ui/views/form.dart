@@ -202,13 +202,13 @@ class XFormViewState extends ConsumerState<XFormView> {
           lastDate: field.endDate ?? DateTime(2101),
         );
 
-        if (selectedDate != null) {
-          setState(
-            () => _controllers[field.id]?.text = selectedDate
-                .toIso8601String()
-                .substring(0, 10),
-          );
-        }
+        if (selectedDate == null) return;
+
+        setState(
+          () => _controllers[field.id]?.text = selectedDate
+              .toIso8601String()
+              .substring(0, 10),
+        );
       },
       validator: field.validate,
       autovalidateMode: AutovalidateMode.onUserInteraction,
