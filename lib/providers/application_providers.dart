@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/providers/base_notifier.dart';
 import 'package:schemafx/repositories/data_repository.dart';
 import 'package:schemafx/models/models.dart';
+import 'package:schemafx/services/api_service.dart';
 import 'mock_data.dart';
 
 /// Defines the current mode of the application.
@@ -19,6 +20,7 @@ enum AppMode {
 /// [AppSchema] which includes all tables and fields.
 class SchemaNotifier extends BaseNotifier<AppSchema> {
   late final _repo = DataRepository(ref);
+  late final _apiService = ApiService();
 
   @override
   Future<AppSchema> build() async {
@@ -30,198 +32,65 @@ class SchemaNotifier extends BaseNotifier<AppSchema> {
     return demoSchema;
   }
 
-  Future<void> addElement(
-    dynamic element,
-    String partOf, {
-    String? parentId,
-  }) async {
-    final oldState = await future;
-    late AppSchema newState;
-
-    if (partOf == 'tables') {
-      newState = oldState.copyWith(tables: [...oldState.tables, element]);
-    } else if (partOf == 'views') {
-      newState = oldState.copyWith(views: [...oldState.views, element]);
-    } else if (partOf == 'fields' && parentId != null) {
-      final oldFieldsLength = oldState.tables
-          .firstWhere((table) => table.id == parentId)
-          .fields
-          .length;
-
-      newState = oldState.copyWith(
-        tables: oldState.tables
-            .map(
-              (table) => table.id == parentId
-                  ? table.copyWith(fields: [...table.fields, element])
-                  : table,
-            )
-            .toList(),
-        views: oldState.views
-            .map(
-              (view) =>
-                  view.tableId == parentId &&
-                      view.fields.length == oldFieldsLength
-                  ? view.copyWith(
-                      fields: [...view.fields, (element as AppField).id],
-                    )
-                  : view,
-            )
-            .toList(),
+  Future<void> addElement(dynamic element, String partOf, {String? parentId}) =>
+      _updateSchema(
+        _apiService.post('apps/appId/schema', {
+          'action': 'add',
+          'element': parentId == null
+              ? {'partOf': partOf, 'element': element}
+              : {'partOf': partOf, 'element': element, 'parentId': parentId},
+        }),
       );
-    } else {
-      return;
-    }
-
-    return mutate(() async {
-      await _repo.saveSchema(newState);
-      return newState;
-    }, 'Added successfully');
-  }
 
   Future<void> updateElement(
     dynamic element,
     String partOf, {
     String? parentId,
-  }) async {
-    final oldState = await future;
-    late AppSchema newState;
-
-    if (partOf == 'tables') {
-      newState = oldState.copyWith(
-        tables: oldState.tables
-            .map((t) => t.id == element.id ? element as AppTable : t)
-            .toList(),
-      );
-    } else if (partOf == 'views') {
-      newState = oldState.copyWith(
-        views: oldState.views
-            .map((t) => t.id == element.id ? element as AppView : t)
-            .toList(),
-      );
-    } else if (partOf == 'fields' && parentId != null) {
-      newState = oldState.copyWith(
-        tables: oldState.tables
-            .map(
-              (table) => table.id == parentId
-                  ? table.copyWith(
-                      fields: table.fields
-                          .map(
-                            (f) => f.id == element.id ? element as AppField : f,
-                          )
-                          .toList(),
-                    )
-                  : table,
-            )
-            .toList(),
-      );
-    } else {
-      return;
-    }
-
-    return mutate(() async {
-      await _repo.saveSchema(newState);
-      return newState;
-    }, 'Updated successfully');
-  }
+  }) => _updateSchema(
+    _apiService.post('apps/appId/schema', {
+      'action': 'update',
+      'element': parentId == null
+          ? {'partOf': partOf, 'element': element}
+          : {'partOf': partOf, 'element': element, 'parentId': parentId},
+    }),
+  );
 
   Future<void> deleteElement(
     String elementId,
     String partOf, {
     String? parentId,
-  }) async {
-    final oldState = await future;
-    late AppSchema newState;
-
-    if (partOf == 'tables') {
-      newState = oldState.copyWith(
-        tables: oldState.tables.where((t) => t.id != elementId).toList(),
-      );
-    } else if (partOf == 'views') {
-      newState = oldState.copyWith(
-        views: oldState.views.where((t) => t.id != elementId).toList(),
-      );
-    } else if (partOf == 'fields' && parentId != null) {
-      newState = oldState.copyWith(
-        tables: oldState.tables
-            .map(
-              (table) => table.id == parentId
-                  ? table.copyWith(
-                      fields: table.fields
-                          .where((f) => f.id != elementId)
-                          .toList(),
-                    )
-                  : table,
-            )
-            .toList(),
-        views: oldState.views
-            .map(
-              (view) => view.tableId == parentId
-                  ? view.copyWith(
-                      fields: view.fields
-                          .where((field) => field != elementId)
-                          .toList(),
-                    )
-                  : view,
-            )
-            .toList(),
-      );
-    } else {
-      return;
-    }
-
-    return mutate(() async {
-      await _repo.saveSchema(newState);
-      return newState;
-    }, 'Deleted successfully');
-  }
+  }) => _updateSchema(
+    _apiService.post('apps/appId/schema', {
+      'action': 'delete',
+      'element': parentId == null
+          ? {'partOf': partOf, 'elementId': elementId}
+          : {'partOf': partOf, 'elementId': elementId, 'parentId': parentId},
+    }),
+  );
 
   Future<void> reorderElement(
     int oldIndex,
     int newIndex,
     String partOf, {
     String? parentId,
-  }) async {
-    final oldState = await future;
-    if (oldIndex < newIndex) {
-      newIndex -= 1;
-    }
+  }) => _updateSchema(
+    _apiService.post('apps/appId/schema', {
+      'action': 'reorder',
+      'oldIndex': oldIndex,
+      'newIndex': newIndex,
+      'element': parentId == null
+          ? {'partOf': partOf}
+          : {'partOf': partOf, 'parentId': parentId},
+    }),
+  );
 
-    late List<dynamic> elements;
-
-    if (partOf == 'tables') {
-      elements = [...oldState.tables];
-    } else if (partOf == 'views') {
-      elements = [...oldState.views];
-    } else if (partOf == 'fields' && parentId != null) {
-      final table = oldState.tables.firstWhere((table) => table.id == parentId);
-      final fields = [...table.fields];
-
-      if (oldIndex < newIndex) {
-        newIndex -= 1;
-      }
-
-      final field = fields.removeAt(oldIndex);
-      fields.insert(newIndex, field);
-
-      return updateElement(table.copyWith(fields: fields), 'tables');
-    } else {
-      return;
-    }
-
-    final element = elements.removeAt(oldIndex);
-    elements.insert(newIndex, element);
-
-    late AppSchema newState;
-    if (partOf == 'tables') {
-      newState = oldState.copyWith(tables: List<AppTable>.from(elements));
-    } else if (partOf == 'views') {
-      newState = oldState.copyWith(views: List<AppView>.from(elements));
-    }
+  Future<void> _updateSchema(Future<dynamic> query) async {
+    final newState = AppSchema.fromJson(await query);
 
     return mutate(() async {
       await _repo.saveSchema(newState);
       return newState;
-    }, 'Reordered successfully');
+    }, 'Saved');
   }
 }
 
