@@ -1,13 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/services/api_service.dart';
-import 'package:schemafx/services/shared_preferences_storage_service.dart';
-import 'package:schemafx/services/storage_service.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/providers/providers.dart';
-
-final storageServiceProvider = Provider<StorageService>(
-  (ref) => SharedPreferencesStorageService(),
-);
 
 class DataRepository {
   final Ref ref;
