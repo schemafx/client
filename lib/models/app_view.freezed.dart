@@ -15,12 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppView {
 
-/// The unique identifier of the view.
- String get id;/// The name of the view.
- String get name;/// The unique identifier of the table this view is associated with.
- String get tableId;/// The type of view to display.
- AppViewType get type;/// The list of field IDs to display in the view.
- List<String> get fields;
+ String get id; String get name; String get tableId; AppViewType get type; List<String> get fields;
 /// Create a copy of AppView
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -215,17 +210,11 @@ class _AppView extends AppView {
   const _AppView({required this.id, required this.name, required this.tableId, required this.type, required final  List<String> fields}): _fields = fields,super._();
   factory _AppView.fromJson(Map<String, dynamic> json) => _$AppViewFromJson(json);
 
-/// The unique identifier of the view.
 @override final  String id;
-/// The name of the view.
 @override final  String name;
-/// The unique identifier of the table this view is associated with.
 @override final  String tableId;
-/// The type of view to display.
 @override final  AppViewType type;
-/// The list of field IDs to display in the view.
  final  List<String> _fields;
-/// The list of field IDs to display in the view.
 @override List<String> get fields {
   if (_fields is EqualUnmodifiableListView) return _fields;
   // ignore: implicit_dynamic_type
