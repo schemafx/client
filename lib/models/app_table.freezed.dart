@@ -15,10 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppTable {
 
-/// The unique identifier for this table.
- String get id;/// The name of this table.
- String get name;/// The list of fields in this table.
- List<AppField> get fields;
+ String get id; String get name; String get connector; List<AppField> get fields;
 /// Create a copy of AppTable
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -31,16 +28,16 @@ $AppTableCopyWith<AppTable> get copyWith => _$AppTableCopyWithImpl<AppTable>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppTable&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other.fields, fields));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppTable&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.connector, connector) || other.connector == connector)&&const DeepCollectionEquality().equals(other.fields, fields));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,const DeepCollectionEquality().hash(fields));
+int get hashCode => Object.hash(runtimeType,id,name,connector,const DeepCollectionEquality().hash(fields));
 
 @override
 String toString() {
-  return 'AppTable(id: $id, name: $name, fields: $fields)';
+  return 'AppTable(id: $id, name: $name, connector: $connector, fields: $fields)';
 }
 
 
@@ -51,7 +48,7 @@ abstract mixin class $AppTableCopyWith<$Res>  {
   factory $AppTableCopyWith(AppTable value, $Res Function(AppTable) _then) = _$AppTableCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, List<AppField> fields
+ String id, String name, String connector, List<AppField> fields
 });
 
 
@@ -68,10 +65,11 @@ class _$AppTableCopyWithImpl<$Res>
 
 /// Create a copy of AppTable
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? fields = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? connector = null,Object? fields = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,connector: null == connector ? _self.connector : connector // ignore: cast_nullable_to_non_nullable
 as String,fields: null == fields ? _self.fields : fields // ignore: cast_nullable_to_non_nullable
 as List<AppField>,
   ));
@@ -155,10 +153,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  List<AppField> fields)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String connector,  List<AppField> fields)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppTable() when $default != null:
-return $default(_that.id,_that.name,_that.fields);case _:
+return $default(_that.id,_that.name,_that.connector,_that.fields);case _:
   return orElse();
 
 }
@@ -176,10 +174,10 @@ return $default(_that.id,_that.name,_that.fields);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  List<AppField> fields)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String connector,  List<AppField> fields)  $default,) {final _that = this;
 switch (_that) {
 case _AppTable():
-return $default(_that.id,_that.name,_that.fields);}
+return $default(_that.id,_that.name,_that.connector,_that.fields);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -193,10 +191,10 @@ return $default(_that.id,_that.name,_that.fields);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  List<AppField> fields)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String connector,  List<AppField> fields)?  $default,) {final _that = this;
 switch (_that) {
 case _AppTable() when $default != null:
-return $default(_that.id,_that.name,_that.fields);case _:
+return $default(_that.id,_that.name,_that.connector,_that.fields);case _:
   return null;
 
 }
@@ -208,16 +206,13 @@ return $default(_that.id,_that.name,_that.fields);case _:
 @JsonSerializable()
 
 class _AppTable extends AppTable {
-  const _AppTable({required this.id, required this.name, final  List<AppField> fields = const []}): _fields = fields,super._();
+  const _AppTable({required this.id, required this.name, required this.connector, final  List<AppField> fields = const []}): _fields = fields,super._();
   factory _AppTable.fromJson(Map<String, dynamic> json) => _$AppTableFromJson(json);
 
-/// The unique identifier for this table.
 @override final  String id;
-/// The name of this table.
 @override final  String name;
-/// The list of fields in this table.
+@override final  String connector;
  final  List<AppField> _fields;
-/// The list of fields in this table.
 @override@JsonKey() List<AppField> get fields {
   if (_fields is EqualUnmodifiableListView) return _fields;
   // ignore: implicit_dynamic_type
@@ -238,16 +233,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppTable&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other._fields, _fields));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppTable&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.connector, connector) || other.connector == connector)&&const DeepCollectionEquality().equals(other._fields, _fields));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,const DeepCollectionEquality().hash(_fields));
+int get hashCode => Object.hash(runtimeType,id,name,connector,const DeepCollectionEquality().hash(_fields));
 
 @override
 String toString() {
-  return 'AppTable(id: $id, name: $name, fields: $fields)';
+  return 'AppTable(id: $id, name: $name, connector: $connector, fields: $fields)';
 }
 
 
@@ -258,7 +253,7 @@ abstract mixin class _$AppTableCopyWith<$Res> implements $AppTableCopyWith<$Res>
   factory _$AppTableCopyWith(_AppTable value, $Res Function(_AppTable) _then) = __$AppTableCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, List<AppField> fields
+ String id, String name, String connector, List<AppField> fields
 });
 
 
@@ -275,10 +270,11 @@ class __$AppTableCopyWithImpl<$Res>
 
 /// Create a copy of AppTable
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? fields = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? connector = null,Object? fields = null,}) {
   return _then(_AppTable(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+as String,connector: null == connector ? _self.connector : connector // ignore: cast_nullable_to_non_nullable
 as String,fields: null == fields ? _self._fields : fields // ignore: cast_nullable_to_non_nullable
 as List<AppField>,
   ));

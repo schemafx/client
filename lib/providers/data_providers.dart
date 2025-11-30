@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schemafx/providers/application_providers.dart';
 import 'package:schemafx/providers/base_notifier.dart';
 import 'package:schemafx/repositories/data_repository.dart';
+import 'package:schemafx/services/api_service.dart';
 
 /// A type definition for the application's data.
 ///
@@ -12,67 +14,58 @@ typedef AppData = Map<String, List<Map<String, dynamic>>>;
 ///
 /// This notifier is responsible for loading, saving, and modifying the [AppData]
 /// which includes all the rows for all the tables.
-class DataNotifier extends BaseNotifier<AppData> {
+class DataNotifier extends BaseNotifier<AppData?> {
   late final _repo = DataRepository(ref);
+  late final _apiService = ApiService();
 
   @override
-  Future<AppData> build() async {
-    return await _repo.loadData() ?? {};
+  Future<AppData?> build() async {
+    final appId = ref.watch(appIdProvider);
+    if (appId == null) return null;
+    return await _repo.loadData();
   }
 
   /// Adds a [row] to the table with the given [tableId].
-  Future<void> addRow(String tableId, Map<String, dynamic> row) async {
-    final oldState = await future;
-    final newState = {...oldState};
-    if (!newState.containsKey(tableId)) {
-      newState[tableId] = [];
-    }
-
-    newState[tableId]!.add(row);
-
-    await mutate(() async {
-      await _repo.saveData(newState);
-      return newState;
-    }, 'Row added successfully');
-  }
+  Future<void> addRow(String tableId, Map<String, dynamic> row) => _updateTable(
+    tableId,
+    _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
+      'action': 'add',
+      'row': row,
+    }),
+  );
 
   /// Updates the [row] at the given [rowIndex] in the table with the given [tableId].
   Future<void> updateRow(
     String tableId,
     int rowIndex,
     Map<String, dynamic> row,
-  ) async {
-    final oldState = await future;
-    final newState = {...oldState};
-
-    if (newState.containsKey(tableId) && newState[tableId]!.length > rowIndex) {
-      newState[tableId]![rowIndex] = row;
-
-      await mutate(() async {
-        await _repo.saveData(newState);
-        return newState;
-      }, 'Row updated successfully');
-    }
-  }
+  ) => _updateTable(
+    tableId,
+    _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
+      'action': 'update',
+      'rowIndex': rowIndex,
+      'row': row,
+    }),
+  );
 
   /// Deletes the row at the given [rowIndex] from the table with the given [tableId].
-  Future<void> deleteRow(String tableId, int rowIndex) async {
-    final oldState = await future;
-    final newState = {...oldState};
+  Future<void> deleteRow(String tableId, int rowIndex) => _updateTable(
+    tableId,
+    _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
+      'action': 'delete',
+      'rowIndex': rowIndex,
+    }),
+  );
 
-    if (newState.containsKey(tableId) && newState[tableId]!.length > rowIndex) {
-      newState[tableId]!.removeAt(rowIndex);
-
-      await mutate(() async {
-        await _repo.saveData(newState);
-        return newState;
-      }, 'Row deleted successfully');
-    }
+  Future<void> _updateTable(String tableId, Future<dynamic> query) async {
+    final newState = {...(await future ?? {})};
+    newState[tableId] = List<Map<String, dynamic>>.from(await query);
+    return mutate(() async => newState, 'Saved');
   }
 }
 
 /// A provider that exposes the application's data and allows it to be modified.
-final dataProvider = AsyncNotifierProvider<DataNotifier, AppData>(
+final dataProvider = AsyncNotifierProvider<DataNotifier, AppData?>(
   DataNotifier.new,
 );
 
@@ -81,21 +74,19 @@ final dataProvider = AsyncNotifierProvider<DataNotifier, AppData>(
 /// The `family` modifier is used to pass the table and record IDs to the provider.
 final recordByIdProvider =
     Provider.family<Map<String, dynamic>?, ({String tableId, String recordId})>(
-      (ref, ids) {
-        return ref
-            .watch(dataProvider)
-            .when(
-              data: (allData) {
-                final records = allData[ids.tableId] ?? [];
+      (ref, ids) => ref
+          .watch(dataProvider)
+          .when(
+            data: (allData) {
+              final records = allData?[ids.tableId] ?? [];
 
-                try {
-                  return records.firstWhere((r) => r['_id'] == ids.recordId);
-                } catch (e) {
-                  return null;
-                }
-              },
-              loading: () => null,
-              error: (_, _) => null,
-            );
-      },
+              try {
+                return records.firstWhere((r) => r['_id'] == ids.recordId);
+              } catch (e) {
+                return null;
+              }
+            },
+            loading: () => null,
+            error: (_, _) => null,
+          ),
     );

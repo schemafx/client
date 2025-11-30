@@ -15,19 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppField {
 
-/// The unique identifier for this field.
- String get id;/// The name of this field.
- String get name;/// The data type of this field.
- AppFieldType get type;/// The ID of the table this field is related to, if [type] is [AppFieldType.reference].
- String? get referenceTo;/// Whether this field is required to have a value.
- bool get isRequired;/// The minimum length of the text, if [type] is [AppFieldType.text].
- int? get minLength;/// The maximum length of the text, if [type] is [AppFieldType.text].
- int? get maxLength;/// The minimum value of the number, if [type] is [AppFieldType.number].
- double? get minValue;/// The maximum value of the number, if [type] is [AppFieldType.number].
- double? get maxValue;/// The start date, if [type] is [AppFieldType.date].
- DateTime? get startDate;/// The end date, if [type] is [AppFieldType.date].
- DateTime? get endDate;/// The list of options for a dropdown field.
- List<String>? get options;
+ String get id; String get name; AppFieldType get type; String? get referenceTo; bool get isRequired; int? get minLength; int? get maxLength; double? get minValue; double? get maxValue; DateTime? get startDate; DateTime? get endDate; List<String>? get options;
 /// Create a copy of AppField
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -229,31 +217,18 @@ class _AppField extends AppField {
   const _AppField({required this.id, required this.name, required this.type, this.referenceTo, this.isRequired = false, this.minLength, this.maxLength, this.minValue, this.maxValue, this.startDate, this.endDate, final  List<String>? options}): _options = options,super._();
   factory _AppField.fromJson(Map<String, dynamic> json) => _$AppFieldFromJson(json);
 
-/// The unique identifier for this field.
 @override final  String id;
-/// The name of this field.
 @override final  String name;
-/// The data type of this field.
 @override final  AppFieldType type;
-/// The ID of the table this field is related to, if [type] is [AppFieldType.reference].
 @override final  String? referenceTo;
-/// Whether this field is required to have a value.
 @override@JsonKey() final  bool isRequired;
-/// The minimum length of the text, if [type] is [AppFieldType.text].
 @override final  int? minLength;
-/// The maximum length of the text, if [type] is [AppFieldType.text].
 @override final  int? maxLength;
-/// The minimum value of the number, if [type] is [AppFieldType.number].
 @override final  double? minValue;
-/// The maximum value of the number, if [type] is [AppFieldType.number].
 @override final  double? maxValue;
-/// The start date, if [type] is [AppFieldType.date].
 @override final  DateTime? startDate;
-/// The end date, if [type] is [AppFieldType.date].
 @override final  DateTime? endDate;
-/// The list of options for a dropdown field.
  final  List<String>? _options;
-/// The list of options for a dropdown field.
 @override List<String>? get options {
   final value = _options;
   if (value == null) return null;

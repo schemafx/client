@@ -1,73 +1,45 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:schemafx/services/shared_preferences_storage_service.dart';
-import 'package:schemafx/services/storage_service.dart';
+import 'package:schemafx/services/api_service.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/providers/providers.dart';
 
-const String _appDataKey = 'app_data';
-
-final storageServiceProvider = Provider<StorageService>(
-  (ref) => SharedPreferencesStorageService(),
-);
-
 class DataRepository {
   final Ref ref;
-  final StorageService _storageService;
-  DataRepository(this.ref) : _storageService = ref.read(storageServiceProvider);
-
-  Future<Map<String, dynamic>?> _loadAppData() =>
-      _storageService.load(_appDataKey);
+  DataRepository(this.ref);
+  late final _apiService = ApiService();
 
   Future<AppSchema?> loadSchema() async {
     try {
-      final appData = await _loadAppData();
+      final appId = ref.read(appIdProvider);
+      if (appId == null) return null;
 
-      if (appData == null || !appData.containsKey('schema')) return null;
-      return AppSchema.fromJson(appData['schema']);
+      return AppSchema.fromJson(await _apiService.get('apps/$appId/schema'));
     } catch (e) {
       ref.read(errorProvider.notifier).showError('Failed to load schema: $e');
       rethrow;
     }
   }
 
-  Future<AppData?> loadData() async {
+  Future<AppData> loadData() async {
     try {
-      final appData = await _loadAppData();
-      if (appData == null || !appData.containsKey('data')) return null;
+      final AppData appData = {};
+      final appId = ref.read(appIdProvider);
+      final schema = await loadSchema();
 
-      return appData['data'].map(
-        (tableId, List rows) => MapEntry(
-          tableId,
-          rows.map((row) => Map<String, dynamic>.from(row)).toList(),
+      if (appId == null || schema == null) return appData;
+
+      (await Future.wait(
+        schema.tables.map(
+          (table) => _apiService.get('apps/$appId/data/${table.id}'),
         ),
+      )).asMap().forEach(
+        (idx, data) => appData[schema.tables[idx].id] =
+            List<Map<String, dynamic>>.from(data),
       );
+
+      return appData;
     } catch (e) {
       ref.read(errorProvider.notifier).showError('Failed to load data: $e');
-      rethrow;
-    }
-  }
-
-  /// Saves the application [schema] to storage.
-  Future<void> saveSchema(AppSchema schema) async {
-    try {
-      final appData = await _loadAppData() ?? {};
-      appData['schema'] = schema.toJson();
-
-      await _storageService.save(_appDataKey, appData);
-    } catch (e) {
-      ref.read(errorProvider.notifier).showError('Failed to save schema: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> saveData(AppData data) async {
-    try {
-      final appData = await _loadAppData() ?? {};
-      appData['data'] = data;
-
-      await _storageService.save(_appDataKey, appData);
-    } catch (e) {
-      ref.read(errorProvider.notifier).showError('Failed to save data: $e');
       rethrow;
     }
   }

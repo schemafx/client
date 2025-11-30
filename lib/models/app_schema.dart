@@ -14,16 +14,9 @@ part 'app_schema.g.dart';
 sealed class AppSchema with _$AppSchema {
   /// Creates a new [AppSchema].
   const factory AppSchema({
-    /// The unique identifier for this schema.
     required String id,
-
-    /// The name of this schema.
     required String name,
-
-    /// The list of tables in this schema.
     @Default([]) List<AppTable> tables,
-
-    /// The list of views in this schema.
     @Default([]) List<AppView> views,
   }) = _AppSchema;
 

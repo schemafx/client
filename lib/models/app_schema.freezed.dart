@@ -15,11 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppSchema {
 
-/// The unique identifier for this schema.
- String get id;/// The name of this schema.
- String get name;/// The list of tables in this schema.
- List<AppTable> get tables;/// The list of views in this schema.
- List<AppView> get views;
+ String get id; String get name; List<AppTable> get tables; List<AppView> get views;
 /// Create a copy of AppSchema
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -213,22 +209,16 @@ class _AppSchema extends AppSchema {
   const _AppSchema({required this.id, required this.name, final  List<AppTable> tables = const [], final  List<AppView> views = const []}): _tables = tables,_views = views,super._();
   factory _AppSchema.fromJson(Map<String, dynamic> json) => _$AppSchemaFromJson(json);
 
-/// The unique identifier for this schema.
 @override final  String id;
-/// The name of this schema.
 @override final  String name;
-/// The list of tables in this schema.
  final  List<AppTable> _tables;
-/// The list of tables in this schema.
 @override@JsonKey() List<AppTable> get tables {
   if (_tables is EqualUnmodifiableListView) return _tables;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_tables);
 }
 
-/// The list of views in this schema.
  final  List<AppView> _views;
-/// The list of views in this schema.
 @override@JsonKey() List<AppView> get views {
   if (_views is EqualUnmodifiableListView) return _views;
   // ignore: implicit_dynamic_type

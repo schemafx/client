@@ -4,28 +4,7 @@ part 'app_field.freezed.dart';
 part 'app_field.g.dart';
 
 /// Defines the data type of a field in a table.
-enum AppFieldType {
-  /// A plain text field.
-  text,
-
-  /// A numeric field.
-  number,
-
-  /// A date field.
-  date,
-
-  /// An email address field.
-  email,
-
-  /// A dropdown field with a list of options.
-  dropdown,
-
-  /// A boolean field.
-  boolean,
-
-  /// A reference field.
-  reference,
-}
+enum AppFieldType { text, number, date, email, dropdown, boolean, reference }
 
 /// Represents a single field within a table.
 ///
@@ -35,40 +14,17 @@ enum AppFieldType {
 sealed class AppField with _$AppField {
   /// Creates a new [AppField].
   const factory AppField({
-    /// The unique identifier for this field.
     required String id,
-
-    /// The name of this field.
     required String name,
-
-    /// The data type of this field.
     required AppFieldType type,
-
-    /// The ID of the table this field is related to, if [type] is [AppFieldType.reference].
     String? referenceTo,
-
-    /// Whether this field is required to have a value.
     @Default(false) bool isRequired,
-
-    /// The minimum length of the text, if [type] is [AppFieldType.text].
     int? minLength,
-
-    /// The maximum length of the text, if [type] is [AppFieldType.text].
     int? maxLength,
-
-    /// The minimum value of the number, if [type] is [AppFieldType.number].
     double? minValue,
-
-    /// The maximum value of the number, if [type] is [AppFieldType.number].
     double? maxValue,
-
-    /// The start date, if [type] is [AppFieldType.date].
     DateTime? startDate,
-
-    /// The end date, if [type] is [AppFieldType.date].
     DateTime? endDate,
-
-    /// The list of options for a dropdown field.
     List<String>? options,
   }) = _AppField;
 
@@ -84,9 +40,7 @@ sealed class AppField with _$AppField {
       return 'This field is required.';
     }
 
-    if (value == null || value.isEmpty) {
-      return null;
-    }
+    if (value == null || value.isEmpty) return null;
 
     switch (type) {
       case AppFieldType.text:

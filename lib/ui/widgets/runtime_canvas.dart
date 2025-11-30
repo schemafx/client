@@ -24,6 +24,8 @@ class RuntimeCanvas extends ConsumerWidget {
         .watch(schemaProvider)
         .when(
           data: (schema) {
+            if (schema == null) return Container();
+
             final view = schema.views.firstWhere((v) => v.id == selectedViewId);
             final table = schema.getTable(view.tableId);
 
@@ -35,6 +37,7 @@ class RuntimeCanvas extends ConsumerWidget {
                 .watch(dataProvider)
                 .when(
                   data: (allData) {
+                    if (allData == null) return Container();
                     late Widget viewWidget;
 
                     switch (view.type) {

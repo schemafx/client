@@ -5,10 +5,6 @@ import 'package:schemafx/providers/providers.dart';
 import 'package:schemafx/ui/screens/data_screen.dart';
 import 'package:schemafx/ui/widgets/dialogs.dart';
 
-// TODO: Restore
-//import '../components/dialog.dart';
-//import 'data.dart';
-
 class DesignScreen extends ConsumerWidget {
   const DesignScreen({super.key});
 

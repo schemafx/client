@@ -17,9 +17,7 @@ class XTableView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (records.isEmpty) {
-      return const Center(child: Text('No records found.'));
-    }
+    if (records.isEmpty) return const Center(child: Text('No records found.'));
 
     final visibleFields = view.fields.map(
       (id) => table.fields.firstWhere((f) => f.id == id),
@@ -49,6 +47,7 @@ class XTableView extends ConsumerWidget {
                     final asyncSchema = ref.watch(schemaProvider);
                     displayValue = asyncSchema.when(
                       data: (schema) {
+                        if (schema == null) return '';
                         final relatedTable = schema.getTable(
                           field.referenceTo!,
                         );

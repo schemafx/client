@@ -13,45 +13,44 @@ class Dialogs {
 
     return showDialog<void>(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Add New Table'),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: controller,
-              autofocus: true,
-              validator: (value) => value == null || value.isEmpty
-                  ? 'Please enter a table name'
-                  : null,
-            ),
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('Add New Table'),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            autofocus: true,
+            validator: (value) => value == null || value.isEmpty
+                ? 'Please enter a table name'
+                : null,
           ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: const Text('Add'),
-              onPressed: () async {
-                if (formKey.currentState!.validate()) {
-                  final newTable = AppTable(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    name: controller.text,
-                  );
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('Cancel'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          TextButton(
+            child: const Text('Add'),
+            onPressed: () async {
+              if (formKey.currentState!.validate()) {
+                final newTable = AppTable(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  name: controller.text,
+                  connector: 'memory',
+                );
 
-                  await ref
-                      .read(schemaProvider.notifier)
-                      .addElement(newTable, 'tables');
+                await ref
+                    .read(schemaProvider.notifier)
+                    .addElement(newTable, 'tables');
 
-                  if (!context.mounted) return;
-                  Navigator.of(context).pop();
-                }
-              },
-            ),
-          ],
-        );
-      },
+                if (!context.mounted) return;
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -158,32 +157,30 @@ class Dialogs {
     BuildContext context,
     WidgetRef ref,
     AppTable table,
-  ) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Delete Table'),
-        content: Text('Are you sure you want to delete "${table.name}"?'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            child: const Text('Delete'),
-            onPressed: () async {
-              await ref
-                  .read(schemaProvider.notifier)
-                  .deleteElement(table.id, 'tables');
+  ) => showDialog<void>(
+    context: context,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('Delete Table'),
+      content: Text('Are you sure you want to delete "${table.name}"?'),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Cancel'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        TextButton(
+          child: const Text('Delete'),
+          onPressed: () async {
+            await ref
+                .read(schemaProvider.notifier)
+                .deleteElement(table.id, 'tables');
 
-              if (!context.mounted) return;
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+            if (!context.mounted) return;
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    ),
+  );
 
   /// Shows a dialog for deleting a view.
   static Future<void> showDeleteView(

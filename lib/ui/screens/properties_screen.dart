@@ -9,15 +9,13 @@ class PropertiesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final view = ref.watch(selectedEditorViewProvider);
-
-    if (view == null) {
-      return Container();
-    }
+    if (view == null) return Container();
 
     return ref
         .watch(schemaProvider)
         .when(
           data: (schema) {
+            if (schema == null) return Container();
             final table = schema.getTable(view.tableId);
 
             return Padding(
