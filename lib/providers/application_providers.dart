@@ -4,20 +4,39 @@ import 'package:schemafx/repositories/data_repository.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/services/api_service.dart';
 
+/// A notifier that manages the application Id.
+class AppIdNotifier extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  void setId(String? appId) {
+    state = appId;
+  }
+}
+
+/// A provider that exposes the current application id and allows it to be modified.
+final appIdProvider = NotifierProvider<AppIdNotifier, String?>(
+  AppIdNotifier.new,
+);
+
 /// A notifier that manages the entire application schema.
 ///
 /// This notifier is responsible for loading, saving, and modifying the
 /// [AppSchema] which includes all tables and fields.
-class SchemaNotifier extends BaseNotifier<AppSchema> {
+class SchemaNotifier extends BaseNotifier<AppSchema?> {
   late final _repo = DataRepository(ref);
   late final _apiService = ApiService();
 
   @override
-  Future<AppSchema> build() => _repo.loadSchema();
+  Future<AppSchema?> build() async {
+    final appId = ref.watch(appIdProvider);
+    if (appId == null) return null;
+    return _repo.loadSchema();
+  }
 
   Future<void> addElement(dynamic element, String partOf, {String? parentId}) =>
       _updateSchema(
-        _apiService.post('apps/appId/schema', {
+        _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
           'action': 'add',
           'element': parentId == null
               ? {'partOf': partOf, 'element': element}
@@ -30,7 +49,7 @@ class SchemaNotifier extends BaseNotifier<AppSchema> {
     String partOf, {
     String? parentId,
   }) => _updateSchema(
-    _apiService.post('apps/appId/schema', {
+    _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
       'action': 'update',
       'element': parentId == null
           ? {'partOf': partOf, 'element': element}
@@ -43,7 +62,7 @@ class SchemaNotifier extends BaseNotifier<AppSchema> {
     String partOf, {
     String? parentId,
   }) => _updateSchema(
-    _apiService.post('apps/appId/schema', {
+    _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
       'action': 'delete',
       'element': parentId == null
           ? {'partOf': partOf, 'elementId': elementId}
@@ -57,7 +76,7 @@ class SchemaNotifier extends BaseNotifier<AppSchema> {
     String partOf, {
     String? parentId,
   }) => _updateSchema(
-    _apiService.post('apps/appId/schema', {
+    _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
       'action': 'reorder',
       'oldIndex': oldIndex,
       'newIndex': newIndex,
@@ -73,7 +92,7 @@ class SchemaNotifier extends BaseNotifier<AppSchema> {
   }
 }
 
-final schemaProvider = AsyncNotifierProvider<SchemaNotifier, AppSchema>(
+final schemaProvider = AsyncNotifierProvider<SchemaNotifier, AppSchema?>(
   SchemaNotifier.new,
 );
 
@@ -185,10 +204,10 @@ class SelectedEditorViewNotifier extends Notifier<AppView?> {
     ref.listen(schemaProvider, (previous, next) {
       if (!next.hasValue) return;
 
-      final schema = next.value!;
+      final schema = next.value;
       final currentViewId = state?.id;
 
-      if (currentViewId == null) return;
+      if (schema == null || currentViewId == null) return;
 
       try {
         state = schema.views.firstWhere((v) => v.id == currentViewId);

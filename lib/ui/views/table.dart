@@ -47,6 +47,7 @@ class XTableView extends ConsumerWidget {
                     final asyncSchema = ref.watch(schemaProvider);
                     displayValue = asyncSchema.when(
                       data: (schema) {
+                        if (schema == null) return '';
                         final relatedTable = schema.getTable(
                           field.referenceTo!,
                         );

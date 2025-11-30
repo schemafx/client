@@ -226,6 +226,7 @@ class XFormViewState extends ConsumerState<XFormView> {
 
     return asyncSchema.when(
       data: (schema) {
+        if (schema == null) return Container();
         final relatedTable = schema.getTable(relatedTableId);
         final displayField = relatedTable?.fields.firstWhere(
           (f) => f.type == AppFieldType.text || f.type == AppFieldType.email,
@@ -234,6 +235,7 @@ class XFormViewState extends ConsumerState<XFormView> {
 
         return asyncData.when(
           data: (allData) {
+            if (allData == null) return Container();
             final relatedRecords = allData[relatedTableId] ?? [];
 
             return Padding(

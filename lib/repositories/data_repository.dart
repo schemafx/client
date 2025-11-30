@@ -8,9 +8,12 @@ class DataRepository {
   DataRepository(this.ref);
   late final _apiService = ApiService();
 
-  Future<AppSchema> loadSchema() async {
+  Future<AppSchema?> loadSchema() async {
     try {
-      return AppSchema.fromJson(await _apiService.get('apps/appId/schema'));
+      final appId = ref.read(appIdProvider);
+      if (appId == null) return null;
+
+      return AppSchema.fromJson(await _apiService.get('apps/$appId/schema'));
     } catch (e) {
       ref.read(errorProvider.notifier).showError('Failed to load schema: $e');
       rethrow;
@@ -20,11 +23,14 @@ class DataRepository {
   Future<AppData> loadData() async {
     try {
       final AppData appData = {};
+      final appId = ref.read(appIdProvider);
       final schema = await loadSchema();
+
+      if (appId == null || schema == null) return appData;
 
       (await Future.wait(
         schema.tables.map(
-          (table) => _apiService.get('apps/appId/data/${table.id}'),
+          (table) => _apiService.get('apps/$appId/data/${table.id}'),
         ),
       )).asMap().forEach(
         (idx, data) => appData[schema.tables[idx].id] =

@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schemafx/providers/application_providers.dart';
 import 'package:schemafx/providers/base_notifier.dart';
 import 'package:schemafx/repositories/data_repository.dart';
 import 'package:schemafx/services/api_service.dart';
@@ -13,17 +14,24 @@ typedef AppData = Map<String, List<Map<String, dynamic>>>;
 ///
 /// This notifier is responsible for loading, saving, and modifying the [AppData]
 /// which includes all the rows for all the tables.
-class DataNotifier extends BaseNotifier<AppData> {
+class DataNotifier extends BaseNotifier<AppData?> {
   late final _repo = DataRepository(ref);
   late final _apiService = ApiService();
 
   @override
-  Future<AppData> build() => _repo.loadData();
+  Future<AppData?> build() async {
+    final appId = ref.watch(appIdProvider);
+    if (appId == null) return null;
+    return await _repo.loadData();
+  }
 
   /// Adds a [row] to the table with the given [tableId].
   Future<void> addRow(String tableId, Map<String, dynamic> row) => _updateTable(
     tableId,
-    _apiService.post('apps/appId/data/$tableId', {'action': 'add', 'row': row}),
+    _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
+      'action': 'add',
+      'row': row,
+    }),
   );
 
   /// Updates the [row] at the given [rowIndex] in the table with the given [tableId].
@@ -33,7 +41,7 @@ class DataNotifier extends BaseNotifier<AppData> {
     Map<String, dynamic> row,
   ) => _updateTable(
     tableId,
-    _apiService.post('apps/appId/data/$tableId', {
+    _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
       'action': 'update',
       'rowIndex': rowIndex,
       'row': row,
@@ -43,23 +51,21 @@ class DataNotifier extends BaseNotifier<AppData> {
   /// Deletes the row at the given [rowIndex] from the table with the given [tableId].
   Future<void> deleteRow(String tableId, int rowIndex) => _updateTable(
     tableId,
-    _apiService.post('apps/appId/data/$tableId', {
+    _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
       'action': 'delete',
       'rowIndex': rowIndex,
     }),
   );
 
   Future<void> _updateTable(String tableId, Future<dynamic> query) async {
-    final oldState = await future;
-    final newState = {...oldState};
-
+    final newState = {...(await future ?? {})};
     newState[tableId] = List<Map<String, dynamic>>.from(await query);
     return mutate(() async => newState, 'Saved');
   }
 }
 
 /// A provider that exposes the application's data and allows it to be modified.
-final dataProvider = AsyncNotifierProvider<DataNotifier, AppData>(
+final dataProvider = AsyncNotifierProvider<DataNotifier, AppData?>(
   DataNotifier.new,
 );
 
@@ -72,7 +78,7 @@ final recordByIdProvider =
           .watch(dataProvider)
           .when(
             data: (allData) {
-              final records = allData[ids.tableId] ?? [];
+              final records = allData?[ids.tableId] ?? [];
 
               try {
                 return records.firstWhere((r) => r['_id'] == ids.recordId);

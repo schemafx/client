@@ -11,15 +11,17 @@ class RuntimeModeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => ref
       .watch(schemaProvider)
       .when(
-        data: (schema) => Scaffold(
-          appBar: AppBar(title: Text(schema.name)),
-          body: Row(
-            children: [
-              const RuntimeSidebar(),
-              Expanded(child: RuntimeCanvas()),
-            ],
-          ),
-        ),
+        data: (schema) => schema == null
+            ? Container()
+            : Scaffold(
+                appBar: AppBar(title: Text(schema.name)),
+                body: Row(
+                  children: [
+                    const RuntimeSidebar(),
+                    Expanded(child: RuntimeCanvas()),
+                  ],
+                ),
+              ),
         error: (error, stackTrace) => Center(child: Text('Error: $error')),
         loading: () => const Center(child: CircularProgressIndicator()),
       );

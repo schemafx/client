@@ -15,6 +15,7 @@ class PropertiesScreen extends ConsumerWidget {
         .watch(schemaProvider)
         .when(
           data: (schema) {
+            if (schema == null) return Container();
             final table = schema.getTable(view.tableId);
 
             return Padding(

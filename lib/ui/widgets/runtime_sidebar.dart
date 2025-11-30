@@ -18,6 +18,7 @@ class RuntimeSidebar extends ConsumerWidget {
         .watch(schemaProvider)
         .when(
           data: (schema) {
+            if (schema == null) return Container();
             final selectedIndex = schema.views.indexWhere(
               (view) => view.id == selectedViewId,
             );

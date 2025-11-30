@@ -46,14 +46,25 @@ class SchemaFxApp extends ConsumerWidget {
         routes: [
           GoRoute(path: '/', builder: (context, state) => RuntimeModeScreen()),
           GoRoute(
-            path: '/start/:id',
+            path: '/start/:appId',
             builder: (context, state) => RuntimeModeScreen(),
           ),
           GoRoute(
-            path: '/edit/:id',
+            path: '/edit/:appId',
             builder: (context, state) => EditorModeScreen(),
           ),
         ],
+        redirect: (context, state) {
+          Future.microtask(
+            () => context.mounted
+                ? ProviderScope.containerOf(context)
+                      .read(appIdProvider.notifier)
+                      .setId(state.pathParameters['appId'])
+                : null,
+          );
+
+          return null;
+        },
       ),
     );
   }
