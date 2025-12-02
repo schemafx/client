@@ -17,13 +17,15 @@ class XTableView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (records.isEmpty) return const Center(child: Text('No records found.'));
+    if (records.isEmpty && !view.showEmpty) {
+      return const Center(child: Text('No records found.'));
+    }
 
     final visibleFields = view.fields.map(
       (id) => table.fields.firstWhere((f) => f.id == id),
     );
 
-    return SizedBox(
+    final tableWidget = SizedBox(
       width: double.infinity,
       child: DataTable(
         columns: visibleFields
@@ -79,6 +81,20 @@ class XTableView extends ConsumerWidget {
             .toList(),
       ),
     );
+
+    if (records.isEmpty && view.showEmpty) {
+      return Column(
+        children: [
+          tableWidget,
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text('No records found.'),
+          ),
+        ],
+      );
+    }
+
+    return tableWidget;
   }
 
   void _showEditDialog(
