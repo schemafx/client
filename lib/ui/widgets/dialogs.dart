@@ -222,50 +222,63 @@ class Dialogs {
     return SideSheet.right(
       width: 400,
       context: context,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppBar(title: Text('Field Properties')),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: FieldEditor(
-                field: field,
-                schema: schema,
-                onUpdate: (updatedField) {
-                  ref
-                      .read(schemaProvider.notifier)
-                      .updateElement(
-                        updatedField,
-                        'fields',
-                        parentId: table.id,
-                      );
-                },
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: TextButton.icon(
-                icon: const Icon(Icons.delete_outline),
-                label: const Text('Delete Field'),
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).colorScheme.error,
-                ),
-                onPressed: () async {
-                  await ref
-                      .read(schemaProvider.notifier)
-                      .deleteElement(field.id, 'fields', parentId: table.id);
+      body: const FieldEditorContainer(),
+    );
+  }
+}
 
-                  ref.read(selectedFieldProvider.notifier).select(null);
-                },
-              ),
+class FieldEditorContainer extends ConsumerWidget {
+  const FieldEditorContainer({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final table = ref.watch(selectedEditorTableProvider);
+    final field = ref.watch(selectedFieldProvider);
+    final schema = ref.watch(schemaProvider).value;
+
+    if (table == null || field == null || schema == null) {
+      return const Center(child: Text('No field selected'));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppBar(title: const Text('Field Properties')),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: FieldEditor(
+              field: field,
+              schema: schema,
+              onUpdate: (updatedField) {
+                ref
+                    .read(schemaProvider.notifier)
+                    .updateElement(updatedField, 'fields', parentId: table.id);
+              },
             ),
           ),
-        ],
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: TextButton.icon(
+              icon: const Icon(Icons.delete_outline),
+              label: const Text('Delete Field'),
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).colorScheme.error,
+              ),
+              onPressed: () async {
+                await ref
+                    .read(schemaProvider.notifier)
+                    .deleteElement(field.id, 'fields', parentId: table.id);
+
+                ref.read(selectedFieldProvider.notifier).select(null);
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
