@@ -17,9 +17,10 @@ class XFormView extends ConsumerStatefulWidget {
 /// The state for the [XFormView].
 class XFormViewState extends ConsumerState<XFormView> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Unified storage for all field values
   late Map<String, dynamic> _formValues;
+  int _formVersion = 0;
 
   @override
   void initState() {
@@ -62,8 +63,10 @@ class XFormViewState extends ConsumerState<XFormView> {
       await ref.read(dataProvider.notifier).addRow(widget.table.id, newRecord);
 
       // Reset form
-      _formKey.currentState?.reset();
+      // We increment the version to force a complete rebuild of the SmartFields,
+      // ensuring that their internal state (controllers) is wiped clean.
       setState(() {
+        _formVersion++;
         _initFormValues();
       });
     }
@@ -86,6 +89,7 @@ class XFormViewState extends ConsumerState<XFormView> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: SmartField(
+                    key: ValueKey('${field.id}_$_formVersion'),
                     field: field,
                     initialValue: _formValues[field.id],
                     onChanged: (newValue) {
