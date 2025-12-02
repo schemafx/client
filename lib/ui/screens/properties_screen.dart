@@ -225,6 +225,18 @@ class PropertiesScreen extends ConsumerWidget {
                                     );
                               },
                             ),
+                            const SizedBox(height: 16),
+                            if (view.type == AppViewType.table)
+                              CheckboxListTile(
+                                title: const Text('Show Empty Table'),
+                                value: view.showEmpty,
+                                onChanged: (value) => ref
+                                    .read(schemaProvider.notifier)
+                                    .updateElement(
+                                      view.copyWith(showEmpty: value ?? false),
+                                      'views',
+                                    ),
+                              ),
                           ],
                         ),
                       ),

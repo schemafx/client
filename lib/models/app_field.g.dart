@@ -25,6 +25,12 @@ _AppField _$AppFieldFromJson(Map<String, dynamic> json) => _AppField(
   options: (json['options'] as List<dynamic>?)
       ?.map((e) => e as String)
       .toList(),
+  fields: (json['fields'] as List<dynamic>?)
+      ?.map((e) => AppField.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  child: json['child'] == null
+      ? null
+      : AppField.fromJson(json['child'] as Map<String, dynamic>),
 );
 
 Map<String, dynamic> _$AppFieldToJson(_AppField instance) => <String, dynamic>{
@@ -40,6 +46,8 @@ Map<String, dynamic> _$AppFieldToJson(_AppField instance) => <String, dynamic>{
   'startDate': instance.startDate?.toIso8601String(),
   'endDate': instance.endDate?.toIso8601String(),
   'options': instance.options,
+  'fields': instance.fields,
+  'child': instance.child,
 };
 
 const _$AppFieldTypeEnumMap = {
@@ -50,4 +58,6 @@ const _$AppFieldTypeEnumMap = {
   AppFieldType.dropdown: 'dropdown',
   AppFieldType.boolean: 'boolean',
   AppFieldType.reference: 'reference',
+  AppFieldType.json: 'json',
+  AppFieldType.list: 'list',
 };

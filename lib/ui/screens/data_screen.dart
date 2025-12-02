@@ -207,6 +207,7 @@ class _DataScreenTable extends ConsumerWidget {
               tableId: selectedTable.id,
               type: AppViewType.table,
               fields: selectedTable.fields.map((field) => field.id).toList(),
+              showEmpty: true,
             ),
             records: [],
           ),

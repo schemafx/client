@@ -23,7 +23,7 @@ class ApiService {
         return jsonDecode(response.body);
       } else {
         throw Exception(
-          'Failed perform query. Status code: ${response.statusCode}',
+          'Failed perform query. Status code: ${response.statusCode}. ${response.body}',
         );
       }
     } catch (e) {

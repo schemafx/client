@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppView {
 
- String get id; String get name; String get tableId; AppViewType get type; List<String> get fields;
+ String get id; String get name; String get tableId; AppViewType get type; List<String> get fields; bool get showEmpty;
 /// Create a copy of AppView
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AppViewCopyWith<AppView> get copyWith => _$AppViewCopyWithImpl<AppView>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppView&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.fields, fields));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppView&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other.fields, fields)&&(identical(other.showEmpty, showEmpty) || other.showEmpty == showEmpty));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,tableId,type,const DeepCollectionEquality().hash(fields));
+int get hashCode => Object.hash(runtimeType,id,name,tableId,type,const DeepCollectionEquality().hash(fields),showEmpty);
 
 @override
 String toString() {
-  return 'AppView(id: $id, name: $name, tableId: $tableId, type: $type, fields: $fields)';
+  return 'AppView(id: $id, name: $name, tableId: $tableId, type: $type, fields: $fields, showEmpty: $showEmpty)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AppViewCopyWith<$Res>  {
   factory $AppViewCopyWith(AppView value, $Res Function(AppView) _then) = _$AppViewCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String tableId, AppViewType type, List<String> fields
+ String id, String name, String tableId, AppViewType type, List<String> fields, bool showEmpty
 });
 
 
@@ -65,14 +65,15 @@ class _$AppViewCopyWithImpl<$Res>
 
 /// Create a copy of AppView
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? tableId = null,Object? type = null,Object? fields = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? tableId = null,Object? type = null,Object? fields = null,Object? showEmpty = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,tableId: null == tableId ? _self.tableId : tableId // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as AppViewType,fields: null == fields ? _self.fields : fields // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,showEmpty: null == showEmpty ? _self.showEmpty : showEmpty // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -154,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String tableId,  AppViewType type,  List<String> fields)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String tableId,  AppViewType type,  List<String> fields,  bool showEmpty)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppView() when $default != null:
-return $default(_that.id,_that.name,_that.tableId,_that.type,_that.fields);case _:
+return $default(_that.id,_that.name,_that.tableId,_that.type,_that.fields,_that.showEmpty);case _:
   return orElse();
 
 }
@@ -175,10 +176,10 @@ return $default(_that.id,_that.name,_that.tableId,_that.type,_that.fields);case 
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String tableId,  AppViewType type,  List<String> fields)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String tableId,  AppViewType type,  List<String> fields,  bool showEmpty)  $default,) {final _that = this;
 switch (_that) {
 case _AppView():
-return $default(_that.id,_that.name,_that.tableId,_that.type,_that.fields);}
+return $default(_that.id,_that.name,_that.tableId,_that.type,_that.fields,_that.showEmpty);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -192,10 +193,10 @@ return $default(_that.id,_that.name,_that.tableId,_that.type,_that.fields);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String tableId,  AppViewType type,  List<String> fields)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String tableId,  AppViewType type,  List<String> fields,  bool showEmpty)?  $default,) {final _that = this;
 switch (_that) {
 case _AppView() when $default != null:
-return $default(_that.id,_that.name,_that.tableId,_that.type,_that.fields);case _:
+return $default(_that.id,_that.name,_that.tableId,_that.type,_that.fields,_that.showEmpty);case _:
   return null;
 
 }
@@ -207,7 +208,7 @@ return $default(_that.id,_that.name,_that.tableId,_that.type,_that.fields);case 
 @JsonSerializable()
 
 class _AppView extends AppView {
-  const _AppView({required this.id, required this.name, required this.tableId, required this.type, required final  List<String> fields}): _fields = fields,super._();
+  const _AppView({required this.id, required this.name, required this.tableId, required this.type, required final  List<String> fields, this.showEmpty = false}): _fields = fields,super._();
   factory _AppView.fromJson(Map<String, dynamic> json) => _$AppViewFromJson(json);
 
 @override final  String id;
@@ -221,6 +222,7 @@ class _AppView extends AppView {
   return EqualUnmodifiableListView(_fields);
 }
 
+@override@JsonKey() final  bool showEmpty;
 
 /// Create a copy of AppView
 /// with the given fields replaced by the non-null parameter values.
@@ -235,16 +237,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppView&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._fields, _fields));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppView&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.tableId, tableId) || other.tableId == tableId)&&(identical(other.type, type) || other.type == type)&&const DeepCollectionEquality().equals(other._fields, _fields)&&(identical(other.showEmpty, showEmpty) || other.showEmpty == showEmpty));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,tableId,type,const DeepCollectionEquality().hash(_fields));
+int get hashCode => Object.hash(runtimeType,id,name,tableId,type,const DeepCollectionEquality().hash(_fields),showEmpty);
 
 @override
 String toString() {
-  return 'AppView(id: $id, name: $name, tableId: $tableId, type: $type, fields: $fields)';
+  return 'AppView(id: $id, name: $name, tableId: $tableId, type: $type, fields: $fields, showEmpty: $showEmpty)';
 }
 
 
@@ -255,7 +257,7 @@ abstract mixin class _$AppViewCopyWith<$Res> implements $AppViewCopyWith<$Res> {
   factory _$AppViewCopyWith(_AppView value, $Res Function(_AppView) _then) = __$AppViewCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String tableId, AppViewType type, List<String> fields
+ String id, String name, String tableId, AppViewType type, List<String> fields, bool showEmpty
 });
 
 
@@ -272,14 +274,15 @@ class __$AppViewCopyWithImpl<$Res>
 
 /// Create a copy of AppView
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? tableId = null,Object? type = null,Object? fields = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? tableId = null,Object? type = null,Object? fields = null,Object? showEmpty = null,}) {
   return _then(_AppView(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,tableId: null == tableId ? _self.tableId : tableId // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as AppViewType,fields: null == fields ? _self._fields : fields // ignore: cast_nullable_to_non_nullable
-as List<String>,
+as List<String>,showEmpty: null == showEmpty ? _self.showEmpty : showEmpty // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
