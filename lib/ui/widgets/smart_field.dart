@@ -231,7 +231,7 @@ class _SmartFieldState extends ConsumerState<SmartField> {
 
   Widget _buildDropdownField(FormFieldState<dynamic> fieldState) {
     return DropdownButtonFormField<String>(
-      value: fieldState.value?.toString(),
+      initialValue: fieldState.value?.toString(),
       decoration: InputDecoration(
         labelText: widget.field.name,
         border: const OutlineInputBorder(),
@@ -278,7 +278,7 @@ class _SmartFieldState extends ConsumerState<SmartField> {
             );
 
             return DropdownButtonFormField<String>(
-              value: isValidValue ? initialValue : null,
+              initialValue: isValidValue ? initialValue : null,
               decoration: InputDecoration(
                 labelText: widget.field.name,
                 border: const OutlineInputBorder(),
