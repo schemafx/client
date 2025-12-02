@@ -16,6 +16,7 @@ class RuntimeModeScreen extends ConsumerWidget {
             : Scaffold(
                 appBar: AppBar(title: Text(schema.name)),
                 body: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const RuntimeSidebar(),
                     Expanded(child: RuntimeCanvas()),
