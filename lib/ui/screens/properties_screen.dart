@@ -226,19 +226,17 @@ class PropertiesScreen extends ConsumerWidget {
                               },
                             ),
                             const SizedBox(height: 16),
-                            SwitchListTile(
-                              title: const Text('Show Empty Table'),
-                              subtitle: const Text(
-                                'Show table headers when no records found',
+                            if (view.type == AppViewType.table)
+                              CheckboxListTile(
+                                title: const Text('Show Empty Table'),
+                                value: view.showEmpty,
+                                onChanged: (value) => ref
+                                    .read(schemaProvider.notifier)
+                                    .updateElement(
+                                      view.copyWith(showEmpty: value ?? false),
+                                      'views',
+                                    ),
                               ),
-                              value: view.showEmpty || false,
-                              onChanged: (value) => ref
-                                  .read(schemaProvider.notifier)
-                                  .updateElement(
-                                    view.copyWith(showEmpty: value),
-                                    'views',
-                                  ),
-                            ),
                           ],
                         ),
                       ),
