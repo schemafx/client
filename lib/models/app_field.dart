@@ -4,7 +4,7 @@ part 'app_field.freezed.dart';
 part 'app_field.g.dart';
 
 /// Defines the data type of a field in a table.
-enum AppFieldType { text, number, date, email, dropdown, boolean, reference }
+enum AppFieldType { text, number, date, email, dropdown, boolean, reference, json, list }
 
 /// Represents a single field within a table.
 ///
@@ -26,6 +26,8 @@ sealed class AppField with _$AppField {
     DateTime? startDate,
     DateTime? endDate,
     List<String>? options,
+    List<AppField>? fields,
+    AppField? child,
   }) = _AppField;
 
   const AppField._();
@@ -35,26 +37,31 @@ sealed class AppField with _$AppField {
       _$AppFieldFromJson(json);
 
   /// Validates a single field based on its properties.
-  String? validate(String? value) {
-    if (isRequired && (value == null || value.isEmpty)) {
-      return 'This field is required.';
+  String? validate(dynamic value) {
+    if (isRequired) {
+      if (value == null) return 'This field is required.';
+      if (value is String && value.isEmpty) return 'This field is required.';
+      if (value is List && value.isEmpty) return 'This field is required.';
+      if (value is Map && value.isEmpty) return 'This field is required.';
     }
 
-    if (value == null || value.isEmpty) return null;
+    if (value == null) return null;
+    if (value is String && value.isEmpty) return null;
 
     switch (type) {
       case AppFieldType.text:
-        if (minLength != null && value.length < minLength!) {
+        final strValue = value.toString();
+        if (minLength != null && strValue.length < minLength!) {
           return 'Must be at least $minLength characters.';
         }
 
-        if (maxLength != null && value.length > maxLength!) {
+        if (maxLength != null && strValue.length > maxLength!) {
           return 'Must be no more than $maxLength characters.';
         }
 
         break;
       case AppFieldType.number:
-        final number = double.tryParse(value);
+        final number = value is num ? value.toDouble() : double.tryParse(value.toString());
 
         if (number == null) {
           return 'Must be a valid number.';
@@ -70,7 +77,7 @@ sealed class AppField with _$AppField {
 
         break;
       case AppFieldType.date:
-        final date = DateTime.tryParse(value);
+        final date = value is DateTime ? value : DateTime.tryParse(value.toString());
 
         if (date == null) {
           return 'Invalid date format.';
@@ -88,19 +95,25 @@ sealed class AppField with _$AppField {
       case AppFieldType.email:
         final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
 
-        if (!emailRegex.hasMatch(value)) {
+        if (!emailRegex.hasMatch(value.toString())) {
           return 'Must be a valid email address.';
         }
 
         break;
       case AppFieldType.dropdown:
-        if (options != null && !options!.contains(value)) {
+        if (options != null && !options!.contains(value.toString())) {
           return 'Invalid option.';
         }
 
         break;
       case AppFieldType.boolean:
         // No validation needed for boolean, as it's handled by the checkbox
+        break;
+      case AppFieldType.json:
+        if (value is! Map) return 'Invalid JSON format.';
+        break;
+      case AppFieldType.list:
+        if (value is! List) return 'Invalid List format.';
         break;
       default:
         break;
