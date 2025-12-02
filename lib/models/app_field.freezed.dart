@@ -52,7 +52,7 @@ $Res call({
 });
 
 
-
+$AppFieldCopyWith<$Res>? get child;
 
 }
 /// @nodoc
@@ -84,7 +84,19 @@ as List<AppField>?,child: freezed == child ? _self.child : child // ignore: cast
 as AppField?,
   ));
 }
+/// Create a copy of AppField
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AppFieldCopyWith<$Res>? get child {
+    if (_self.child == null) {
+    return null;
+  }
 
+  return $AppFieldCopyWith<$Res>(_self.child!, (value) {
+    return _then(_self.copyWith(child: value));
+  });
+}
 }
 
 
@@ -163,7 +175,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  String? referenceTo,  bool isRequired,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options, List<AppField>? fields, AppField? child)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  String? referenceTo,  bool isRequired,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options,  List<AppField>? fields,  AppField? child)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppField() when $default != null:
 return $default(_that.id,_that.name,_that.type,_that.referenceTo,_that.isRequired,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options,_that.fields,_that.child);case _:
@@ -184,7 +196,7 @@ return $default(_that.id,_that.name,_that.type,_that.referenceTo,_that.isRequire
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  String? referenceTo,  bool isRequired,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options, List<AppField>? fields, AppField? child)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  String? referenceTo,  bool isRequired,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options,  List<AppField>? fields,  AppField? child)  $default,) {final _that = this;
 switch (_that) {
 case _AppField():
 return $default(_that.id,_that.name,_that.type,_that.referenceTo,_that.isRequired,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options,_that.fields,_that.child);}
@@ -201,7 +213,7 @@ return $default(_that.id,_that.name,_that.type,_that.referenceTo,_that.isRequire
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  AppFieldType type,  String? referenceTo,  bool isRequired,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options, List<AppField>? fields, AppField? child)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  AppFieldType type,  String? referenceTo,  bool isRequired,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options,  List<AppField>? fields,  AppField? child)?  $default,) {final _that = this;
 switch (_that) {
 case _AppField() when $default != null:
 return $default(_that.id,_that.name,_that.type,_that.referenceTo,_that.isRequired,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options,_that.fields,_that.child);case _:
@@ -216,7 +228,7 @@ return $default(_that.id,_that.name,_that.type,_that.referenceTo,_that.isRequire
 @JsonSerializable()
 
 class _AppField extends AppField {
-  const _AppField({required this.id, required this.name, required this.type, this.referenceTo, this.isRequired = false, this.minLength, this.maxLength, this.minValue, this.maxValue, this.startDate, this.endDate, final  List<String>? options, final List<AppField>? fields, this.child}): _options = options,_fields = fields,super._();
+  const _AppField({required this.id, required this.name, required this.type, this.referenceTo, this.isRequired = false, this.minLength, this.maxLength, this.minValue, this.maxValue, this.startDate, this.endDate, final  List<String>? options, final  List<AppField>? fields, this.child}): _options = options,_fields = fields,super._();
   factory _AppField.fromJson(Map<String, dynamic> json) => _$AppFieldFromJson(json);
 
 @override final  String id;
@@ -239,15 +251,16 @@ class _AppField extends AppField {
   return EqualUnmodifiableListView(value);
 }
 
-final List<AppField>? _fields;
+ final  List<AppField>? _fields;
 @override List<AppField>? get fields {
   final value = _fields;
   if (value == null) return null;
   if (_fields is EqualUnmodifiableListView) return _fields;
+  // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(value);
 }
-@override final AppField? child;
 
+@override final  AppField? child;
 
 /// Create a copy of AppField
 /// with the given fields replaced by the non-null parameter values.
@@ -286,7 +299,7 @@ $Res call({
 });
 
 
-
+@override $AppFieldCopyWith<$Res>? get child;
 
 }
 /// @nodoc
@@ -319,7 +332,19 @@ as AppField?,
   ));
 }
 
+/// Create a copy of AppField
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AppFieldCopyWith<$Res>? get child {
+    if (_self.child == null) {
+    return null;
+  }
 
+  return $AppFieldCopyWith<$Res>(_self.child!, (value) {
+    return _then(_self.copyWith(child: value));
+  });
+}
 }
 
 // dart format on
