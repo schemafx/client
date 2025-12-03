@@ -4,6 +4,7 @@ import 'package:schemafx/models/models.dart';
 import 'package:schemafx/providers/providers.dart';
 import 'package:schemafx/ui/views/form.dart';
 import 'package:schemafx/ui/views/table.dart';
+import 'package:schemafx/ui/widgets/action_editor.dart';
 import 'package:schemafx/ui/widgets/dialogs.dart';
 import 'package:side_sheet/side_sheet.dart';
 
@@ -194,6 +195,17 @@ class _DataScreenTable extends ConsumerWidget {
               ),
               tooltip: 'Add Row',
               icon: const Icon(Icons.playlist_add_outlined),
+            ),
+            const SizedBox(width: 4),
+            IconButton(
+              onPressed:
+                  () => SideSheet.right(
+                    width: 400,
+                    context: context,
+                    body: const ActionListSideSheet(),
+                  ),
+              tooltip: 'Actions',
+              icon: const Icon(Icons.bolt_outlined),
             ),
             const SizedBox(width: 4),
           ],

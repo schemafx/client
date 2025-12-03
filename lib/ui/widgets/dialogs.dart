@@ -316,6 +316,14 @@ class FieldEditor extends StatelessWidget {
             onUpdate(field.copyWith(isRequired: newValue));
           },
         ),
+        CheckboxListTile(
+          title: const Text('Key'),
+          value: field.isKey,
+          onChanged: (newValue) {
+            if (newValue == null) return;
+            onUpdate(field.copyWith(isKey: newValue));
+          },
+        ),
         const SizedBox(height: 16),
         DropdownButtonFormField<AppFieldType>(
           initialValue: field.type,

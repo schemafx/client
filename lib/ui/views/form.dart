@@ -57,10 +57,13 @@ class XFormViewState extends ConsumerState<XFormView> {
         '_id': DateTime.now().millisecondsSinceEpoch.toString(),
       };
 
-      // Filter out nulls if necessary, or keep them to represent explicit clearing
-      // In this case, we send what we have.
-
-      await ref.read(dataProvider.notifier).addRow(widget.table.id, newRecord);
+      await ref.read(dataProvider.notifier).executeAction(
+        widget.table.id,
+        widget.table.actions
+            .firstWhere((action) => action.type == AppActionType.add)
+            .id,
+        [newRecord],
+      );
 
       // Reset form
       // We increment the version to force a complete rebuild of the SmartFields,

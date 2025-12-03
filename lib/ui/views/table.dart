@@ -122,11 +122,14 @@ class XTableView extends ConsumerWidget {
             onPressed: () {
               final newRecord = {...record};
               newRecord[field.id] = controller.text;
-              final rowIndex = records.indexOf(record);
 
-              ref
-                  .read(dataProvider.notifier)
-                  .updateRow(table.id, rowIndex, newRecord);
+              ref.read(dataProvider.notifier).executeAction(
+                table.id,
+                table.actions
+                    .firstWhere((action) => action.type == AppActionType.update)
+                    .id,
+                [newRecord],
+              );
 
               Navigator.of(context).pop();
             },

@@ -4,7 +4,17 @@ part 'app_field.freezed.dart';
 part 'app_field.g.dart';
 
 /// Defines the data type of a field in a table.
-enum AppFieldType { text, number, date, email, dropdown, boolean, reference, json, list }
+enum AppFieldType {
+  text,
+  number,
+  date,
+  email,
+  dropdown,
+  boolean,
+  reference,
+  json,
+  list,
+}
 
 /// Represents a single field within a table.
 ///
@@ -17,8 +27,9 @@ sealed class AppField with _$AppField {
     required String id,
     required String name,
     required AppFieldType type,
-    String? referenceTo,
     @Default(false) bool isRequired,
+    @Default(false) bool isKey,
+    String? referenceTo,
     int? minLength,
     int? maxLength,
     double? minValue,
@@ -38,7 +49,7 @@ sealed class AppField with _$AppField {
 
   /// Validates a single field based on its properties.
   String? validate(dynamic value) {
-    if (isRequired) {
+    if (isRequired || isKey) {
       if (value == null) return 'This field is required.';
       if (value is String && value.isEmpty) return 'This field is required.';
       if (value is List && value.isEmpty) return 'This field is required.';
@@ -61,7 +72,9 @@ sealed class AppField with _$AppField {
 
         break;
       case AppFieldType.number:
-        final number = value is num ? value.toDouble() : double.tryParse(value.toString());
+        final number = value is num
+            ? value.toDouble()
+            : double.tryParse(value.toString());
 
         if (number == null) {
           return 'Must be a valid number.';
@@ -77,7 +90,9 @@ sealed class AppField with _$AppField {
 
         break;
       case AppFieldType.date:
-        final date = value is DateTime ? value : DateTime.tryParse(value.toString());
+        final date = value is DateTime
+            ? value
+            : DateTime.tryParse(value.toString());
 
         if (date == null) {
           return 'Invalid date format.';
