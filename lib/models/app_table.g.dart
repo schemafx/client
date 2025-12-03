@@ -15,6 +15,11 @@ _AppTable _$AppTableFromJson(Map<String, dynamic> json) => _AppTable(
           ?.map((e) => AppField.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
+  actions:
+      (json['actions'] as List<dynamic>?)
+          ?.map((e) => AppAction.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
 );
 
 Map<String, dynamic> _$AppTableToJson(_AppTable instance) => <String, dynamic>{
@@ -22,4 +27,5 @@ Map<String, dynamic> _$AppTableToJson(_AppTable instance) => <String, dynamic>{
   'name': instance.name,
   'connector': instance.connector,
   'fields': instance.fields,
+  'actions': instance.actions,
 };

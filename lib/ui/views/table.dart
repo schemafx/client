@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:schemafx/models/app_action.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/providers/providers.dart';
 
@@ -122,11 +123,14 @@ class XTableView extends ConsumerWidget {
             onPressed: () {
               final newRecord = {...record};
               newRecord[field.id] = controller.text;
-              final rowIndex = records.indexOf(record);
 
-              ref
-                  .read(dataProvider.notifier)
-                  .updateRow(table.id, rowIndex, newRecord);
+              ref.read(dataProvider.notifier).executeAction(
+                table.id,
+                table.actions
+                    .firstWhere((action) => action.type == AppActionType.update)
+                    .id,
+                [newRecord],
+              );
 
               Navigator.of(context).pop();
             },

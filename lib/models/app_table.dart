@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'app_field.dart';
+import 'app_action.dart';
 
 part 'app_table.freezed.dart';
 part 'app_table.g.dart';
@@ -16,6 +17,7 @@ sealed class AppTable with _$AppTable {
     required String name,
     required String connector,
     @Default([]) List<AppField> fields,
+    @Default([]) List<AppAction> actions,
   }) = _AppTable;
 
   const AppTable._();

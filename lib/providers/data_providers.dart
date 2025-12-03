@@ -26,40 +26,21 @@ class DataNotifier extends BaseNotifier<AppData?> {
   }
 
   /// Adds a [row] to the table with the given [tableId].
-  Future<void> addRow(String tableId, Map<String, dynamic> row) => _updateTable(
-    tableId,
-    _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
-      'action': 'add',
-      'row': row,
-    }),
-  );
-
-  /// Updates the [row] at the given [rowIndex] in the table with the given [tableId].
-  Future<void> updateRow(
+  Future<void> executeAction(
     String tableId,
-    int rowIndex,
-    Map<String, dynamic> row,
-  ) => _updateTable(
-    tableId,
-    _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
-      'action': 'update',
-      'rowIndex': rowIndex,
-      'row': row,
-    }),
-  );
-
-  /// Deletes the row at the given [rowIndex] from the table with the given [tableId].
-  Future<void> deleteRow(String tableId, int rowIndex) => _updateTable(
-    tableId,
-    _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
-      'action': 'delete',
-      'rowIndex': rowIndex,
-    }),
-  );
-
-  Future<void> _updateTable(String tableId, Future<dynamic> query) async {
+    String actionId,
+    List<Map<String, dynamic>> rows, {
+    Map<String, dynamic>? payload,
+  }) async {
     final newState = {...(await future ?? {})};
-    newState[tableId] = List<Map<String, dynamic>>.from(await query);
+    newState[tableId] = List<Map<String, dynamic>>.from(
+      await _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
+        'actionId': actionId,
+        'rows': rows,
+        'payload': payload,
+      }),
+    );
+
     return mutate(() async => newState, 'Saved');
   }
 }
