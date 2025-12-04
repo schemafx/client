@@ -16,8 +16,7 @@ sealed class AppView with _$AppView {
     required String name,
     required String tableId,
     required AppViewType type,
-    required List<String> fields,
-    @Default(false) bool showEmpty,
+    @Default({}) Map<String, dynamic> config,
   }) = _AppView;
 
   const AppView._();

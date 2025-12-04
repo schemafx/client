@@ -185,9 +185,11 @@ class _DataScreenTable extends ConsumerWidget {
                         name: '',
                         tableId: selectedTable.id,
                         type: AppViewType.form,
-                        fields: selectedTable.fields
-                            .map((field) => field.id)
-                            .toList(),
+                        config: {
+                          'fields': selectedTable.fields
+                              .map((field) => field.id)
+                              .toList(),
+                        },
                       ),
                     ),
                   ],
@@ -198,12 +200,11 @@ class _DataScreenTable extends ConsumerWidget {
             ),
             const SizedBox(width: 4),
             IconButton(
-              onPressed:
-                  () => SideSheet.right(
-                    width: 400,
-                    context: context,
-                    body: const ActionListSideSheet(),
-                  ),
+              onPressed: () => SideSheet.right(
+                width: 400,
+                context: context,
+                body: const ActionListSideSheet(),
+              ),
               tooltip: 'Actions',
               icon: const Icon(Icons.bolt_outlined),
             ),
@@ -218,8 +219,12 @@ class _DataScreenTable extends ConsumerWidget {
               name: '',
               tableId: selectedTable.id,
               type: AppViewType.table,
-              fields: selectedTable.fields.map((field) => field.id).toList(),
-              showEmpty: true,
+              config: {
+                'fields': selectedTable.fields
+                    .map((field) => field.id)
+                    .toList(),
+                'showEmpty': true,
+              },
             ),
             records: [],
           ),

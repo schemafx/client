@@ -11,8 +11,7 @@ _AppView _$AppViewFromJson(Map<String, dynamic> json) => _AppView(
   name: json['name'] as String,
   tableId: json['tableId'] as String,
   type: $enumDecode(_$AppViewTypeEnumMap, json['type']),
-  fields: (json['fields'] as List<dynamic>).map((e) => e as String).toList(),
-  showEmpty: json['showEmpty'] as bool? ?? false,
+  config: json['config'] as Map<String, dynamic>? ?? const {},
 );
 
 Map<String, dynamic> _$AppViewToJson(_AppView instance) => <String, dynamic>{
@@ -20,8 +19,7 @@ Map<String, dynamic> _$AppViewToJson(_AppView instance) => <String, dynamic>{
   'name': instance.name,
   'tableId': instance.tableId,
   'type': _$AppViewTypeEnumMap[instance.type]!,
-  'fields': instance.fields,
-  'showEmpty': instance.showEmpty,
+  'config': instance.config,
 };
 
 const _$AppViewTypeEnumMap = {

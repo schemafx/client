@@ -62,7 +62,9 @@ class PropertiesScreen extends ConsumerWidget {
                                 final newTable = schema.tables.firstWhere(
                                   (t) => t.id == value,
                                 );
-                                final allFieldIds = newTable.fields
+
+                                final config = {...view.config};
+                                config['fields'] = newTable.fields
                                     .map((f) => f.id)
                                     .toList();
 
@@ -71,7 +73,7 @@ class PropertiesScreen extends ConsumerWidget {
                                     .updateElement(
                                       view.copyWith(
                                         tableId: value,
-                                        fields: allFieldIds,
+                                        config: config,
                                       ),
                                       'views',
                                     );
@@ -90,50 +92,75 @@ class PropertiesScreen extends ConsumerWidget {
                                     const Divider(),
                                     ReorderableListView(
                                       shrinkWrap: true,
-                                      children: view.fields
-                                          .map(
-                                            (fieldId) => ListTile(
-                                              key: ValueKey(fieldId),
-                                              title: Text(
-                                                table.fields
-                                                    .firstWhere(
-                                                      (f) => f.id == fieldId,
-                                                    )
-                                                    .name,
-                                              ),
-                                              trailing: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  IconButton(
-                                                    icon: const Icon(
-                                                      Icons.delete_outline,
-                                                    ),
-                                                    onPressed: () => ref
-                                                        .read(
-                                                          schemaProvider
-                                                              .notifier,
+                                      children:
+                                          List<String>.from(
+                                                view.config['fields'] ?? [],
+                                              )
+                                              .map(
+                                                (fieldId) => ListTile(
+                                                  key: ValueKey(fieldId),
+                                                  title: Text(
+                                                    table.fields
+                                                        .firstWhere(
+                                                          (f) =>
+                                                              f.id == fieldId,
                                                         )
-                                                        .updateElement(
-                                                          view.copyWith(
-                                                            fields: view.fields
-                                                                .where(
-                                                                  (id) =>
-                                                                      id !=
-                                                                      fieldId,
-                                                                )
-                                                                .toList(),
-                                                          ),
-                                                          'views',
-                                                        ),
+                                                        .name,
                                                   ),
-                                                  const Icon(Icons.drag_handle),
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                          .toList(),
+                                                  trailing: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      IconButton(
+                                                        icon: const Icon(
+                                                          Icons.delete_outline,
+                                                        ),
+                                                        onPressed: () {
+                                                          final config = {
+                                                            ...view.config,
+                                                          };
+
+                                                          config['fields'] =
+                                                              List<String>.from(
+                                                                    view.config['fields'] ??
+                                                                        [],
+                                                                  )
+                                                                  .where(
+                                                                    (id) =>
+                                                                        id !=
+                                                                        fieldId,
+                                                                  )
+                                                                  .toList();
+
+                                                          ref
+                                                              .read(
+                                                                schemaProvider
+                                                                    .notifier,
+                                                              )
+                                                              .updateElement(
+                                                                view.copyWith(
+                                                                  config:
+                                                                      config,
+                                                                ),
+                                                                'views',
+                                                              );
+                                                        },
+                                                      ),
+                                                      const Icon(
+                                                        Icons.drag_handle,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                              .toList(),
                                       onReorder: (oldIndex, newIndex) {
-                                        final fields = [...view.fields];
+                                        final fields = [
+                                          ...List<String>.from(
+                                            view.config['fields'] ?? [],
+                                          ),
+                                        ];
+
                                         if (oldIndex < newIndex) {
                                           newIndex -= 1;
                                         }
@@ -141,10 +168,13 @@ class PropertiesScreen extends ConsumerWidget {
                                         final field = fields.removeAt(oldIndex);
                                         fields.insert(newIndex, field);
 
+                                        final config = {...view.config};
+                                        config['fields'] = fields;
+
                                         ref
                                             .read(schemaProvider.notifier)
                                             .updateElement(
-                                              view.copyWith(fields: fields),
+                                              view.copyWith(config: config),
                                               'views',
                                             );
                                       },
@@ -152,24 +182,32 @@ class PropertiesScreen extends ConsumerWidget {
                                     const Divider(),
                                     ...table.fields
                                         .where(
-                                          (field) =>
-                                              !view.fields.contains(field.id),
+                                          (field) => !List<String>.from(
+                                            view.config['fields'] ?? [],
+                                          ).contains(field.id),
                                         )
                                         .map(
                                           (field) => CheckboxListTile(
                                             title: Text(field.name),
                                             value: false,
-                                            onChanged: (value) => ref
-                                                .read(schemaProvider.notifier)
-                                                .updateElement(
-                                                  view.copyWith(
-                                                    fields: [
-                                                      ...view.fields,
-                                                      field.id,
-                                                    ],
-                                                  ),
-                                                  'views',
+                                            onChanged: (value) {
+                                              final config = {...view.config};
+                                              config['fields'] = [
+                                                ...List<String>.from(
+                                                  view.config['fields'] ?? [],
                                                 ),
+                                                field.id,
+                                              ];
+
+                                              ref
+                                                  .read(schemaProvider.notifier)
+                                                  .updateElement(
+                                                    view.copyWith(
+                                                      config: config,
+                                                    ),
+                                                    'views',
+                                                  );
+                                            },
                                           ),
                                         ),
                                   ],
@@ -229,13 +267,18 @@ class PropertiesScreen extends ConsumerWidget {
                             if (view.type == AppViewType.table)
                               CheckboxListTile(
                                 title: const Text('Show Empty Table'),
-                                value: view.showEmpty,
-                                onChanged: (value) => ref
-                                    .read(schemaProvider.notifier)
-                                    .updateElement(
-                                      view.copyWith(showEmpty: value ?? false),
-                                      'views',
-                                    ),
+                                value: view.config['showEmpty'] ?? false,
+                                onChanged: (value) {
+                                  final config = {...view.config};
+                                  config['showEmpty'] = value ?? false;
+
+                                  ref
+                                      .read(schemaProvider.notifier)
+                                      .updateElement(
+                                        view.copyWith(config: config),
+                                        'views',
+                                      );
+                                },
                               ),
                           ],
                         ),

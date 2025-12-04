@@ -83,7 +83,7 @@ class XFormViewState extends ConsumerState<XFormView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ...widget.view.fields
+          ...List<String>.from(widget.view.config['fields'] ?? [])
               .map(
                 (fieldId) =>
                     widget.table.fields.firstWhere((f) => f.id == fieldId),

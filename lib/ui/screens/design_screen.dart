@@ -183,7 +183,7 @@ class DesignScreen extends ConsumerWidget {
             name: 'New View',
             tableId: defaultTable.id,
             type: AppViewType.table,
-            fields: defaultTable.fields.map((f) => f.id).toList(),
+            config: {'fields': defaultTable.fields.map((f) => f.id).toList()},
           ),
           'views',
         );

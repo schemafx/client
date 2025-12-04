@@ -17,13 +17,13 @@ class XTableView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (records.isEmpty && !view.showEmpty) {
+    if (records.isEmpty && !(view.config['showEmpty'] ?? false)) {
       return const Center(child: Text('No records found.'));
     }
 
-    final visibleFields = view.fields.map(
-      (id) => table.fields.firstWhere((f) => f.id == id),
-    );
+    final visibleFields = List<String>.from(
+      view.config['fields'] ?? [],
+    ).map((id) => table.fields.firstWhere((f) => f.id == id));
 
     final tableWidget = SizedBox(
       width: double.infinity,
@@ -82,7 +82,7 @@ class XTableView extends ConsumerWidget {
       ),
     );
 
-    if (records.isEmpty && view.showEmpty) {
+    if (records.isEmpty && (view.config['showEmpty'] ?? false)) {
       return Column(
         children: [
           tableWidget,
