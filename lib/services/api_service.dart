@@ -3,7 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:schemafx/services/secure_storage_service.dart';
 
 class ApiService {
-  final String _baseUrl = 'http://localhost:3000/api';
+  final String _baseUrl = 'localhost:3000';
+  final String _baseUrlPath = '/api';
+  final String _baseUrlSchema = 'http';
   final SecureStorageService _secureStorageService = SecureStorageService();
 
   Future<Map<String, String>> _getHeaders() async {
@@ -34,13 +36,19 @@ class ApiService {
 
   Future<dynamic> post(String path, Object body) async => _query(
     http.post(
-      Uri.parse('$_baseUrl/$path'),
+      Uri.parse('$_baseUrlSchema://$_baseUrl$_baseUrlPath/$path'),
       headers: await _getHeaders(),
       body: jsonEncode(body),
     ),
   );
 
-  Future<dynamic> get(String path) async => _query(
-    http.get(Uri.parse('$_baseUrl/$path'), headers: await _getHeaders()),
-  );
+  Future<dynamic> get(String path, {Map<String, String>? query}) async =>
+      _query(
+        http.get(
+          _baseUrlSchema == 'http'
+              ? Uri.http(_baseUrl, '$_baseUrlPath/$path', query)
+              : Uri.https(_baseUrl, '$_baseUrlPath/$path', query),
+          headers: await _getHeaders(),
+        ),
+      );
 }

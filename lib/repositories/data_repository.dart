@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/services/api_service.dart';
 import 'package:schemafx/models/models.dart';
@@ -20,7 +21,11 @@ class DataRepository {
     }
   }
 
-  Future<AppData> loadData() async {
+  Future<AppData> loadData({
+    List<dynamic>? filters,
+    int? limit,
+    int? offset,
+  }) async {
     try {
       final AppData appData = {};
       final appId = ref.read(appIdProvider);
@@ -30,7 +35,17 @@ class DataRepository {
 
       (await Future.wait(
         schema.tables.map(
-          (table) => _apiService.get('apps/$appId/data/${table.id}'),
+          (table) => _apiService.get(
+            'apps/$appId/data/${table.id}',
+            query: {
+              if (filters != null || limit != null || offset != null)
+                'query': jsonEncode({
+                  if (filters != null) 'filters': filters,
+                  if (limit != null) 'limit': limit,
+                  if (offset != null) 'offset': offset,
+                }),
+            },
+          ),
         ),
       )).asMap().forEach(
         (idx, data) => appData[schema.tables[idx].id] =
