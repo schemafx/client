@@ -18,6 +18,7 @@ sealed class AppTable with _$AppTable {
     required String connector,
     @Default([]) List<AppField> fields,
     @Default([]) List<AppAction> actions,
+    @Default([]) List<String> path,
   }) = _AppTable;
 
   const AppTable._();

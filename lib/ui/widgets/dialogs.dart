@@ -3,56 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/providers/providers.dart';
 import 'package:side_sheet/side_sheet.dart';
+import 'package:schemafx/ui/widgets/connector_discovery_dialog.dart';
 
 /// A utility class for showing dialogs in the editor sidebar.
 class Dialogs {
   /// Shows a dialog for adding a new table.
-  static Future<void> showAddTable(BuildContext context, WidgetRef ref) async {
-    final formKey = GlobalKey<FormState>();
-    final controller = TextEditingController(text: 'New Table');
-
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Add New Table'),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: controller,
-            autofocus: true,
-            validator: (value) => value == null || value.isEmpty
-                ? 'Please enter a table name'
-                : null,
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          TextButton(
-            child: const Text('Add'),
-            onPressed: () async {
-              if (formKey.currentState!.validate()) {
-                final newTable = AppTable(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  name: controller.text,
-                  connector: 'memory',
-                );
-
-                await ref
-                    .read(schemaProvider.notifier)
-                    .addElement(newTable, 'tables');
-
-                if (!context.mounted) return;
-                Navigator.of(context).pop();
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
+  static Future<void> showAddTable(BuildContext context, WidgetRef ref) =>
+      showDialog(
+        context: context,
+        builder: (BuildContext context) => const ConnectorDiscoveryDialog(),
+      );
 
   /// Shows a dialog for renaming a view.
   static Future<void> showRenameView(

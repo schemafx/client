@@ -81,6 +81,23 @@ class SchemaNotifier extends BaseNotifier<AppSchema?> {
     }),
   );
 
+  Future<void> addTableFromConnector(
+    String connectorName,
+    List<String> path,
+  ) async {
+    final currentAppId = ref.read(appIdProvider);
+    final newSchema = AppSchema.fromJson(
+      await _apiService.addTable(connectorName, path, currentAppId),
+    );
+
+    if (currentAppId == null) {
+      ref.read(appIdProvider.notifier).setId(newSchema.id);
+      return;
+    }
+
+    return mutate(() async => newSchema, 'Table Added');
+  }
+
   Future<void> reorderElement(
     int oldIndex,
     int newIndex,
