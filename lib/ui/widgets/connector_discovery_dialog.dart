@@ -216,7 +216,6 @@ class _ConnectorDiscoveryDialogState
         return ListTile(
           leading: const Icon(Icons.electrical_services),
           title: Text(connector['name'] ?? 'Unknown'),
-          subtitle: Text(connector['id'] ?? ''),
           onTap: () =>
               _selectConnector(connector['id'], connector['name'] ?? 'Unknown'),
         );
@@ -247,7 +246,6 @@ class _ConnectorDiscoveryDialogState
           enabled: !isUnavailable,
           leading: Icon(canExplore ? Icons.folder : Icons.table_chart),
           title: Text(name),
-          subtitle: Text(capabilities.join(', ')),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
