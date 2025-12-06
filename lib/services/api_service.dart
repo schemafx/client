@@ -51,4 +51,23 @@ class ApiService {
           headers: await _getHeaders(),
         ),
       );
+
+  Future<List<Map<String, dynamic>>> getConnectors() async =>
+      List<Map<String, dynamic>>.from(await get('connectors'));
+
+  Future<List<Map<String, dynamic>>> queryConnector(
+    String connectorId,
+    List<String> path,
+  ) async => List<Map<String, dynamic>>.from(
+    await post('connectors/$connectorId/query', {'path': path}),
+  );
+
+  Future<dynamic> addTable(
+    String connectorName,
+    List<String> path,
+    String? appId,
+  ) => post('connectors/$connectorName/table', {
+    'path': path,
+    if (appId != null) 'appId': appId,
+  });
 }
