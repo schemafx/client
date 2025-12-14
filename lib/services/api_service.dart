@@ -57,17 +57,26 @@ class ApiService {
 
   Future<List<Map<String, dynamic>>> queryConnector(
     String connectorId,
-    List<String> path,
-  ) async => List<Map<String, dynamic>>.from(
-    await post('connectors/$connectorId/query', {'path': path}),
+    List<String> path, {
+    String? connectionId,
+  }) async => List<Map<String, dynamic>>.from(
+    await post('connectors/$connectorId/query', {
+      'path': path,
+      if (connectionId != null) 'connectionId': connectionId,
+    }),
   );
 
   Future<dynamic> addTable(
     String connectorName,
     List<String> path,
-    String? appId,
-  ) => post('connectors/$connectorName/table', {
+    String? appId, {
+    String? connectionId,
+  }) => post('connectors/$connectorName/table', {
     'path': path,
     if (appId != null) 'appId': appId,
+    if (connectionId != null) 'connectionId': connectionId,
   });
+
+  String getAuthUrl(String connectorName) =>
+      '$_baseUrlSchema://$_baseUrl$_baseUrlPath/connectors/$connectorName/auth';
 }

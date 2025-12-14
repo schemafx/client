@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:schemafx/providers/providers.dart';
 import 'package:schemafx/services/api_service.dart';
 
@@ -21,6 +22,7 @@ class _ConnectorDiscoveryDialogState
   List<Map<String, dynamic>>? _connectors;
   String? _selectedConnectorId;
   String? _selectedConnectorName;
+  String? _selectedConnectionId;
 
   List<String> _currentPath = [];
   List<Map<String, dynamic>>? _discoveryResults;
@@ -68,6 +70,7 @@ class _ConnectorDiscoveryDialogState
       final results = await _apiService.queryConnector(
         _selectedConnectorId!,
         queryPath,
+        connectionId: _selectedConnectionId,
       );
 
       if (mounted) {
@@ -87,10 +90,15 @@ class _ConnectorDiscoveryDialogState
     }
   }
 
-  Future<void> _selectConnector(String id, String name) async {
+  Future<void> _selectConnector(
+    String id,
+    String name, {
+    String? connectionId,
+  }) async {
     setState(() {
       _selectedConnectorId = id;
       _selectedConnectorName = name;
+      _selectedConnectionId = connectionId;
       _currentPath = [];
       _discoveryResults = null;
     });
@@ -103,9 +111,11 @@ class _ConnectorDiscoveryDialogState
     final path = List<String>.from(item['path'] as List);
 
     try {
-      await ref
-          .read(schemaProvider.notifier)
-          .addTableFromConnector(_selectedConnectorId!, path);
+      await ref.read(schemaProvider.notifier).addTableFromConnector(
+        _selectedConnectorId!,
+        path,
+        connectionId: _selectedConnectionId,
+      );
 
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
@@ -122,6 +132,7 @@ class _ConnectorDiscoveryDialogState
       setState(() {
         _selectedConnectorId = null;
         _selectedConnectorName = null;
+        _selectedConnectionId = null;
         _discoveryResults = null;
       });
     } else {
@@ -212,12 +223,42 @@ class _ConnectorDiscoveryDialogState
       itemCount: _connectors!.length,
       itemBuilder: (context, index) {
         final connector = _connectors![index];
+        final connection = connector['connection'];
+        final requiresConnection =
+            connector['requiresConnection'] as bool? ?? false;
+        final name = connector['name'] ?? 'Unknown';
 
         return ListTile(
           leading: const Icon(Icons.electrical_services),
-          title: Text(connector['name'] ?? 'Unknown'),
-          onTap: () =>
-              _selectConnector(connector['id'], connector['name'] ?? 'Unknown'),
+          title: Text(name),
+          subtitle:
+              connection != null
+                  ? Text(connection['name'] ?? 'Unknown Connection')
+                  : null,
+          trailing:
+              connection == null && requiresConnection
+                  ? FilledButton(
+                    onPressed: () {
+                      final url = _apiService.getAuthUrl(connector['id']);
+                      launchUrl(
+                        Uri.parse(url),
+                        webOnlyWindowName: '_self',
+                      );
+                    },
+                    child: const Text('Connect'),
+                  )
+                  : null,
+          onTap: () {
+            if (connection != null) {
+              _selectConnector(
+                connector['id'],
+                name,
+                connectionId: connection['id'],
+              );
+            } else if (!requiresConnection) {
+              _selectConnector(connector['id'], name);
+            }
+          },
         );
       },
     );
