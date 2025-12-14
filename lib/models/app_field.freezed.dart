@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppField {
 
- String get id; String get name; AppFieldType get type; bool get isRequired; bool get isKey; String? get referenceTo; int? get minLength; int? get maxLength; double? get minValue; double? get maxValue; DateTime? get startDate; DateTime? get endDate; List<String>? get options; List<AppField>? get fields; AppField? get child;
+ String get id; String get name; AppFieldType get type; bool get isRequired; bool get isKey; bool get encrypted; String? get referenceTo; int? get minLength; int? get maxLength; double? get minValue; double? get maxValue; DateTime? get startDate; DateTime? get endDate; List<String>? get options; List<AppField>? get fields; AppField? get child;
 /// Create a copy of AppField
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $AppFieldCopyWith<AppField> get copyWith => _$AppFieldCopyWithImpl<AppField>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppField&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.isRequired, isRequired) || other.isRequired == isRequired)&&(identical(other.isKey, isKey) || other.isKey == isKey)&&(identical(other.referenceTo, referenceTo) || other.referenceTo == referenceTo)&&(identical(other.minLength, minLength) || other.minLength == minLength)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other.options, options)&&const DeepCollectionEquality().equals(other.fields, fields)&&(identical(other.child, child) || other.child == child));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppField&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.isRequired, isRequired) || other.isRequired == isRequired)&&(identical(other.isKey, isKey) || other.isKey == isKey)&&(identical(other.encrypted, encrypted) || other.encrypted == encrypted)&&(identical(other.referenceTo, referenceTo) || other.referenceTo == referenceTo)&&(identical(other.minLength, minLength) || other.minLength == minLength)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other.options, options)&&const DeepCollectionEquality().equals(other.fields, fields)&&(identical(other.child, child) || other.child == child));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,type,isRequired,isKey,referenceTo,minLength,maxLength,minValue,maxValue,startDate,endDate,const DeepCollectionEquality().hash(options),const DeepCollectionEquality().hash(fields),child);
+int get hashCode => Object.hash(runtimeType,id,name,type,isRequired,isKey,encrypted,referenceTo,minLength,maxLength,minValue,maxValue,startDate,endDate,const DeepCollectionEquality().hash(options),const DeepCollectionEquality().hash(fields),child);
 
 @override
 String toString() {
-  return 'AppField(id: $id, name: $name, type: $type, isRequired: $isRequired, isKey: $isKey, referenceTo: $referenceTo, minLength: $minLength, maxLength: $maxLength, minValue: $minValue, maxValue: $maxValue, startDate: $startDate, endDate: $endDate, options: $options, fields: $fields, child: $child)';
+  return 'AppField(id: $id, name: $name, type: $type, isRequired: $isRequired, isKey: $isKey, encrypted: $encrypted, referenceTo: $referenceTo, minLength: $minLength, maxLength: $maxLength, minValue: $minValue, maxValue: $maxValue, startDate: $startDate, endDate: $endDate, options: $options, fields: $fields, child: $child)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $AppFieldCopyWith<$Res>  {
   factory $AppFieldCopyWith(AppField value, $Res Function(AppField) _then) = _$AppFieldCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, AppFieldType type, bool isRequired, bool isKey, String? referenceTo, int? minLength, int? maxLength, double? minValue, double? maxValue, DateTime? startDate, DateTime? endDate, List<String>? options, List<AppField>? fields, AppField? child
+ String id, String name, AppFieldType type, bool isRequired, bool isKey, bool encrypted, String? referenceTo, int? minLength, int? maxLength, double? minValue, double? maxValue, DateTime? startDate, DateTime? endDate, List<String>? options, List<AppField>? fields, AppField? child
 });
 
 
@@ -65,13 +65,14 @@ class _$AppFieldCopyWithImpl<$Res>
 
 /// Create a copy of AppField
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? type = null,Object? isRequired = null,Object? isKey = null,Object? referenceTo = freezed,Object? minLength = freezed,Object? maxLength = freezed,Object? minValue = freezed,Object? maxValue = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? options = freezed,Object? fields = freezed,Object? child = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? type = null,Object? isRequired = null,Object? isKey = null,Object? encrypted = null,Object? referenceTo = freezed,Object? minLength = freezed,Object? maxLength = freezed,Object? minValue = freezed,Object? maxValue = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? options = freezed,Object? fields = freezed,Object? child = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as AppFieldType,isRequired: null == isRequired ? _self.isRequired : isRequired // ignore: cast_nullable_to_non_nullable
 as bool,isKey: null == isKey ? _self.isKey : isKey // ignore: cast_nullable_to_non_nullable
+as bool,encrypted: null == encrypted ? _self.encrypted : encrypted // ignore: cast_nullable_to_non_nullable
 as bool,referenceTo: freezed == referenceTo ? _self.referenceTo : referenceTo // ignore: cast_nullable_to_non_nullable
 as String?,minLength: freezed == minLength ? _self.minLength : minLength // ignore: cast_nullable_to_non_nullable
 as int?,maxLength: freezed == maxLength ? _self.maxLength : maxLength // ignore: cast_nullable_to_non_nullable
@@ -176,10 +177,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  bool isRequired,  bool isKey,  String? referenceTo,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options,  List<AppField>? fields,  AppField? child)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  bool isRequired,  bool isKey,  bool encrypted,  String? referenceTo,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options,  List<AppField>? fields,  AppField? child)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppField() when $default != null:
-return $default(_that.id,_that.name,_that.type,_that.isRequired,_that.isKey,_that.referenceTo,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options,_that.fields,_that.child);case _:
+return $default(_that.id,_that.name,_that.type,_that.isRequired,_that.isKey,_that.encrypted,_that.referenceTo,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options,_that.fields,_that.child);case _:
   return orElse();
 
 }
@@ -197,10 +198,10 @@ return $default(_that.id,_that.name,_that.type,_that.isRequired,_that.isKey,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  bool isRequired,  bool isKey,  String? referenceTo,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options,  List<AppField>? fields,  AppField? child)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  AppFieldType type,  bool isRequired,  bool isKey,  bool encrypted,  String? referenceTo,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options,  List<AppField>? fields,  AppField? child)  $default,) {final _that = this;
 switch (_that) {
 case _AppField():
-return $default(_that.id,_that.name,_that.type,_that.isRequired,_that.isKey,_that.referenceTo,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options,_that.fields,_that.child);}
+return $default(_that.id,_that.name,_that.type,_that.isRequired,_that.isKey,_that.encrypted,_that.referenceTo,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options,_that.fields,_that.child);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -214,10 +215,10 @@ return $default(_that.id,_that.name,_that.type,_that.isRequired,_that.isKey,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  AppFieldType type,  bool isRequired,  bool isKey,  String? referenceTo,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options,  List<AppField>? fields,  AppField? child)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  AppFieldType type,  bool isRequired,  bool isKey,  bool encrypted,  String? referenceTo,  int? minLength,  int? maxLength,  double? minValue,  double? maxValue,  DateTime? startDate,  DateTime? endDate,  List<String>? options,  List<AppField>? fields,  AppField? child)?  $default,) {final _that = this;
 switch (_that) {
 case _AppField() when $default != null:
-return $default(_that.id,_that.name,_that.type,_that.isRequired,_that.isKey,_that.referenceTo,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options,_that.fields,_that.child);case _:
+return $default(_that.id,_that.name,_that.type,_that.isRequired,_that.isKey,_that.encrypted,_that.referenceTo,_that.minLength,_that.maxLength,_that.minValue,_that.maxValue,_that.startDate,_that.endDate,_that.options,_that.fields,_that.child);case _:
   return null;
 
 }
@@ -229,7 +230,7 @@ return $default(_that.id,_that.name,_that.type,_that.isRequired,_that.isKey,_tha
 @JsonSerializable()
 
 class _AppField extends AppField {
-  const _AppField({required this.id, required this.name, required this.type, this.isRequired = false, this.isKey = false, this.referenceTo, this.minLength, this.maxLength, this.minValue, this.maxValue, this.startDate, this.endDate, final  List<String>? options, final  List<AppField>? fields, this.child}): _options = options,_fields = fields,super._();
+  const _AppField({required this.id, required this.name, required this.type, this.isRequired = false, this.isKey = false, this.encrypted = false, this.referenceTo, this.minLength, this.maxLength, this.minValue, this.maxValue, this.startDate, this.endDate, final  List<String>? options, final  List<AppField>? fields, this.child}): _options = options,_fields = fields,super._();
   factory _AppField.fromJson(Map<String, dynamic> json) => _$AppFieldFromJson(json);
 
 @override final  String id;
@@ -237,6 +238,7 @@ class _AppField extends AppField {
 @override final  AppFieldType type;
 @override@JsonKey() final  bool isRequired;
 @override@JsonKey() final  bool isKey;
+@override@JsonKey() final  bool encrypted;
 @override final  String? referenceTo;
 @override final  int? minLength;
 @override final  int? maxLength;
@@ -277,16 +279,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppField&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.isRequired, isRequired) || other.isRequired == isRequired)&&(identical(other.isKey, isKey) || other.isKey == isKey)&&(identical(other.referenceTo, referenceTo) || other.referenceTo == referenceTo)&&(identical(other.minLength, minLength) || other.minLength == minLength)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other._options, _options)&&const DeepCollectionEquality().equals(other._fields, _fields)&&(identical(other.child, child) || other.child == child));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppField&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.type, type) || other.type == type)&&(identical(other.isRequired, isRequired) || other.isRequired == isRequired)&&(identical(other.isKey, isKey) || other.isKey == isKey)&&(identical(other.encrypted, encrypted) || other.encrypted == encrypted)&&(identical(other.referenceTo, referenceTo) || other.referenceTo == referenceTo)&&(identical(other.minLength, minLength) || other.minLength == minLength)&&(identical(other.maxLength, maxLength) || other.maxLength == maxLength)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.endDate, endDate) || other.endDate == endDate)&&const DeepCollectionEquality().equals(other._options, _options)&&const DeepCollectionEquality().equals(other._fields, _fields)&&(identical(other.child, child) || other.child == child));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,name,type,isRequired,isKey,referenceTo,minLength,maxLength,minValue,maxValue,startDate,endDate,const DeepCollectionEquality().hash(_options),const DeepCollectionEquality().hash(_fields),child);
+int get hashCode => Object.hash(runtimeType,id,name,type,isRequired,isKey,encrypted,referenceTo,minLength,maxLength,minValue,maxValue,startDate,endDate,const DeepCollectionEquality().hash(_options),const DeepCollectionEquality().hash(_fields),child);
 
 @override
 String toString() {
-  return 'AppField(id: $id, name: $name, type: $type, isRequired: $isRequired, isKey: $isKey, referenceTo: $referenceTo, minLength: $minLength, maxLength: $maxLength, minValue: $minValue, maxValue: $maxValue, startDate: $startDate, endDate: $endDate, options: $options, fields: $fields, child: $child)';
+  return 'AppField(id: $id, name: $name, type: $type, isRequired: $isRequired, isKey: $isKey, encrypted: $encrypted, referenceTo: $referenceTo, minLength: $minLength, maxLength: $maxLength, minValue: $minValue, maxValue: $maxValue, startDate: $startDate, endDate: $endDate, options: $options, fields: $fields, child: $child)';
 }
 
 
@@ -297,7 +299,7 @@ abstract mixin class _$AppFieldCopyWith<$Res> implements $AppFieldCopyWith<$Res>
   factory _$AppFieldCopyWith(_AppField value, $Res Function(_AppField) _then) = __$AppFieldCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, AppFieldType type, bool isRequired, bool isKey, String? referenceTo, int? minLength, int? maxLength, double? minValue, double? maxValue, DateTime? startDate, DateTime? endDate, List<String>? options, List<AppField>? fields, AppField? child
+ String id, String name, AppFieldType type, bool isRequired, bool isKey, bool encrypted, String? referenceTo, int? minLength, int? maxLength, double? minValue, double? maxValue, DateTime? startDate, DateTime? endDate, List<String>? options, List<AppField>? fields, AppField? child
 });
 
 
@@ -314,13 +316,14 @@ class __$AppFieldCopyWithImpl<$Res>
 
 /// Create a copy of AppField
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? type = null,Object? isRequired = null,Object? isKey = null,Object? referenceTo = freezed,Object? minLength = freezed,Object? maxLength = freezed,Object? minValue = freezed,Object? maxValue = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? options = freezed,Object? fields = freezed,Object? child = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? type = null,Object? isRequired = null,Object? isKey = null,Object? encrypted = null,Object? referenceTo = freezed,Object? minLength = freezed,Object? maxLength = freezed,Object? minValue = freezed,Object? maxValue = freezed,Object? startDate = freezed,Object? endDate = freezed,Object? options = freezed,Object? fields = freezed,Object? child = freezed,}) {
   return _then(_AppField(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as AppFieldType,isRequired: null == isRequired ? _self.isRequired : isRequired // ignore: cast_nullable_to_non_nullable
 as bool,isKey: null == isKey ? _self.isKey : isKey // ignore: cast_nullable_to_non_nullable
+as bool,encrypted: null == encrypted ? _self.encrypted : encrypted // ignore: cast_nullable_to_non_nullable
 as bool,referenceTo: freezed == referenceTo ? _self.referenceTo : referenceTo // ignore: cast_nullable_to_non_nullable
 as String?,minLength: freezed == minLength ? _self.minLength : minLength // ignore: cast_nullable_to_non_nullable
 as int?,maxLength: freezed == maxLength ? _self.maxLength : maxLength // ignore: cast_nullable_to_non_nullable

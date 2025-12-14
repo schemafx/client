@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:schemafx/providers/providers.dart';
 import 'package:schemafx/services/api_service.dart';
 
@@ -21,9 +22,14 @@ class _ConnectorDiscoveryDialogState
   List<Map<String, dynamic>>? _connectors;
   String? _selectedConnectorId;
   String? _selectedConnectorName;
+  String? _selectedConnectionId;
 
   List<String> _currentPath = [];
   List<Map<String, dynamic>>? _discoveryResults;
+
+  List<List<String>> _pathHistory = [];
+  List<List<String>> _nameHistory = [];
+  List<String> _currentPathNames = [];
 
   @override
   void initState() {
@@ -55,7 +61,11 @@ class _ConnectorDiscoveryDialogState
     }
   }
 
-  Future<void> _queryConnector({List<String>? path}) async {
+  Future<void> _queryConnector({
+    List<String>? path,
+    List<String>? names,
+    bool pushHistory = false,
+  }) async {
     if (_selectedConnectorId == null) return;
     final queryPath = path ?? _currentPath;
 
@@ -68,12 +78,18 @@ class _ConnectorDiscoveryDialogState
       final results = await _apiService.queryConnector(
         _selectedConnectorId!,
         queryPath,
+        connectionId: _selectedConnectionId,
       );
 
       if (mounted) {
         setState(() {
+          if (pushHistory) {
+            _pathHistory.add(List.from(_currentPath));
+            _nameHistory.add(List.from(_currentPathNames));
+          }
           _discoveryResults = results;
           _currentPath = queryPath;
+          if (names != null) _currentPathNames = names;
           _loading = false;
         });
       }
@@ -87,12 +103,20 @@ class _ConnectorDiscoveryDialogState
     }
   }
 
-  Future<void> _selectConnector(String id, String name) async {
+  Future<void> _selectConnector(
+    String id,
+    String name, {
+    String? connectionId,
+  }) async {
     setState(() {
       _selectedConnectorId = id;
       _selectedConnectorName = name;
+      _selectedConnectionId = connectionId;
       _currentPath = [];
       _discoveryResults = null;
+      _pathHistory = [];
+      _nameHistory = [];
+      _currentPathNames = [];
     });
 
     await _queryConnector();
@@ -105,7 +129,11 @@ class _ConnectorDiscoveryDialogState
     try {
       await ref
           .read(schemaProvider.notifier)
-          .addTableFromConnector(_selectedConnectorId!, path);
+          .addTableFromConnector(
+            _selectedConnectorId!,
+            path,
+            connectionId: _selectedConnectionId,
+          );
 
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
@@ -118,14 +146,21 @@ class _ConnectorDiscoveryDialogState
   }
 
   void _navigateUp() {
-    if (_currentPath.isEmpty) {
+    if (_pathHistory.isNotEmpty) {
+      final prevPath = _pathHistory.removeLast();
+      final prevNames = _nameHistory.removeLast();
+      _queryConnector(path: prevPath, names: prevNames);
+    } else {
       setState(() {
         _selectedConnectorId = null;
         _selectedConnectorName = null;
+        _selectedConnectionId = null;
         _discoveryResults = null;
+        _currentPath = [];
+        _pathHistory = [];
+        _nameHistory = [];
+        _currentPathNames = [];
       });
-    } else {
-      _queryConnector(path: List<String>.from(_currentPath)..removeLast());
     }
   }
 
@@ -155,9 +190,11 @@ class _ConnectorDiscoveryDialogState
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        _currentPath.isEmpty
+                        _currentPathNames.length > 3
+                            ? '.../${_currentPathNames.sublist(_currentPathNames.length - 3).join('/')}'
+                            : _currentPathNames.isEmpty
                             ? '/'
-                            : '/${_currentPath.join('/')}',
+                            : '/${_currentPathNames.join('/')}',
                         style: Theme.of(context).textTheme.bodyMedium,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -212,12 +249,37 @@ class _ConnectorDiscoveryDialogState
       itemCount: _connectors!.length,
       itemBuilder: (context, index) {
         final connector = _connectors![index];
+        final connection = connector['connection'];
+        final requiresConnection =
+            connector['requiresConnection'] as bool? ?? false;
+        final name = connector['name'] ?? 'Unknown';
 
         return ListTile(
           leading: const Icon(Icons.electrical_services),
-          title: Text(connector['name'] ?? 'Unknown'),
-          onTap: () =>
-              _selectConnector(connector['id'], connector['name'] ?? 'Unknown'),
+          title: Text(name),
+          subtitle: connection != null
+              ? Text(connection['name'] ?? 'Unknown Connection')
+              : null,
+          trailing: connection == null && requiresConnection
+              ? FilledButton(
+                  onPressed: () {
+                    final url = _apiService.getAuthUrl(connector['id']);
+                    launchUrl(Uri.parse(url), webOnlyWindowName: '_self');
+                  },
+                  child: const Text('Connect'),
+                )
+              : null,
+          onTap: () {
+            if (connection != null) {
+              _selectConnector(
+                connector['id'],
+                name,
+                connectionId: connection['id'],
+              );
+            } else if (!requiresConnection) {
+              _selectConnector(connector['id'], name);
+            }
+          },
         );
       },
     );
@@ -253,9 +315,15 @@ class _ConnectorDiscoveryDialogState
                 IconButton(
                   icon: const Icon(Icons.arrow_forward),
                   tooltip: 'Explore',
-                  onPressed: () => _queryConnector(
-                    path: List<String>.from(item['path'] as List),
-                  ),
+                  onPressed: () {
+                    final newNames = List<String>.from(_currentPathNames)
+                      ..add(name);
+                    _queryConnector(
+                      path: List<String>.from(item['path'] as List),
+                      names: newNames,
+                      pushHistory: true,
+                    );
+                  },
                 ),
               if (canConnect)
                 ElevatedButton(
@@ -265,9 +333,15 @@ class _ConnectorDiscoveryDialogState
             ],
           ),
           onTap: canExplore
-              ? () => _queryConnector(
-                  path: List<String>.from(item['path'] as List),
-                )
+              ? () {
+                  final newNames = List<String>.from(_currentPathNames)
+                    ..add(name);
+                  _queryConnector(
+                    path: List<String>.from(item['path'] as List),
+                    names: newNames,
+                    pushHistory: true,
+                  );
+                }
               : null,
         );
       },

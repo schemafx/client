@@ -83,11 +83,17 @@ class SchemaNotifier extends BaseNotifier<AppSchema?> {
 
   Future<void> addTableFromConnector(
     String connectorName,
-    List<String> path,
-  ) async {
+    List<String> path, {
+    String? connectionId,
+  }) async {
     final currentAppId = ref.read(appIdProvider);
     final newSchema = AppSchema.fromJson(
-      await _apiService.addTable(connectorName, path, currentAppId),
+      await _apiService.addTable(
+        connectorName,
+        path,
+        currentAppId,
+        connectionId: connectionId,
+      ),
     );
 
     if (currentAppId == null) {
