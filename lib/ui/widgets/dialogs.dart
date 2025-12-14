@@ -284,6 +284,15 @@ class FieldEditor extends StatelessWidget {
             onUpdate(field.copyWith(isKey: newValue));
           },
         ),
+        if (field.type == AppFieldType.text || field.type == AppFieldType.json)
+          CheckboxListTile(
+            title: const Text('Encrypted'),
+            value: field.encrypted,
+            onChanged: (newValue) {
+              if (newValue == null) return;
+              onUpdate(field.copyWith(encrypted: newValue));
+            },
+          ),
         const SizedBox(height: 16),
         DropdownButtonFormField<AppFieldType>(
           initialValue: field.type,

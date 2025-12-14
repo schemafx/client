@@ -29,6 +29,7 @@ sealed class AppField with _$AppField {
     required AppFieldType type,
     @Default(false) bool isRequired,
     @Default(false) bool isKey,
+    @Default(false) bool encrypted,
     String? referenceTo,
     int? minLength,
     int? maxLength,
@@ -69,6 +70,8 @@ sealed class AppField with _$AppField {
         if (maxLength != null && strValue.length > maxLength!) {
           return 'Must be no more than $maxLength characters.';
         }
+
+        if (isKey && encrypted) return 'Key fields cannot be encrypted.';
 
         break;
       case AppFieldType.number:
@@ -126,6 +129,8 @@ sealed class AppField with _$AppField {
         break;
       case AppFieldType.json:
         if (value is! Map) return 'Invalid JSON format.';
+        if (isKey) return 'JSON fields cannot be used as keys';
+
         break;
       case AppFieldType.list:
         if (value is! List) return 'Invalid List format.';
