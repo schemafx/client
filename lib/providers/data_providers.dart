@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/providers/application_providers.dart';
-import 'package:schemafx/providers/base_notifier.dart';
+import 'package:schemafx/providers/ui_providers.dart';
 import 'package:schemafx/repositories/data_repository.dart';
 import 'package:schemafx/services/api_service.dart';
 
@@ -10,57 +11,74 @@ import 'package:schemafx/services/api_service.dart';
 /// Each row is a map where the key is the field ID and the value is the cell content.
 typedef AppData = Map<String, List<Map<String, dynamic>>>;
 
-/// A notifier that manages the application's data.
-///
-/// This notifier is responsible for loading, saving, and modifying the [AppData]
-/// which includes all the rows for all the tables.
-class DataNotifier extends BaseNotifier<AppData?> {
-  late final _repo = DataRepository(ref);
+/// A provider that returns a list of records for a specific table.
+/// It uses autoDispose to ensure data is fresh when the view is revisited.
+final tableDataProvider = FutureProvider.autoDispose
+    .family<List<Map<String, dynamic>>, String>((ref, tableId) async {
+      final repo = DataRepository(ref);
+      return await repo.loadTableData(tableId);
+    });
+
+/// A controller for executing actions on a table.
+class TableActionController {
+  final Ref ref;
+  TableActionController(this.ref);
   late final _apiService = ApiService();
 
-  @override
-  Future<AppData?> build() async {
-    final appId = ref.watch(appIdProvider);
-    if (appId == null) return null;
-    return await _repo.loadData();
-  }
-
-  /// Adds a [row] to the table with the given [tableId].
   Future<void> executeAction(
     String tableId,
     String actionId,
     List<Map<String, dynamic>> rows, {
     Map<String, dynamic>? payload,
   }) async {
-    final newState = {...(await future ?? {})};
-    newState[tableId] = List<Map<String, dynamic>>.from(
+    final scaffoldMessenger = ref.read(scaffoldMessengerKeyProvider);
+
+    try {
+      scaffoldMessenger.currentState?.showSnackBar(
+        const SnackBar(content: Text('Saving...')),
+      );
+
       await _apiService.post('apps/${ref.read(appIdProvider)}/data/$tableId', {
         'actionId': actionId,
         'rows': rows,
         'payload': payload,
-      }),
-    );
+      });
 
-    return mutate(() async => newState, 'Saved');
+      // Invalidate the provider to force a refresh
+      ref.invalidate(tableDataProvider(tableId));
+
+      scaffoldMessenger.currentState?.hideCurrentSnackBar();
+      scaffoldMessenger.currentState?.showSnackBar(
+        const SnackBar(content: Text('Saved')),
+      );
+    } catch (e) {
+      scaffoldMessenger.currentState?.hideCurrentSnackBar();
+      scaffoldMessenger.currentState?.showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(
+            scaffoldMessenger.currentContext!,
+          ).colorScheme.error,
+          content: Text('Error: ${e.toString()}'),
+        ),
+      );
+      rethrow;
+    }
   }
 }
 
-/// A provider that exposes the application's data and allows it to be modified.
-final dataProvider = AsyncNotifierProvider<DataNotifier, AppData?>(
-  DataNotifier.new,
+final tableActionControllerProvider = Provider(
+  (ref) => TableActionController(ref),
 );
 
 /// A provider that returns a single record by its ID.
 ///
 /// The `family` modifier is used to pass the table and record IDs to the provider.
-final recordByIdProvider =
-    Provider.family<Map<String, dynamic>?, ({String tableId, String recordId})>(
+final recordByIdProvider = Provider.autoDispose
+    .family<Map<String, dynamic>?, ({String tableId, String recordId})>(
       (ref, ids) => ref
-          .watch(dataProvider)
+          .watch(tableDataProvider(ids.tableId))
           .when(
-            data: (allData) {
-              final records = allData?[ids.tableId] ?? [];
-
+            data: (records) {
               try {
                 return records.firstWhere((r) => r['_id'] == ids.recordId);
               } catch (e) {

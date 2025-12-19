@@ -226,7 +226,6 @@ class _DataScreenTable extends ConsumerWidget {
                 'showEmpty': true,
               },
             ),
-            records: [],
           ),
         ),
       ],

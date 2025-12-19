@@ -58,4 +58,35 @@ class DataRepository {
       rethrow;
     }
   }
+
+  Future<List<Map<String, dynamic>>> loadTableData(
+    String tableId, {
+    List<dynamic>? filters,
+    int? limit,
+    int? offset,
+  }) async {
+    try {
+      final appId = ref.read(appIdProvider);
+      if (appId == null) return [];
+
+      final data = await _apiService.get(
+        'apps/$appId/data/$tableId',
+        query: {
+          if (filters != null || limit != null || offset != null)
+            'query': jsonEncode({
+              if (filters != null) 'filters': filters,
+              if (limit != null) 'limit': limit,
+              if (offset != null) 'offset': offset,
+            }),
+        },
+      );
+
+      return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      ref.read(errorProvider.notifier).showError(
+        'Failed to load table data: $e',
+      );
+      rethrow;
+    }
+  }
 }
