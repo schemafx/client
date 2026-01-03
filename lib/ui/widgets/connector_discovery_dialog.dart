@@ -129,7 +129,7 @@ class _ConnectorDiscoveryDialogState
     final path = List<String>.from(item['path'] as List);
 
     try {
-      await ref
+      final newId = await ref
           .read(schemaProvider.notifier)
           .addTableFromConnector(
             _selectedConnectorId!,
@@ -137,7 +137,7 @@ class _ConnectorDiscoveryDialogState
             connectionId: _selectedConnectionId,
           );
 
-      if (mounted) Navigator.of(context).pop();
+      if (mounted) Navigator.of(context).pop(newId);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(

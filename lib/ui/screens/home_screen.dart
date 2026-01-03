@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:schemafx/services/api_service.dart';
+import 'package:schemafx/ui/widgets/dialogs.dart';
 
 /// A simple screen that shows a navigation rail on the left and
 /// a list of applications fetched from `/api/apps` on the right.
@@ -34,6 +35,15 @@ class HomeScreen extends ConsumerWidget {
                 label: Text('Apps'),
               ),
             ],
+            leading: FloatingActionButton.small(
+              onPressed: () async {
+                final id = await Dialogs.showAddTable(context, ref);
+                if (id != null && context.mounted) {
+                  context.go('/edit/$id');
+                }
+              },
+              child: const Icon(Icons.add),
+            ),
           ),
           const VerticalDivider(width: 1),
           // Main content

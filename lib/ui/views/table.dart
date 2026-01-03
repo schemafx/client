@@ -17,7 +17,7 @@ class XTableView extends ConsumerWidget {
       loading: () => _buildSkeleton(context),
       error: (e, st) => Center(child: Text('Error: $e')),
       data: (records) {
-        if (records.isEmpty && !(view.config['showEmpty'] ?? false)) {
+        if (records.isEmpty && !(view.config['showEmpty'] as bool? ?? false)) {
           return const Center(child: Text('No records found.'));
         }
 
@@ -56,7 +56,7 @@ class XTableView extends ConsumerWidget {
           ),
         );
 
-        if (records.isEmpty && (view.config['showEmpty'] ?? false)) {
+        if (records.isEmpty && (view.config['showEmpty'] as bool? ?? false)) {
           return Column(
             children: [
               tableWidget,
@@ -94,7 +94,9 @@ class XTableView extends ConsumerWidget {
                     Container(
                       width: 100,
                       height: 16,
-                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                     ),
                   ),
                 )
