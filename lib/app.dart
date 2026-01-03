@@ -8,6 +8,7 @@ import 'package:schemafx/ui/screens/auth_callback_screen.dart';
 import 'package:schemafx/ui/screens/editor_mode_screen.dart';
 import 'package:schemafx/ui/screens/login_screen.dart';
 import 'package:schemafx/ui/screens/runtime_mode_screen.dart';
+import 'package:schemafx/ui/screens/home_screen.dart';
 
 class SchemaFxApp extends ConsumerWidget {
   const SchemaFxApp({super.key});
@@ -47,7 +48,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     refreshListenable: _AuthRefreshNotifier(ref),
     routes: [
-      GoRoute(path: '/', redirect: (_, _) => '/start/123'),
+      GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/logout',
