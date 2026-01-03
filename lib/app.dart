@@ -30,75 +30,6 @@ class SchemaFxApp extends ConsumerWidget {
       });
     });
 
-    // This router is now simpler and more robust.
-    final router = GoRouter(
-      initialLocation: '/',
-      refreshListenable: _AuthRefreshNotifier(ref),
-      routes: [
-        GoRoute(path: '/', redirect: (_, _) => '/start/123'),
-        GoRoute(
-          path: '/login',
-          builder: (context, state) => const LoginScreen(),
-        ),
-        GoRoute(
-          path: '/logout',
-          builder: (context, state) =>
-              const Scaffold(body: Center(child: CircularProgressIndicator())),
-          redirect: (context, state) async {
-            await ref.read(authServiceProvider).logout();
-            return '/login';
-          },
-        ),
-        GoRoute(
-          path: '/auth/callback',
-          builder: (context, state) => AuthCallbackScreen(
-            token: state.uri.queryParameters['token'],
-            error: state.uri.queryParameters['error'],
-          ),
-        ),
-        GoRoute(
-          path: '/start/:appId',
-          builder: (context, state) => RuntimeModeScreen(),
-        ),
-        GoRoute(
-          path: '/edit/:appId',
-          builder: (context, state) => EditorModeScreen(),
-        ),
-      ],
-      redirect: (context, state) {
-        final authState = ref.watch(authProvider);
-        final isAuthenticated =
-            authState.asData?.value == AuthState.authenticated;
-        final isLoggingIn = state.matchedLocation == '/login';
-        final isAuthCallback = state.matchedLocation == '/auth/callback';
-
-        // If the user is on the auth callback, let them proceed.
-        if (isAuthCallback) return null;
-
-        // If the user is not authenticated, redirect to the login screen.
-        if (!isAuthenticated && !isLoggingIn) {
-          // Store the intended location so we can redirect after login.
-          Future.microtask(
-            () => ref.read(redirectUrlProvider.notifier).set(state.uri),
-          );
-
-          return '/login';
-        }
-
-        // If the user is authenticated and on the login screen, redirect them.
-        if (isAuthenticated && isLoggingIn) {
-          final redirectUrl = ref.read(redirectUrlProvider) ?? Uri.parse('/');
-          Future.microtask(
-            () => ref.read(redirectUrlProvider.notifier).clear(),
-          );
-
-          return redirectUrl.toString();
-        }
-
-        return null;
-      },
-    );
-
     return MaterialApp.router(
       title: 'SchemaFX',
       debugShowCheckedModeBanner: false,
@@ -106,13 +37,83 @@ class SchemaFxApp extends ConsumerWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4)),
         useMaterial3: true,
       ),
-      routerConfig: router,
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }
 
+final routerProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    initialLocation: '/',
+    refreshListenable: _AuthRefreshNotifier(ref),
+    routes: [
+      GoRoute(path: '/', redirect: (_, _) => '/start/123'),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/logout',
+        builder: (context, state) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        redirect: (context, state) async {
+          await ref.read(authServiceProvider).logout();
+          return '/login';
+        },
+      ),
+      GoRoute(
+        path: '/auth/callback',
+        builder: (context, state) => AuthCallbackScreen(
+          token: state.uri.queryParameters['token'],
+          error: state.uri.queryParameters['error'],
+        ),
+      ),
+      GoRoute(
+        path: '/start/:appId',
+        builder: (context, state) => RuntimeModeScreen(),
+      ),
+      GoRoute(
+        path: '/edit/:appId',
+        builder: (context, state) => EditorModeScreen(),
+      ),
+    ],
+    redirect: (context, state) {
+      final authState = ref.read(authProvider);
+      final isAuthenticated =
+          authState.asData?.value == AuthState.authenticated;
+      final isLoggingIn = state.matchedLocation == '/login';
+      final isAuthCallback = state.matchedLocation == '/auth/callback';
+
+      // If the user is on the auth callback, let them proceed.
+      if (isAuthCallback) return null;
+
+      // If the user is not authenticated, redirect to the login screen.
+      if (!isAuthenticated && !isLoggingIn) {
+        // Store the intended location so we can redirect after login.
+        Future.microtask(
+          () => ref.read(redirectUrlProvider.notifier).set(state.uri),
+        );
+
+        return '/login';
+      }
+
+      // If the user is authenticated and on the login screen, redirect them.
+      if (isAuthenticated && isLoggingIn) {
+        final redirectUrl = ref.read(redirectUrlProvider) ?? Uri.parse('/');
+        Future.microtask(
+          () => ref.read(redirectUrlProvider.notifier).clear(),
+        );
+
+        return redirectUrl.toString();
+      }
+
+      return null;
+    },
+  );
+});
+
 class _AuthRefreshNotifier extends ChangeNotifier {
-  _AuthRefreshNotifier(WidgetRef ref) {
+  _AuthRefreshNotifier(Ref ref) {
     ref.listen(authProvider, (previous, next) => notifyListeners());
   }
 }
