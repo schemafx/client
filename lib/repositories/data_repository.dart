@@ -89,9 +89,9 @@ class DataRepository {
 
       return List<Map<String, dynamic>>.from(data);
     } catch (e) {
-      ref.read(errorProvider.notifier).showError(
-        'Failed to load table data: $e',
-      );
+      ref
+          .read(errorProvider.notifier)
+          .showError('Failed to load table data: $e');
       rethrow;
     }
   }
