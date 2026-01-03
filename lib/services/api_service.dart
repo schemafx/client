@@ -88,6 +88,11 @@ class ApiService {
         ),
       );
 
+  Future<String> getTokenFromCode(String code) async {
+    final response = await get('token/$code');
+    return response['token'] as String;
+  }
+
   Future<List<Map<String, dynamic>>> getConnectors() async =>
       List<Map<String, dynamic>>.from(await get('connectors'));
 

@@ -9,10 +9,10 @@ import 'package:web/web.dart' as web;
 
 // Represents the result of an authentication attempt from a popup/redirect.
 class AuthResult {
-  final String? token;
+  final String? code;
   final String? error;
 
-  AuthResult({this.token, this.error});
+  AuthResult({this.code, this.error});
 }
 
 // Base class for platform-specific authentication services.

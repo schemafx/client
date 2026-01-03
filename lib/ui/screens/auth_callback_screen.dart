@@ -7,10 +7,10 @@ import 'package:schemafx/services/auth_service.dart';
 import 'package:web/web.dart' as web;
 
 class AuthCallbackScreen extends ConsumerStatefulWidget {
-  final String? token;
+  final String? code;
   final String? error;
 
-  const AuthCallbackScreen({super.key, this.token, this.error});
+  const AuthCallbackScreen({super.key, this.code, this.error});
 
   @override
   ConsumerState<AuthCallbackScreen> createState() => _AuthCallbackScreenState();
@@ -35,11 +35,12 @@ class _AuthCallbackScreenState extends ConsumerState<AuthCallbackScreen> {
 
       if (widget.error != null) {
         completer.complete(AuthResult(error: widget.error));
-      } else if (widget.token != null) {
-        completer.complete(AuthResult(token: widget.token));
+      } else if (widget.code != null) {
+        completer.complete(AuthResult(code: widget.code));
       } else {
         completer.completeError(
-            Exception('Authentication failed: No token or error received.'));
+          Exception('Authentication failed: No code or error received.'),
+        );
       }
       ref.read(authCompleterProvider.notifier).clear();
       if (mounted) context.go('/');
@@ -47,16 +48,16 @@ class _AuthCallbackScreenState extends ConsumerState<AuthCallbackScreen> {
     }
 
     // On web, the app has performed a full-page redirect. We now handle the
-    // token and then navigate to the user's original destination.
+    // code and then navigate to the user's original destination.
     try {
       if (widget.error != null) {
         throw Exception(widget.error);
       }
 
-      if (widget.token != null) {
+      if (widget.code != null) {
         await ref
             .read(authProvider.notifier)
-            .handleTokenFromServer(widget.token!);
+            .handleCodeFromServer(widget.code!);
 
         // After auth is complete, retrieve and clear the saved redirect URL.
         final redirectUrl =
@@ -65,7 +66,7 @@ class _AuthCallbackScreenState extends ConsumerState<AuthCallbackScreen> {
 
         if (mounted) context.go(redirectUrl);
       } else {
-        throw Exception('Authentication failed: No token received.');
+        throw Exception('Authentication failed: No code received.');
       }
     } catch (e) {
       // If anything goes wrong, just send the user back to the login page.
