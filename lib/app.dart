@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:schemafx/providers/providers.dart';
+import 'package:schemafx/services/auth_service.dart';
 import 'package:schemafx/ui/screens/auth_callback_screen.dart';
 import 'package:schemafx/ui/screens/editor_mode_screen.dart';
 import 'package:schemafx/ui/screens/login_screen.dart';
@@ -38,6 +39,15 @@ class SchemaFxApp extends ConsumerWidget {
         GoRoute(
           path: '/login',
           builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/logout',
+          builder: (context, state) =>
+              const Scaffold(body: Center(child: CircularProgressIndicator())),
+          redirect: (context, state) async {
+            await ref.read(authServiceProvider).logout();
+            return '/login';
+          },
         ),
         GoRoute(
           path: '/auth/callback',

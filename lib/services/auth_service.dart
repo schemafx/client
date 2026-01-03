@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/providers/providers.dart';
 import 'package:schemafx/services/api_service.dart';
+import 'package:schemafx/services/secure_storage_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:web/web.dart' as web;
 
@@ -20,11 +21,13 @@ abstract class AuthService {
     String connectorName,
     String redirectUri,
   );
+  Future<void> logout();
 }
 
 // Web implementation that uses a full-page redirect.
 class WebAuthService implements AuthService {
   final Ref _ref;
+  final SecureStorageService _secureStorageService = SecureStorageService();
   WebAuthService(this._ref);
 
   @override
@@ -54,11 +57,17 @@ class WebAuthService implements AuthService {
     // be completely reloaded on the callback page.
     return Completer<AuthResult>().future;
   }
+
+  @override
+  Future<void> logout() async {
+    await _secureStorageService.deleteToken();
+  }
 }
 
 // Mobile implementation that uses a web view and deep linking.
 class MobileAuthService implements AuthService {
   final Ref _ref;
+  final SecureStorageService _secureStorageService = SecureStorageService();
   MobileAuthService(this._ref);
 
   @override
@@ -80,6 +89,11 @@ class MobileAuthService implements AuthService {
     }
 
     return completer.future;
+  }
+
+  @override
+  Future<void> logout() async {
+    await _secureStorageService.deleteToken();
   }
 }
 
