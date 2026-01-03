@@ -48,10 +48,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: _AuthRefreshNotifier(ref),
     routes: [
       GoRoute(path: '/', redirect: (_, _) => '/start/123'),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/logout',
         builder: (context, state) =>
@@ -64,7 +61,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/auth/callback',
         builder: (context, state) => AuthCallbackScreen(
-          token: state.uri.queryParameters['token'],
+          code: state.uri.queryParameters['code'],
           error: state.uri.queryParameters['error'],
         ),
       ),
@@ -100,9 +97,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // If the user is authenticated and on the login screen, redirect them.
       if (isAuthenticated && isLoggingIn) {
         final redirectUrl = ref.read(redirectUrlProvider) ?? Uri.parse('/');
-        Future.microtask(
-          () => ref.read(redirectUrlProvider.notifier).clear(),
-        );
+        Future.microtask(() => ref.read(redirectUrlProvider.notifier).clear());
 
         return redirectUrl.toString();
       }

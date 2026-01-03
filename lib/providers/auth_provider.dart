@@ -13,9 +13,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
   Future<AuthState> build() async {
     final secureStorageService = ref.watch(secureStorageServiceProvider);
     final token = await secureStorageService.getToken();
-    return token != null
-        ? AuthState.authenticated
-        : AuthState.unauthenticated;
+    return token != null ? AuthState.authenticated : AuthState.unauthenticated;
   }
 
   Future<void> loginWithConnector(String connectorName) async {
@@ -25,9 +23,9 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
       // Determine the redirect URI based on the platform.
       final String redirectUri;
       if (kIsWeb) {
-        redirectUri = Uri.parse(web.window.location.origin)
-            .replace(path: '/auth/callback')
-            .toString();
+        redirectUri = Uri.parse(
+          web.window.location.origin,
+        ).replace(path: '/auth/callback').toString();
       } else {
         // This should be your mobile app's custom scheme.
         redirectUri = 'schemafx://auth/callback';
@@ -41,11 +39,20 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         throw Exception(result.error);
       }
 
-      if (result.token != null) {
-        await handleTokenFromServer(result.token!);
+      if (result.code != null) {
+        await handleCodeFromServer(result.code!);
       } else {
-        throw Exception('Authentication failed: No token received.');
+        throw Exception('Authentication failed: No token or code received.');
       }
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
+  Future<void> handleCodeFromServer(String code) async {
+    try {
+      final token = await ApiService().getTokenFromCode(code);
+      await handleTokenFromServer(token);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
     }
