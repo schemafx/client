@@ -24,13 +24,26 @@ class ApiService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return jsonDecode(response.body);
       } else {
-        throw Exception(
-          'Failed perform query. Status code: ${response.statusCode}. ${response.body}',
-        );
+        // Sanitize error messages to avoid leaking server internals
+        String errorMessage =
+            'Request failed with status: ${response.statusCode}';
+
+        try {
+          final errorData = jsonDecode(response.body);
+          if (errorData is Map && errorData.containsKey('message')) {
+            errorMessage = errorData['message'];
+          }
+        } catch (_) {
+          // If body isn't JSON or doesn't have a message, use the generic status message
+        }
+
+        throw Exception(errorMessage);
       }
     } catch (e) {
-      // Handle network errors or parsing errors
-      throw Exception('Failed to perform query: $e');
+      if (e is Exception && !e.toString().contains('XMLHttpRequest')) {
+        rethrow;
+      }
+      throw Exception('A network error occurred. Please try again later.');
     }
   }
 
