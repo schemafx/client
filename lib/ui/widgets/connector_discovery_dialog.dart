@@ -47,7 +47,9 @@ class _ConnectorDiscoveryDialogState
       final connectors = await _apiService.getConnectors();
       if (mounted) {
         setState(() {
-          _connectors = connectors;
+          _connectors = connectors
+              .where((connector) => connector['supportsData'] as bool)
+              .toList();
           _loading = false;
         });
       }
