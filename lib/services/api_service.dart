@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:schemafx/services/secure_storage_service.dart';
 
@@ -22,14 +23,14 @@ class ApiService {
       final response = await query;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return jsonDecode(response.body);
+        return _parseJson(response.body);
       } else {
         // Sanitize error messages to avoid leaking server internals
         String errorMessage =
             'Request failed with status: ${response.statusCode}';
 
         try {
-          final errorData = jsonDecode(response.body);
+          final errorData = await _parseJson(response.body);
           if (errorData is Map && errorData.containsKey('message')) {
             errorMessage = errorData['message'];
           }
@@ -45,6 +46,15 @@ class ApiService {
       }
       throw Exception('A network error occurred. Please try again later.');
     }
+  }
+
+  /// Decodes JSON on a background isolate if the payload is large (>10KB)
+  /// to prevent UI jank.
+  Future<dynamic> _parseJson(String body) async {
+    if (body.length > 10000) {
+      return compute(jsonDecode, body);
+    }
+    return jsonDecode(body);
   }
 
   Future<dynamic> post(String path, Object body) async => _query(
