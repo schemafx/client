@@ -254,7 +254,7 @@ class _SmartFieldState extends ConsumerState<SmartField> {
     final relatedTableId = widget.field.referenceTo;
     if (relatedTableId == null) return const SizedBox.shrink();
 
-    final asyncData = ref.watch(dataProvider);
+    final asyncData = ref.watch(tableDataProvider(relatedTableId));
     final asyncSchema = ref.watch(schemaProvider);
 
     return asyncSchema.when(
@@ -267,10 +267,7 @@ class _SmartFieldState extends ConsumerState<SmartField> {
         );
 
         return asyncData.when(
-          data: (allData) {
-            if (allData == null) return Container();
-            final relatedRecords = allData[relatedTableId] ?? [];
-
+          data: (relatedRecords) {
             // Ensure the initial value exists in the options to avoid errors
             final initialValue = fieldState.value?.toString();
             final isValidValue = relatedRecords.any(

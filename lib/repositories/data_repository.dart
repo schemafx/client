@@ -22,6 +22,7 @@ class DataRepository {
   }
 
   Future<AppData> loadData({
+    AppSchema? schema,
     List<dynamic>? filters,
     int? limit,
     int? offset,
@@ -29,12 +30,17 @@ class DataRepository {
     try {
       final AppData appData = {};
       final appId = ref.read(appIdProvider);
-      final schema = await loadSchema();
 
-      if (appId == null || schema == null) return appData;
+      // Use provided schema, or try to get it from the provider, or load it as a last resort.
+      final effectiveSchema =
+          schema ??
+          ref.read(schemaProvider).asData?.value ??
+          await loadSchema();
+
+      if (appId == null || effectiveSchema == null) return appData;
 
       (await Future.wait(
-        schema.tables.map(
+        effectiveSchema.tables.map(
           (table) => _apiService.get(
             'apps/$appId/data/${table.id}',
             query: {
@@ -48,13 +54,44 @@ class DataRepository {
           ),
         ),
       )).asMap().forEach(
-        (idx, data) => appData[schema.tables[idx].id] =
+        (idx, data) => appData[effectiveSchema.tables[idx].id] =
             List<Map<String, dynamic>>.from(data),
       );
 
       return appData;
     } catch (e) {
       ref.read(errorProvider.notifier).showError('Failed to load data: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> loadTableData(
+    String tableId, {
+    List<dynamic>? filters,
+    int? limit,
+    int? offset,
+  }) async {
+    try {
+      final appId = ref.read(appIdProvider);
+      if (appId == null) return [];
+
+      final data = await _apiService.get(
+        'apps/$appId/data/$tableId',
+        query: {
+          if (filters != null || limit != null || offset != null)
+            'query': jsonEncode({
+              if (filters != null) 'filters': filters,
+              if (limit != null) 'limit': limit,
+              if (offset != null) 'offset': offset,
+            }),
+        },
+      );
+
+      return List<Map<String, dynamic>>.from(data);
+    } catch (e) {
+      ref
+          .read(errorProvider.notifier)
+          .showError('Failed to load table data: $e');
       rethrow;
     }
   }

@@ -1,7 +1,9 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorageService {
-  final _storage = const FlutterSecureStorage();
+  final _storage = const FlutterSecureStorage(
+    webOptions: WebOptions(useSessionStorage: true),
+  );
   static const _tokenKey = 'auth_token';
 
   Future<void> saveToken(String token) =>

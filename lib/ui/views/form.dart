@@ -57,7 +57,7 @@ class XFormViewState extends ConsumerState<XFormView> {
         '_id': DateTime.now().millisecondsSinceEpoch.toString(),
       };
 
-      await ref.read(dataProvider.notifier).executeAction(
+      await ref.read(tableActionControllerProvider).executeAction(
         widget.table.id,
         widget.table.actions
             .firstWhere((action) => action.type == AppActionType.add)

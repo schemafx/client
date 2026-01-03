@@ -1,18 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:go_router/go_router.dart';
 import 'package:schemafx/providers/providers.dart';
+import 'package:schemafx/services/auth_service.dart';
+import 'package:schemafx/ui/screens/auth_callback_screen.dart';
 import 'package:schemafx/ui/screens/editor_mode_screen.dart';
-import 'package:schemafx/ui/screens/runtime_mode_screen.dart';
 import 'package:schemafx/ui/screens/login_screen.dart';
+import 'package:schemafx/ui/screens/runtime_mode_screen.dart';
 
-/// The root widget of the application.
-///
-/// This widget is responsible for setting up the [MaterialApp] and switching
-/// between the [EditorModeScreen] and [RuntimeModeScreen].
 class SchemaFxApp extends ConsumerWidget {
-  /// Creates a new [SchemaFxApp].
   const SchemaFxApp({super.key});
 
   @override
@@ -20,7 +17,6 @@ class SchemaFxApp extends ConsumerWidget {
     ref.listen<String?>(errorProvider, (previous, next) {
       if (next == null) return;
 
-      // We use a post frame callback to ensure the ScaffoldMessenger is available.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         try {
           ref
@@ -29,63 +25,95 @@ class SchemaFxApp extends ConsumerWidget {
               ?.showSnackBar(
                 SnackBar(content: Text(next), backgroundColor: Colors.red),
               );
-
-          // Clear the error after showing it.
           ref.read(errorProvider.notifier).clearError();
         } catch (_) {}
       });
     });
 
     return MaterialApp.router(
-      scaffoldMessengerKey: ref.watch(scaffoldMessengerKeyProvider),
       title: 'SchemaFX',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4)),
         useMaterial3: true,
       ),
-      routerConfig: GoRouter(
-        initialLocation: '/edit/123',
-        routes: [
-          GoRoute(path: '/', builder: (context, state) => RuntimeModeScreen()),
-          GoRoute(path: '/login', builder: (context, state) => LoginScreen()),
-          GoRoute(
-            path: '/start/:appId',
-            builder: (context, state) => RuntimeModeScreen(),
-          ),
-          GoRoute(
-            path: '/edit/:appId',
-            builder: (context, state) => EditorModeScreen(),
-          ),
-        ],
-        redirect: (context, state) {
-          final authState = ref.watch(authProvider);
-          final isAuthenticated =
-              authState.asData?.value == AuthState.authenticated;
-          final isLoggingIn = state.matchedLocation == '/login';
+      routerConfig: ref.watch(routerProvider),
+    );
+  }
+}
 
-          if (authState.isLoading || authState.isReloading) return null;
-          if (!isAuthenticated && !isLoggingIn) {
-            Future.microtask(
-              () => ref.read(redirectUrlProvider.notifier).set(state.uri),
-            );
-            return '/login';
-          }
-
-          if (isAuthenticated && isLoggingIn) {
-            final redirectUrl = ref.read(redirectUrlProvider);
-            return (redirectUrl != null) ? redirectUrl.toString() : '/';
-          }
-
-          Future.microtask(
-            () => ref
-                .read(appIdProvider.notifier)
-                .setId(state.pathParameters['appId']),
-          );
-
-          return null;
+final routerProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    initialLocation: '/',
+    refreshListenable: _AuthRefreshNotifier(ref),
+    routes: [
+      GoRoute(path: '/', redirect: (_, _) => '/start/123'),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/logout',
+        builder: (context, state) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        redirect: (context, state) async {
+          await ref.read(authServiceProvider).logout();
+          return '/login';
         },
       ),
-    );
+      GoRoute(
+        path: '/auth/callback',
+        builder: (context, state) => AuthCallbackScreen(
+          token: state.uri.queryParameters['token'],
+          error: state.uri.queryParameters['error'],
+        ),
+      ),
+      GoRoute(
+        path: '/start/:appId',
+        builder: (context, state) => RuntimeModeScreen(),
+      ),
+      GoRoute(
+        path: '/edit/:appId',
+        builder: (context, state) => EditorModeScreen(),
+      ),
+    ],
+    redirect: (context, state) {
+      final authState = ref.read(authProvider);
+      final isAuthenticated =
+          authState.asData?.value == AuthState.authenticated;
+      final isLoggingIn = state.matchedLocation == '/login';
+      final isAuthCallback = state.matchedLocation == '/auth/callback';
+
+      // If the user is on the auth callback, let them proceed.
+      if (isAuthCallback) return null;
+
+      // If the user is not authenticated, redirect to the login screen.
+      if (!isAuthenticated && !isLoggingIn) {
+        // Store the intended location so we can redirect after login.
+        Future.microtask(
+          () => ref.read(redirectUrlProvider.notifier).set(state.uri),
+        );
+
+        return '/login';
+      }
+
+      // If the user is authenticated and on the login screen, redirect them.
+      if (isAuthenticated && isLoggingIn) {
+        final redirectUrl = ref.read(redirectUrlProvider) ?? Uri.parse('/');
+        Future.microtask(
+          () => ref.read(redirectUrlProvider.notifier).clear(),
+        );
+
+        return redirectUrl.toString();
+      }
+
+      return null;
+    },
+  );
+});
+
+class _AuthRefreshNotifier extends ChangeNotifier {
+  _AuthRefreshNotifier(Ref ref) {
+    ref.listen(authProvider, (previous, next) => notifyListeners());
   }
 }

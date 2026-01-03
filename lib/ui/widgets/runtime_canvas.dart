@@ -33,41 +33,26 @@ class RuntimeCanvas extends ConsumerWidget {
               return const Center(child: Text('Table not found.'));
             }
 
-            return ref
-                .watch(dataProvider)
-                .when(
-                  data: (allData) {
-                    if (allData == null) return Container();
-                    late Widget viewWidget;
+            late Widget viewWidget;
 
-                    switch (view.type) {
-                      case AppViewType.form:
-                        viewWidget = XFormView(table: table, view: view);
-                        break;
-                      case AppViewType.table:
-                        viewWidget = XTableView(
-                          table: table,
-                          view: view,
-                          records: allData[table.id] ?? [],
-                        );
+            switch (view.type) {
+              case AppViewType.form:
+                viewWidget = XFormView(table: table, view: view);
+                break;
+              case AppViewType.table:
+                viewWidget = XTableView(table: table, view: view);
 
-                        break;
-                      // ignore: unreachable_switch_default
-                      default:
-                        viewWidget = Container();
-                        break;
-                    }
+                break;
+              // ignore: unreachable_switch_default
+              default:
+                viewWidget = Container();
+                break;
+            }
 
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
-                      child: viewWidget,
-                    );
-                  },
-                  error: (error, stackTrace) =>
-                      Center(child: Text('Error loading data: $error')),
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
-                );
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: viewWidget,
+            );
           },
           error: (error, stackTrace) =>
               Center(child: Text('Error loading schema: $error')),
