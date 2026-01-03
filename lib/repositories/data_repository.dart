@@ -22,6 +22,7 @@ class DataRepository {
   }
 
   Future<AppData> loadData({
+    AppSchema? schema,
     List<dynamic>? filters,
     int? limit,
     int? offset,
@@ -29,12 +30,17 @@ class DataRepository {
     try {
       final AppData appData = {};
       final appId = ref.read(appIdProvider);
-      final schema = await loadSchema();
 
-      if (appId == null || schema == null) return appData;
+      // Use provided schema, or try to get it from the provider, or load it as a last resort.
+      final effectiveSchema =
+          schema ??
+          ref.read(schemaProvider).asData?.value ??
+          await loadSchema();
+
+      if (appId == null || effectiveSchema == null) return appData;
 
       (await Future.wait(
-        schema.tables.map(
+        effectiveSchema.tables.map(
           (table) => _apiService.get(
             'apps/$appId/data/${table.id}',
             query: {
@@ -48,7 +54,7 @@ class DataRepository {
           ),
         ),
       )).asMap().forEach(
-        (idx, data) => appData[schema.tables[idx].id] =
+        (idx, data) => appData[effectiveSchema.tables[idx].id] =
             List<Map<String, dynamic>>.from(data),
       );
 
