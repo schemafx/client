@@ -13,7 +13,17 @@ class AppHeader extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: InkWell(
-          onTap: () => context.go('/'),
+          onTap: () {
+            final segments = GoRouter.of(context).state.uri.pathSegments;
+            if (segments.isEmpty || segments.length == 1) {
+              context.go('/');
+              return;
+            }
+
+            context.go(
+              '/${segments.sublist(0, segments.length - 1).join('/')}',
+            );
+          },
           child: Row(
             children: [
               ClipOval(
