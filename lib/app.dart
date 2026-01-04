@@ -9,6 +9,7 @@ import 'package:schemafx/ui/screens/editor_mode_screen.dart';
 import 'package:schemafx/ui/screens/login_screen.dart';
 import 'package:schemafx/ui/screens/runtime_mode_screen.dart';
 import 'package:schemafx/ui/screens/home_screen.dart';
+import 'package:schemafx/ui/widgets/header.dart';
 
 class SchemaFxApp extends ConsumerWidget {
   const SchemaFxApp({super.key});
@@ -48,7 +49,6 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     refreshListenable: _AuthRefreshNotifier(ref),
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/logout',
@@ -70,9 +70,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/start/:appId',
         builder: (context, state) => RuntimeModeScreen(),
       ),
-      GoRoute(
-        path: '/edit/:appId',
-        builder: (context, state) => EditorModeScreen(),
+      ShellRoute(
+        builder: (context, state, child) => AppHeader(child: child),
+        routes: [
+          GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+          GoRoute(
+            path: '/edit/:appId',
+            builder: (context, state) => EditorModeScreen(),
+          ),
+        ],
       ),
     ],
     redirect: (context, state) {
