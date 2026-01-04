@@ -60,7 +60,7 @@ class HomeScreen extends ConsumerWidget {
                 if (apps.isEmpty) {
                   return Center(
                     child: Text(
-                      'No applications found.',
+                      'Seems like there are no applications so far. Start by creating one!',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   );
