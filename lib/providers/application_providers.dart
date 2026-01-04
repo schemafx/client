@@ -140,8 +140,10 @@ class SelectedTableNotifier extends Notifier<String?> {
     ref.listen(schemaProvider, (previous, next) {
       if (!next.hasValue) return;
 
-      final schema = next.value!;
+      final schema = next.value;
       final currentState = state;
+
+      if (schema == null) return;
 
       if (currentState != null) {
         final tableExists = schema.tables.any((t) => t.id == currentState);
@@ -172,8 +174,10 @@ class SelectedRuntimeViewNotifier extends Notifier<String?> {
     ref.listen(schemaProvider, (previous, next) {
       if (!next.hasValue) return;
 
-      final schema = next.value!;
+      final schema = next.value;
       final currentState = state;
+
+      if (schema == null) return;
 
       if (currentState != null) {
         final viewExists = schema.views.any((v) => v.id == currentState);
@@ -205,10 +209,10 @@ class SelectedEditorTableNotifier extends Notifier<AppTable?> {
     ref.listen(schemaProvider, (previous, next) {
       if (!next.hasValue) return;
 
-      final schema = next.value!;
+      final schema = next.value;
       final currentTableId = state?.id;
 
-      if (currentTableId == null) return;
+      if (schema == null || currentTableId == null) return;
 
       try {
         state = schema.tables.firstWhere((t) => t.id == currentTableId);
@@ -279,11 +283,12 @@ class SelectedFieldNotifier extends Notifier<AppField?> {
     ref.listen(schemaProvider, (previous, next) {
       if (!next.hasValue) return;
 
-      final schema = next.value!;
+      final schema = next.value;
       final currentFieldId = state?.id;
       final currentTable = ref.read(selectedEditorTableProvider);
 
-      if (currentFieldId == null || currentTable == null) return;
+      if (schema == null || currentFieldId == null || currentTable == null)
+        return;
 
       try {
         state = schema.tables

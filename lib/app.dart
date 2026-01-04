@@ -81,6 +81,12 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
     refreshListenable: _AuthRefreshNotifier(ref),
+    redirect: (context, state) {
+      // Sync appIdProvider with the current route's :appId parameter.
+      final appId = state.pathParameters['appId'];
+      Future.microtask(() => ref.read(appIdProvider.notifier).setId(appId));
+      return null;
+    },
     routes: [
       GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       ShellRoute(
