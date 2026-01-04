@@ -8,7 +8,7 @@ import 'package:schemafx/ui/screens/auth_callback_screen.dart';
 import 'package:schemafx/ui/screens/editor_mode_screen.dart';
 import 'package:schemafx/ui/screens/login_screen.dart';
 import 'package:schemafx/ui/screens/runtime_mode_screen.dart';
-import 'package:schemafx/ui/screens/home_screen.dart';
+import 'package:schemafx/ui/screens/editor_home_screen.dart';
 import 'package:schemafx/ui/widgets/header.dart';
 
 class SchemaFxApp extends ConsumerWidget {
@@ -110,7 +110,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
             path: '/editor',
-            builder: (context, state) => const HomeScreen(),
+            builder: (context, state) => const EditorHomeScreen(),
           ),
           GoRoute(
             path: '/editor/:appId',

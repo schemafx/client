@@ -6,8 +6,8 @@ import 'package:schemafx/ui/widgets/dialogs.dart';
 
 /// A simple screen that shows a navigation rail on the left and
 /// a list of applications fetched from `/api/apps` on the right.
-class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+class EditorHomeScreen extends ConsumerWidget {
+  const EditorHomeScreen({super.key});
 
   static final _appsProvider = FutureProvider<List<Map<String, dynamic>>>((
     ref,
@@ -126,7 +126,9 @@ class HomeScreen extends ConsumerWidget {
 
                                 try {
                                   await ApiService().delete('apps/$id');
-                                  ref.invalidate(HomeScreen._appsProvider);
+                                  ref.invalidate(
+                                    EditorHomeScreen._appsProvider,
+                                  );
                                   if (!context.mounted) return;
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
