@@ -91,6 +91,53 @@ class HomeScreen extends ConsumerWidget {
                                 icon: const Icon(Icons.play_arrow_outlined),
                                 onPressed: () => context.go('/start/$id'),
                               ),
+                              IconButton(
+                                tooltip: 'Delete',
+                                icon: const Icon(Icons.delete_outline),
+                                onPressed: () async {
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Delete Application'),
+                                      content: Text(
+                                        'Are you sure you want to delete "$name"?',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(false),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(true),
+                                          child: const Text('Delete'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+
+                                  if (confirm != true) return;
+
+                                  try {
+                                    await ApiService().delete('apps/$id');
+                                    ref.invalidate(HomeScreen._appsProvider);
+                                    if (!context.mounted) return;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Application deleted'),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    if (!context.mounted) return;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text('Failed to delete: $e'),
+                                      ),
+                                    );
+                                  }
+                                },
+                              ),
                             ],
                           ),
                         ),
