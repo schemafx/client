@@ -49,6 +49,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     refreshListenable: _AuthRefreshNotifier(ref),
     routes: [
+      GoRoute(path: '/', redirect: (_, _) => '/editor'),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/logout',
@@ -73,9 +74,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ShellRoute(
         builder: (context, state, child) => AppHeader(child: child),
         routes: [
-          GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
           GoRoute(
-            path: '/edit/:appId',
+            path: '/editor',
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/editor/:appId',
             builder: (context, state) => EditorModeScreen(),
           ),
         ],

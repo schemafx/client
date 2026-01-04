@@ -43,7 +43,7 @@ class HomeScreen extends ConsumerWidget {
               onPressed: () async {
                 final id = await Dialogs.showAddTable(context, ref);
                 if (id != null && context.mounted) {
-                  context.go('/edit/$id');
+                  context.go('/editor/$id');
                 }
               },
               child: const Icon(Icons.add),
@@ -82,14 +82,14 @@ class HomeScreen extends ConsumerWidget {
                       child: ListTile(
                         title: Text(name),
                         contentPadding: EdgeInsets.all(8),
-                        onTap: () => context.go('/edit/$id'),
+                        onTap: () => context.go('/editor/$id'),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
                               tooltip: 'Edit',
                               icon: const Icon(Icons.edit_outlined),
-                              onPressed: () => context.go('/edit/$id'),
+                              onPressed: () => context.go('/editor/$id'),
                             ),
                             IconButton(
                               tooltip: 'Preview',
