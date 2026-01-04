@@ -6,6 +6,7 @@ import 'package:schemafx/providers/providers.dart';
 import 'package:schemafx/services/auth_service.dart';
 import 'package:schemafx/ui/screens/auth_callback_screen.dart';
 import 'package:schemafx/ui/screens/editor_mode_screen.dart';
+import 'package:schemafx/ui/screens/home_screen.dart';
 import 'package:schemafx/ui/screens/login_screen.dart';
 import 'package:schemafx/ui/screens/runtime_mode_screen.dart';
 import 'package:schemafx/ui/screens/editor_home_screen.dart';
@@ -82,7 +83,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: routeAuthenticate(ref),
     refreshListenable: _AuthRefreshNotifier(ref),
     routes: [
-      GoRoute(path: '/', redirect: (_, _) => '/editor'),
+      GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(
         path: '/logout',
