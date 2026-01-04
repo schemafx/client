@@ -35,14 +35,21 @@ class HomeScreen extends ConsumerWidget {
                 label: Text('Apps'),
               ),
             ],
-            leading: FloatingActionButton.small(
-              onPressed: () async {
-                final id = await Dialogs.showAddTable(context, ref);
-                if (id != null && context.mounted) {
-                  context.go('/edit/$id');
-                }
-              },
-              child: const Icon(Icons.add),
+            leading: Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: FloatingActionButton.small(
+                elevation: 0,
+                highlightElevation: 0,
+                focusElevation: 0,
+                hoverElevation: 0,
+                onPressed: () async {
+                  final id = await Dialogs.showAddTable(context, ref);
+                  if (id != null && context.mounted) {
+                    context.go('/edit/$id');
+                  }
+                },
+                child: const Icon(Icons.add),
+              ),
             ),
           ),
           const VerticalDivider(width: 1),
