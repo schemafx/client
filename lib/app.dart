@@ -80,30 +80,39 @@ GoRouterRedirect routeAuthenticate(Ref ref) =>
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/',
-    redirect: routeAuthenticate(ref),
     refreshListenable: _AuthRefreshNotifier(ref),
     routes: [
       GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-      GoRoute(
-        path: '/logout',
-        builder: (context, state) =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
-        redirect: (context, state) async {
-          await ref.read(authServiceProvider).logout();
-          return '/login';
-        },
-      ),
-      GoRoute(
-        path: '/auth/callback',
-        builder: (context, state) => AuthCallbackScreen(
-          code: state.uri.queryParameters['code'],
-          error: state.uri.queryParameters['error'],
-        ),
-      ),
-      GoRoute(
-        path: '/start/:appId',
-        builder: (context, state) => RuntimeModeScreen(),
+      ShellRoute(
+        redirect: routeAuthenticate(ref),
+        builder: (context, state, child) => child,
+        routes: [
+          GoRoute(
+            path: '/login',
+            builder: (context, state) => const LoginScreen(),
+          ),
+          GoRoute(
+            path: '/logout',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+            redirect: (context, state) async {
+              await ref.read(authServiceProvider).logout();
+              return '/login';
+            },
+          ),
+          GoRoute(
+            path: '/auth/callback',
+            builder: (context, state) => AuthCallbackScreen(
+              code: state.uri.queryParameters['code'],
+              error: state.uri.queryParameters['error'],
+            ),
+          ),
+          GoRoute(
+            path: '/start/:appId',
+            builder: (context, state) => RuntimeModeScreen(),
+          ),
+        ],
       ),
       ShellRoute(
         redirect: routeAuthenticate(ref),
