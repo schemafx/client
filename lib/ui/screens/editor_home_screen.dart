@@ -9,13 +9,12 @@ import 'package:schemafx/ui/widgets/dialogs.dart';
 class EditorHomeScreen extends ConsumerWidget {
   const EditorHomeScreen({super.key});
 
-  static final _appsProvider = FutureProvider<List<Map<String, dynamic>>>((
-    ref,
-  ) async {
-    final api = ApiService();
-    final data = await api.get('apps');
-    return List<Map<String, dynamic>>.from(data);
-  });
+  static final _appsProvider =
+      FutureProvider.autoDispose<List<Map<String, dynamic>>>((ref) async {
+        final api = ApiService();
+        final data = await api.get('apps');
+        return List<Map<String, dynamic>>.from(data);
+      });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
