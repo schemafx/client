@@ -44,48 +44,8 @@ class SchemaFxApp extends ConsumerWidget {
   }
 }
 
-final routerProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
-    initialLocation: '/',
-    refreshListenable: _AuthRefreshNotifier(ref),
-    routes: [
-      GoRoute(path: '/', redirect: (_, _) => '/editor'),
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-      GoRoute(
-        path: '/logout',
-        builder: (context, state) =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
-        redirect: (context, state) async {
-          await ref.read(authServiceProvider).logout();
-          return '/login';
-        },
-      ),
-      GoRoute(
-        path: '/auth/callback',
-        builder: (context, state) => AuthCallbackScreen(
-          code: state.uri.queryParameters['code'],
-          error: state.uri.queryParameters['error'],
-        ),
-      ),
-      GoRoute(
-        path: '/start/:appId',
-        builder: (context, state) => RuntimeModeScreen(),
-      ),
-      ShellRoute(
-        builder: (context, state, child) => AppHeader(child: child),
-        routes: [
-          GoRoute(
-            path: '/editor',
-            builder: (context, state) => const HomeScreen(),
-          ),
-          GoRoute(
-            path: '/editor/:appId',
-            builder: (context, state) => EditorModeScreen(),
-          ),
-        ],
-      ),
-    ],
-    redirect: (context, state) {
+GoRouterRedirect routeAuthenticate(Ref ref) =>
+    (BuildContext context, GoRouterState state) {
       final authState = ref.read(authProvider);
       final isAuthenticated =
           authState.asData?.value == AuthState.authenticated;
@@ -114,7 +74,51 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       return null;
-    },
+    };
+
+final routerProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    initialLocation: '/',
+    redirect: routeAuthenticate(ref),
+    refreshListenable: _AuthRefreshNotifier(ref),
+    routes: [
+      GoRoute(path: '/', redirect: (_, _) => '/editor'),
+      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
+      GoRoute(
+        path: '/logout',
+        builder: (context, state) =>
+            const Scaffold(body: Center(child: CircularProgressIndicator())),
+        redirect: (context, state) async {
+          await ref.read(authServiceProvider).logout();
+          return '/login';
+        },
+      ),
+      GoRoute(
+        path: '/auth/callback',
+        builder: (context, state) => AuthCallbackScreen(
+          code: state.uri.queryParameters['code'],
+          error: state.uri.queryParameters['error'],
+        ),
+      ),
+      GoRoute(
+        path: '/start/:appId',
+        builder: (context, state) => RuntimeModeScreen(),
+      ),
+      ShellRoute(
+        redirect: routeAuthenticate(ref),
+        builder: (context, state, child) => AppHeader(child: child),
+        routes: [
+          GoRoute(
+            path: '/editor',
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/editor/:appId',
+            builder: (context, state) => EditorModeScreen(),
+          ),
+        ],
+      ),
+    ],
   );
 });
 
