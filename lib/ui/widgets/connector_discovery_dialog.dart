@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/foundation.dart';
 import 'package:schemafx/providers/providers.dart';
 import 'package:schemafx/services/api_service.dart';
 
@@ -306,6 +307,16 @@ class _ConnectorDiscoveryDialogState
         final canExplore = capabilities.contains('Explore');
         final canConnect = capabilities.contains('Connect');
 
+        final schema = ref.watch(schemaProvider).value;
+        final itemPath = List<String>.from(item['path'] as List);
+        final alreadyAdded =
+            schema?.tables.any(
+              (t) =>
+                  t.connector == _selectedConnectorId &&
+                  listEquals(t.path, itemPath),
+            ) ==
+            true;
+
         return ListTile(
           enabled: !isUnavailable,
           leading: Icon(canExplore ? Icons.folder : Icons.table_chart),
@@ -329,8 +340,10 @@ class _ConnectorDiscoveryDialogState
                 ),
               if (canConnect)
                 ElevatedButton(
-                  onPressed: () => _connectTable(item),
-                  child: const Text('Connect'),
+                  onPressed: alreadyAdded ? null : () => _connectTable(item),
+                  child: alreadyAdded
+                      ? const Text('Added')
+                      : const Text('Connect'),
                 ),
             ],
           ),
