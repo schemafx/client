@@ -15,8 +15,8 @@ class SecureStorageServiceNotifier extends Notifier<SecureStorageService> {
 
 final secureStorageServiceProvider =
     NotifierProvider<SecureStorageServiceNotifier, SecureStorageService>(
-  SecureStorageServiceNotifier.new,
-);
+      SecureStorageServiceNotifier.new,
+    );
 
 /// A notifier that manages the application Id.
 class AppIdNotifier extends Notifier<String?> {
@@ -62,31 +62,29 @@ class SchemaNotifier extends BaseNotifier<AppSchema?> {
     dynamic element,
     String partOf, {
     String? parentId,
-  }) =>
-      _updateSchema(
-        _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
-          'action': 'update',
-          'element': parentId == null
-              ? {'partOf': partOf, 'element': element}
-              : {'partOf': partOf, 'element': element, 'parentId': parentId},
-        }),
-      );
+  }) => _updateSchema(
+    _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
+      'action': 'update',
+      'element': parentId == null
+          ? {'partOf': partOf, 'element': element}
+          : {'partOf': partOf, 'element': element, 'parentId': parentId},
+    }),
+  );
 
   Future<void> deleteElement(
     String elementId,
     String partOf, {
     String? parentId,
-  }) =>
-      _updateSchema(
-        _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
-          'action': 'delete',
-          'element': parentId == null
-              ? {'partOf': partOf, 'elementId': elementId}
-              : {'partOf': partOf, 'elementId': elementId, 'parentId': parentId},
-        }),
-      );
+  }) => _updateSchema(
+    _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
+      'action': 'delete',
+      'element': parentId == null
+          ? {'partOf': partOf, 'elementId': elementId}
+          : {'partOf': partOf, 'elementId': elementId, 'parentId': parentId},
+    }),
+  );
 
-  Future<void> addTableFromConnector(
+  Future<String?> addTableFromConnector(
     String connectorName,
     List<String> path, {
     String? connectionId,
@@ -103,10 +101,11 @@ class SchemaNotifier extends BaseNotifier<AppSchema?> {
 
     if (currentAppId == null) {
       ref.read(appIdProvider.notifier).setId(newSchema.id);
-      return;
+      return newSchema.id;
     }
 
-    return mutate(() async => newSchema, 'Table Added');
+    await mutate(() async => newSchema, 'Table Added');
+    return newSchema.id;
   }
 
   Future<void> reorderElement(
@@ -114,17 +113,16 @@ class SchemaNotifier extends BaseNotifier<AppSchema?> {
     int newIndex,
     String partOf, {
     String? parentId,
-  }) =>
-      _updateSchema(
-        _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
-          'action': 'reorder',
-          'oldIndex': oldIndex,
-          'newIndex': newIndex,
-          'element': parentId == null
-              ? {'partOf': partOf}
-              : {'partOf': partOf, 'parentId': parentId},
-        }),
-      );
+  }) => _updateSchema(
+    _apiService.post('apps/${ref.read(appIdProvider)}/schema', {
+      'action': 'reorder',
+      'oldIndex': oldIndex,
+      'newIndex': newIndex,
+      'element': parentId == null
+          ? {'partOf': partOf}
+          : {'partOf': partOf, 'parentId': parentId},
+    }),
+  );
 
   Future<void> _updateSchema(Future<dynamic> query) async {
     final newState = AppSchema.fromJson(await query);
@@ -142,8 +140,10 @@ class SelectedTableNotifier extends Notifier<String?> {
     ref.listen(schemaProvider, (previous, next) {
       if (!next.hasValue) return;
 
-      final schema = next.value!;
+      final schema = next.value;
       final currentState = state;
+
+      if (schema == null) return;
 
       if (currentState != null) {
         final tableExists = schema.tables.any((t) => t.id == currentState);
@@ -174,8 +174,10 @@ class SelectedRuntimeViewNotifier extends Notifier<String?> {
     ref.listen(schemaProvider, (previous, next) {
       if (!next.hasValue) return;
 
-      final schema = next.value!;
+      final schema = next.value;
       final currentState = state;
+
+      if (schema == null) return;
 
       if (currentState != null) {
         final viewExists = schema.views.any((v) => v.id == currentState);
@@ -197,8 +199,8 @@ class SelectedRuntimeViewNotifier extends Notifier<String?> {
 /// A provider that exposes the ID of the currently selected view in Runtime mode.
 final selectedRuntimeViewProvider =
     NotifierProvider<SelectedRuntimeViewNotifier, String?>(
-  SelectedRuntimeViewNotifier.new,
-);
+      SelectedRuntimeViewNotifier.new,
+    );
 
 /// A notifier that manages the currently selected table in Editor mode.
 class SelectedEditorTableNotifier extends Notifier<AppTable?> {
@@ -207,10 +209,10 @@ class SelectedEditorTableNotifier extends Notifier<AppTable?> {
     ref.listen(schemaProvider, (previous, next) {
       if (!next.hasValue) return;
 
-      final schema = next.value!;
+      final schema = next.value;
       final currentTableId = state?.id;
 
-      if (currentTableId == null) return;
+      if (schema == null || currentTableId == null) return;
 
       try {
         state = schema.tables.firstWhere((t) => t.id == currentTableId);
@@ -234,8 +236,8 @@ class SelectedEditorTableNotifier extends Notifier<AppTable?> {
 /// A provider that exposes the currently selected [AppTable] in Editor mode.
 final selectedEditorTableProvider =
     NotifierProvider<SelectedEditorTableNotifier, AppTable?>(
-  SelectedEditorTableNotifier.new,
-);
+      SelectedEditorTableNotifier.new,
+    );
 
 /// A notifier that manages the currently selected view in Editor mode.
 class SelectedEditorViewNotifier extends Notifier<AppView?> {
@@ -271,8 +273,8 @@ class SelectedEditorViewNotifier extends Notifier<AppView?> {
 /// A provider that exposes the currently selected [AppView] in Editor mode.
 final selectedEditorViewProvider =
     NotifierProvider<SelectedEditorViewNotifier, AppView?>(
-  SelectedEditorViewNotifier.new,
-);
+      SelectedEditorViewNotifier.new,
+    );
 
 /// A notifier that manages the currently selected field in the Table Editor.
 class SelectedFieldNotifier extends Notifier<AppField?> {
@@ -281,11 +283,13 @@ class SelectedFieldNotifier extends Notifier<AppField?> {
     ref.listen(schemaProvider, (previous, next) {
       if (!next.hasValue) return;
 
-      final schema = next.value!;
+      final schema = next.value;
       final currentFieldId = state?.id;
       final currentTable = ref.read(selectedEditorTableProvider);
 
-      if (currentFieldId == null || currentTable == null) return;
+      if (schema == null || currentFieldId == null || currentTable == null) {
+        return;
+      }
 
       try {
         state = schema.tables
@@ -309,8 +313,8 @@ class SelectedFieldNotifier extends Notifier<AppField?> {
 /// A provider that exposes the currently selected [AppField] in the Table Editor.
 final selectedFieldProvider =
     NotifierProvider<SelectedFieldNotifier, AppField?>(
-  SelectedFieldNotifier.new,
-);
+      SelectedFieldNotifier.new,
+    );
 
 /// A notifier to manage the auth completer for mobile deep linking.
 class AuthCompleterNotifier extends Notifier<Completer<AuthResult>?> {
@@ -330,5 +334,5 @@ class AuthCompleterNotifier extends Notifier<Completer<AuthResult>?> {
 /// resumed from a deep link on mobile.
 final authCompleterProvider =
     NotifierProvider<AuthCompleterNotifier, Completer<AuthResult>?>(
-  AuthCompleterNotifier.new,
-);
+      AuthCompleterNotifier.new,
+    );

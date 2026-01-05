@@ -8,8 +8,8 @@ import 'package:schemafx/ui/widgets/connector_discovery_dialog.dart';
 /// A utility class for showing dialogs in the editor sidebar.
 class Dialogs {
   /// Shows a dialog for adding a new table.
-  static Future<void> showAddTable(BuildContext context, WidgetRef ref) =>
-      showDialog(
+  static Future<String?> showAddTable(BuildContext context, WidgetRef ref) =>
+      showDialog<String?>(
         context: context,
         builder: (BuildContext context) => const ConnectorDiscoveryDialog(),
       );

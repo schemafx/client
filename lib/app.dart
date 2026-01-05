@@ -6,8 +6,11 @@ import 'package:schemafx/providers/providers.dart';
 import 'package:schemafx/services/auth_service.dart';
 import 'package:schemafx/ui/screens/auth_callback_screen.dart';
 import 'package:schemafx/ui/screens/editor_mode_screen.dart';
+import 'package:schemafx/ui/screens/home_screen.dart';
 import 'package:schemafx/ui/screens/login_screen.dart';
 import 'package:schemafx/ui/screens/runtime_mode_screen.dart';
+import 'package:schemafx/ui/screens/editor_home_screen.dart';
+import 'package:schemafx/ui/widgets/header.dart';
 
 class SchemaFxApp extends ConsumerWidget {
   const SchemaFxApp({super.key});
@@ -42,39 +45,8 @@ class SchemaFxApp extends ConsumerWidget {
   }
 }
 
-final routerProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
-    initialLocation: '/',
-    refreshListenable: _AuthRefreshNotifier(ref),
-    routes: [
-      GoRoute(path: '/', redirect: (_, _) => '/start/123'),
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-      GoRoute(
-        path: '/logout',
-        builder: (context, state) =>
-            const Scaffold(body: Center(child: CircularProgressIndicator())),
-        redirect: (context, state) async {
-          await ref.read(authServiceProvider).logout();
-          return '/login';
-        },
-      ),
-      GoRoute(
-        path: '/auth/callback',
-        builder: (context, state) => AuthCallbackScreen(
-          code: state.uri.queryParameters['code'],
-          error: state.uri.queryParameters['error'],
-        ),
-      ),
-      GoRoute(
-        path: '/start/:appId',
-        builder: (context, state) => RuntimeModeScreen(),
-      ),
-      GoRoute(
-        path: '/edit/:appId',
-        builder: (context, state) => EditorModeScreen(),
-      ),
-    ],
-    redirect: (context, state) {
+GoRouterRedirect routeAuthenticate(Ref ref) =>
+    (BuildContext context, GoRouterState state) {
       final authState = ref.read(authProvider);
       final isAuthenticated =
           authState.asData?.value == AuthState.authenticated;
@@ -103,7 +75,66 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
 
       return null;
+    };
+
+final routerProvider = Provider<GoRouter>((ref) {
+  return GoRouter(
+    initialLocation: '/',
+    refreshListenable: _AuthRefreshNotifier(ref),
+    redirect: (context, state) {
+      // Sync appIdProvider with the current route's :appId parameter.
+      final appId = state.pathParameters['appId'];
+      Future.microtask(() => ref.read(appIdProvider.notifier).setId(appId));
+      return null;
     },
+    routes: [
+      GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+      ShellRoute(
+        redirect: routeAuthenticate(ref),
+        builder: (context, state, child) => child,
+        routes: [
+          GoRoute(
+            path: '/login',
+            builder: (context, state) => const LoginScreen(),
+          ),
+          GoRoute(
+            path: '/logout',
+            builder: (context, state) => const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            ),
+            redirect: (context, state) async {
+              await ref.read(authServiceProvider).logout();
+              return '/login';
+            },
+          ),
+          GoRoute(
+            path: '/auth/callback',
+            builder: (context, state) => AuthCallbackScreen(
+              code: state.uri.queryParameters['code'],
+              error: state.uri.queryParameters['error'],
+            ),
+          ),
+          GoRoute(
+            path: '/start/:appId',
+            builder: (context, state) => RuntimeModeScreen(),
+          ),
+        ],
+      ),
+      ShellRoute(
+        redirect: routeAuthenticate(ref),
+        builder: (context, state, child) => AppHeader(child: child),
+        routes: [
+          GoRoute(
+            path: '/editor',
+            builder: (context, state) => const EditorHomeScreen(),
+          ),
+          GoRoute(
+            path: '/editor/:appId',
+            builder: (context, state) => EditorModeScreen(),
+          ),
+        ],
+      ),
+    ],
   );
 });
 

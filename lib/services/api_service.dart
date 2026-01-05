@@ -78,6 +78,20 @@ class ApiService {
     ),
   );
 
+  Future<dynamic> delete(String path, {Object? body}) async {
+    final uri = _baseUrlSchema == 'http'
+        ? Uri.http(_baseUrl, '$_baseUrlPath/$path')
+        : Uri.https(_baseUrl, '$_baseUrlPath/$path');
+
+    return _query(
+      _client.delete(
+        uri,
+        headers: await _getHeaders(),
+        body: jsonEncode(body ?? {}),
+      ),
+    );
+  }
+
   Future<dynamic> get(String path, {Map<String, String>? query}) async =>
       _query(
         _client.get(
