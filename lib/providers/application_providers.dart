@@ -287,8 +287,9 @@ class SelectedFieldNotifier extends Notifier<AppField?> {
       final currentFieldId = state?.id;
       final currentTable = ref.read(selectedEditorTableProvider);
 
-      if (schema == null || currentFieldId == null || currentTable == null)
+      if (schema == null || currentFieldId == null || currentTable == null) {
         return;
+      }
 
       try {
         state = schema.tables
