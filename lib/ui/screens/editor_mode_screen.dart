@@ -46,23 +46,21 @@ class EditorModeScreen extends ConsumerWidget {
       length: 3,
       child: Column(
         children: [
-          TabBar(
-            tabs: const [
-              Tab(text: 'Design'),
-              Tab(text: 'Preview'),
-              Tab(text: 'Properties'),
-            ],
-            labelPadding: const EdgeInsets.symmetric(horizontal: 8.0),
-            isScrollable: true,
-          ),
           Expanded(
             child: TabBarView(
               children: [
                 Container(color: cardColor, child: const DesignScreen()),
-                Container(color: cardColor, child: const RuntimeModeScreen()),
                 Container(color: cardColor, child: const PropertiesScreen()),
+                Container(color: cardColor, child: const RuntimeModeScreen()),
               ],
             ),
+          ),
+          TabBar(
+            tabs: const [
+              Tab(icon: Icon(Icons.design_services_outlined), text: 'Design'),
+              Tab(icon: Icon(Icons.build_outlined), text: 'Properties'),
+              Tab(icon: Icon(Icons.play_circle), text: 'Preview'),
+            ],
           ),
         ],
       ),
@@ -75,17 +73,6 @@ class EditorModeScreen extends ConsumerWidget {
       length: 3,
       child: Column(
         children: [
-          Container(
-            color: cardColor,
-            child: const TabBar(
-              tabs: [
-                Tab(text: 'Design'),
-                Tab(text: 'Preview'),
-                Tab(text: 'Properties'),
-              ],
-              isScrollable: true,
-            ),
-          ),
           Expanded(
             child: TabBarView(
               children: [
@@ -94,6 +81,13 @@ class EditorModeScreen extends ConsumerWidget {
                 Container(color: cardColor, child: const PropertiesScreen()),
               ],
             ),
+          ),
+          TabBar(
+            tabs: const [
+              Tab(icon: Icon(Icons.palette), text: 'Design'),
+              Tab(icon: Icon(Icons.play_circle), text: 'Preview'),
+              Tab(icon: Icon(Icons.settings), text: 'Properties'),
+            ],
           ),
         ],
       ),
