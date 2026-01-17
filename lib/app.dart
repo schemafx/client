@@ -33,12 +33,57 @@ class SchemaFxApp extends ConsumerWidget {
       });
     });
 
+    const Color schemaNavy = Color(0xFF0F172A);
+    const Color fxLime = Color(0xFF4ADE80);
+
     return MaterialApp.router(
       title: 'SchemaFX',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6750A4)),
         useMaterial3: true,
+        colorSchemeSeed: schemaNavy,
+        brightness: Brightness.light,
+
+        // Customizing the Scaffold (the "Canvas")
+        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+
+        // Headlines: "Build Without Boundaries"
+        textTheme: const TextTheme(
+          headlineLarge: TextStyle(
+            color: schemaNavy,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.5,
+          ),
+          bodyMedium: TextStyle(
+            color: Color(0xFF475569),
+          ), // Slate for secondary text
+        ),
+
+        // Primary Button (The "FX" Action)
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: fxLime,
+            foregroundColor: schemaNavy, // Navy text on lime is high-contrast
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+
+        // Input Decoration (The "Schema" Structure)
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+          ),
+        ),
       ),
       routerConfig: ref.watch(routerProvider),
     );
