@@ -212,12 +212,23 @@ class SelectedEditorTableNotifier extends Notifier<AppTable?> {
       final schema = next.value;
       final currentTableId = state?.id;
 
-      if (schema == null || currentTableId == null) return;
+      if (schema == null) {
+        return;
+      }
 
-      try {
-        state = schema.tables.firstWhere((t) => t.id == currentTableId);
-      } catch (e) {
-        state = null;
+      // If no table is currently selected and schema has tables, select the first one
+      if (currentTableId == null && schema.tables.isNotEmpty) {
+        state = schema.tables.first;
+        return;
+      }
+
+      // If a table was selected, try to keep it; if it's deleted, set to null
+      if (currentTableId != null) {
+        try {
+          state = schema.tables.firstWhere((t) => t.id == currentTableId);
+        } catch (e) {
+          state = null;
+        }
       }
     });
 
@@ -249,12 +260,23 @@ class SelectedEditorViewNotifier extends Notifier<AppView?> {
       final schema = next.value;
       final currentViewId = state?.id;
 
-      if (schema == null || currentViewId == null) return;
+      if (schema == null) {
+        return;
+      }
 
-      try {
-        state = schema.views.firstWhere((v) => v.id == currentViewId);
-      } catch (e) {
-        state = null;
+      // If no view is currently selected and schema has views, select the first one
+      if (currentViewId == null && schema.views.isNotEmpty) {
+        state = schema.views.first;
+        return;
+      }
+
+      // If a view was selected, try to keep it; if it's deleted, set to null
+      if (currentViewId != null) {
+        try {
+          state = schema.views.firstWhere((v) => v.id == currentViewId);
+        } catch (e) {
+          state = null;
+        }
       }
     });
 

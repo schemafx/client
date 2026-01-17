@@ -62,6 +62,13 @@ class _DataScreenSource extends ConsumerWidget {
       (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
     );
 
+    // Select the first table if none is selected and tables are available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (selectedTable == null && tablesList.isNotEmpty) {
+        ref.read(selectedEditorTableProvider.notifier).select(tablesList.first);
+      }
+    });
+
     return Column(
       children: [
         AppBar(
