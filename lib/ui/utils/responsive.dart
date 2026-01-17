@@ -32,9 +32,9 @@ class ResponsiveUtils {
       return const EdgeInsets.all(8.0);
     } else if (isTablet(width)) {
       return const EdgeInsets.all(12.0);
-    } else {
-      return const EdgeInsets.all(16.0);
     }
+
+    return const EdgeInsets.all(16.0);
   }
 
   /// Get responsive icon size based on screen width
@@ -71,9 +71,7 @@ class ResponsiveUtils {
 
   /// Get minimum button size for touch targets (48x48 for mobile, 40x40 for desktop)
   static Size getMinimumTouchTarget(double width) {
-    if (isMobile(width)) {
-      return const Size(48, 48);
-    }
+    if (isMobile(width)) return const Size(48, 48);
     return const Size(40, 40);
   }
 
@@ -81,11 +79,9 @@ class ResponsiveUtils {
   static Widget buildResponsive(
     BuildContext context,
     Widget Function(BuildContext, double) builder,
-  ) {
-    return LayoutBuilder(
-      builder: (context, constraints) => builder(context, constraints.maxWidth),
-    );
-  }
+  ) => LayoutBuilder(
+    builder: (context, constraints) => builder(context, constraints.maxWidth),
+  );
 }
 
 /// Shorthand extension for responsive utilities

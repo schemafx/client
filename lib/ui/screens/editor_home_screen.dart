@@ -83,9 +83,7 @@ class EditorHomeScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           final id = await Dialogs.showAddTable(context, ref);
-          if (id != null && context.mounted) {
-            context.go('/editor/$id');
-          }
+          if (id != null && context.mounted) context.go('/editor/$id');
         },
         child: const Icon(Icons.add),
       ),
