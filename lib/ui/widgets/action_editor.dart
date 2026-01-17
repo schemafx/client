@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/providers/providers.dart';
+import 'package:schemafx/ui/utils/responsive.dart';
 
 class ActionListSideSheet extends ConsumerStatefulWidget {
   const ActionListSideSheet({super.key});
@@ -53,81 +54,138 @@ class _ActionListSideSheetState extends ConsumerState<ActionListSideSheet> {
       }
     }
 
-    return Column(
-      children: [
-        AppBar(
-          title: const Text('Actions'),
-          leading: IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.of(context).pop(),
+    return ResponsiveUtils.buildResponsive(context, (context, width) {
+      final isMobile = ResponsiveUtils.isMobile(width);
+
+      return Column(
+        children: [
+          AppBar(
+            title: const Text('Actions'),
+            leading: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
           ),
-        ),
-        Expanded(
-          child: ListView(
-            children: [
-              ...currentTable.actions.map(
-                (action) => ListTile(
-                  title: Text(action.name),
-                  subtitle: Text(action.type.name),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        onPressed: () {
-                          setState(() {
-                            _selectedActionId = action.id;
-                          });
-                        },
+          Expanded(
+            child: ListView(
+              children: [
+                ...currentTable.actions.map(
+                  (action) => Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 8.0 : 0,
+                      vertical: 4.0,
+                    ),
+                    child: ListTile(
+                      title: Text(action.name),
+                      subtitle: Text(action.type.name),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 8.0 : 16.0,
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          ref
-                              .read(schemaProvider.notifier)
-                              .deleteElement(
-                                action.id,
-                                'actions',
-                                parentId: currentTable.id,
-                              );
-                        },
-                      ),
-                    ],
+                      trailing: isMobile
+                          ? PopupMenuButton<String>(
+                              itemBuilder: (BuildContext context) => [
+                                PopupMenuItem<String>(
+                                  value: 'edit',
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.edit),
+                                      const SizedBox(width: 8),
+                                      const Text('Edit'),
+                                    ],
+                                  ),
+                                ),
+                                PopupMenuItem<String>(
+                                  value: 'delete',
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.delete),
+                                      const SizedBox(width: 8),
+                                      const Text('Delete'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                              onSelected: (String value) {
+                                if (value == 'edit') {
+                                  setState(() {
+                                    _selectedActionId = action.id;
+                                  });
+                                } else if (value == 'delete') {
+                                  ref
+                                      .read(schemaProvider.notifier)
+                                      .deleteElement(
+                                        action.id,
+                                        'actions',
+                                        parentId: currentTable.id,
+                                      );
+                                }
+                              },
+                            )
+                          : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    setState(() {
+                                      _selectedActionId = action.id;
+                                    });
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () {
+                                    ref
+                                        .read(schemaProvider.notifier)
+                                        .deleteElement(
+                                          action.id,
+                                          'actions',
+                                          parentId: currentTable.id,
+                                        );
+                                  },
+                                ),
+                              ],
+                            ),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Action'),
-                  onPressed: () async {
-                    final newAction = AppAction(
-                      id: 'action_${DateTime.now().millisecondsSinceEpoch}',
-                      name: 'New Action',
-                      type: AppActionType.add,
-                    );
-                    await ref
-                        .read(schemaProvider.notifier)
-                        .addElement(
-                          newAction,
-                          'actions',
-                          parentId: currentTable.id,
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: SizedBox(
+                    width: isMobile ? double.infinity : null,
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.add),
+                      label: const Text('Add Action'),
+                      onPressed: () async {
+                        final newAction = AppAction(
+                          id: 'action_${DateTime.now().millisecondsSinceEpoch}',
+                          name: 'New Action',
+                          type: AppActionType.add,
                         );
+                        await ref
+                            .read(schemaProvider.notifier)
+                            .addElement(
+                              newAction,
+                              'actions',
+                              parentId: currentTable.id,
+                            );
 
-                    if (mounted) {
-                      setState(() {
-                        _selectedActionId = newAction.id;
-                      });
-                    }
-                  },
+                        if (mounted) {
+                          setState(() {
+                            _selectedActionId = newAction.id;
+                          });
+                        }
+                      },
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }
 
@@ -151,60 +209,74 @@ class _ActionEditor extends StatefulWidget {
 class _ActionEditorState extends State<_ActionEditor> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: widget.onBack,
+    return ResponsiveUtils.buildResponsive(context, (context, width) {
+      final isMobile = ResponsiveUtils.isMobile(width);
+      final padding = ResponsiveUtils.responsivePadding(width);
+
+      return Column(
+        children: [
+          AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: widget.onBack,
+            ),
+            title: Text('Edit ${widget.action.name}'),
           ),
-          title: Text('Edit ${widget.action.name}'),
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: [
-              TextFormField(
-                initialValue: widget.action.name,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: padding,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: isMobile ? double.infinity : 600,
                 ),
-                onChanged: (value) {
-                  widget.onUpdate(widget.action.copyWith(name: value));
-                },
+                child: Column(
+                  children: [
+                    TextFormField(
+                      initialValue: widget.action.name,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        widget.onUpdate(widget.action.copyWith(name: value));
+                      },
+                    ),
+                    SizedBox(height: padding.top),
+                    DropdownButtonFormField<AppActionType>(
+                      initialValue: widget.action.type,
+                      decoration: const InputDecoration(
+                        labelText: 'Type',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: AppActionType.values
+                          .map(
+                            (type) => DropdownMenuItem(
+                              value: type,
+                              child: Text(type.name),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        if (value != null) {
+                          widget.onUpdate(widget.action.copyWith(type: value));
+                        }
+                      },
+                    ),
+                    SizedBox(height: padding.top * 1.5),
+                    if (widget.action.type == AppActionType.process)
+                      _ProcessConfigEditor(
+                        action: widget.action,
+                        allActions: widget.allActions,
+                        onUpdate: widget.onUpdate,
+                      ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<AppActionType>(
-                initialValue: widget.action.type,
-                decoration: const InputDecoration(
-                  labelText: 'Type',
-                  border: OutlineInputBorder(),
-                ),
-                items: AppActionType.values
-                    .map(
-                      (type) =>
-                          DropdownMenuItem(value: type, child: Text(type.name)),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    widget.onUpdate(widget.action.copyWith(type: value));
-                  }
-                },
-              ),
-              const SizedBox(height: 24),
-              if (widget.action.type == AppActionType.process)
-                _ProcessConfigEditor(
-                  action: widget.action,
-                  allActions: widget.allActions,
-                  onUpdate: widget.onUpdate,
-                ),
-            ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    });
   }
 }
 
@@ -280,7 +352,7 @@ class _ProcessConfigEditorState extends State<_ProcessConfigEditor> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('Process Steps', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         if (_items.length < 2)
           Column(
             children: [
@@ -352,6 +424,8 @@ class _ProcessConfigEditorState extends State<_ProcessConfigEditor> {
             .name,
       ),
       leading: CircleAvatar(child: Text('${index + 1}')),
+      minLeadingWidth: 40,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 8.0),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

@@ -15,6 +15,15 @@ class DesignScreen extends ConsumerWidget {
     final searchQuery = ref.watch(designPagesSearchQueryProvider).toLowerCase();
     final selectedView = ref.watch(selectedEditorViewProvider);
 
+    // Select the first view if none is selected and views are available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (selectedView == null && schema.views.isNotEmpty) {
+        ref
+            .read(selectedEditorViewProvider.notifier)
+            .select(schema.views.first);
+      }
+    });
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
       child: Scaffold(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:schemafx/models/models.dart';
 import 'package:schemafx/providers/providers.dart';
+import 'package:schemafx/ui/utils/responsive.dart';
 
 /// A smart field that renders the appropriate input widget based on the field type.
 /// It handles recursive structures for JSON and List fields.
@@ -232,13 +233,17 @@ class _SmartFieldState extends ConsumerState<SmartField> {
   Widget _buildDropdownField(FormFieldState<dynamic> fieldState) {
     return DropdownButtonFormField<String>(
       initialValue: fieldState.value?.toString(),
+      isExpanded: true,
       decoration: InputDecoration(
         labelText: widget.field.name,
         border: const OutlineInputBorder(),
       ),
       items: widget.field.options
           ?.map(
-            (option) => DropdownMenuItem(value: option, child: Text(option)),
+            (option) => DropdownMenuItem(
+              value: option,
+              child: Text(option, overflow: TextOverflow.ellipsis),
+            ),
           )
           .toList(),
       onChanged: widget.readOnly
@@ -276,6 +281,7 @@ class _SmartFieldState extends ConsumerState<SmartField> {
 
             return DropdownButtonFormField<String>(
               initialValue: isValidValue ? initialValue : null,
+              isExpanded: true,
               decoration: InputDecoration(
                 labelText: widget.field.name,
                 border: const OutlineInputBorder(),
@@ -287,6 +293,7 @@ class _SmartFieldState extends ConsumerState<SmartField> {
                       child: Text(
                         record[displayField?.id ?? '_id']?.toString() ??
                             'Untitled',
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   )
@@ -363,68 +370,124 @@ class _SmartFieldState extends ConsumerState<SmartField> {
       return const Text("No item schema defined for this list.");
     }
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  widget.field.name,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                if (!widget.readOnly)
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {
-                      // Add a null/default item. The validation will handle it if required.
-                      currentList.add(null);
-                      fieldState.didChange(currentList);
-                      widget.onChanged(currentList);
-                    },
+    return ResponsiveUtils.buildResponsive(context, (context, width) {
+      final isMobile = ResponsiveUtils.isMobile(width);
+
+      return Card(
+        margin: const EdgeInsets.only(bottom: 12),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.field.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
                   ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            if (currentList.isEmpty) const Text("No items."),
-            for (int i = 0; i < currentList.length; i++)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: SmartField(
-                        key: ValueKey('${childField.id}_$i'),
-                        field: childField,
-                        initialValue: currentList[i],
-                        readOnly: widget.readOnly,
-                        onChanged: (newValue) {
-                          currentList[i] = newValue;
+                  if (!widget.readOnly)
+                    SizedBox(
+                      width: 48,
+                      height: 48,
+                      child: IconButton(
+                        icon: const Icon(Icons.add),
+                        tooltip: 'Add item',
+                        onPressed: () {
+                          // Add a null/default item. The validation will handle it if required.
+                          currentList.add(null);
                           fieldState.didChange(currentList);
                           widget.onChanged(currentList);
                         },
                       ),
                     ),
-                    if (!widget.readOnly)
-                      IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          currentList.removeAt(i);
-                          fieldState.didChange(currentList);
-                          widget.onChanged(currentList);
-                        },
-                      ),
-                  ],
-                ),
+                ],
               ),
-          ],
+              const SizedBox(height: 8),
+              if (currentList.isEmpty) const Text("No items."),
+              for (int i = 0; i < currentList.length; i++)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: isMobile
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Item ${i + 1}',
+                                  style: Theme.of(context).textTheme.labelSmall,
+                                ),
+                                if (!widget.readOnly)
+                                  SizedBox(
+                                    width: 48,
+                                    height: 48,
+                                    child: IconButton(
+                                      icon: const Icon(Icons.delete),
+                                      tooltip: 'Delete item',
+                                      onPressed: () {
+                                        currentList.removeAt(i);
+                                        fieldState.didChange(currentList);
+                                        widget.onChanged(currentList);
+                                      },
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            SmartField(
+                              key: ValueKey('${childField.id}_$i'),
+                              field: childField,
+                              initialValue: currentList[i],
+                              readOnly: widget.readOnly,
+                              onChanged: (newValue) {
+                                currentList[i] = newValue;
+                                fieldState.didChange(currentList);
+                                widget.onChanged(currentList);
+                              },
+                            ),
+                          ],
+                        )
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: SmartField(
+                                key: ValueKey('${childField.id}_$i'),
+                                field: childField,
+                                initialValue: currentList[i],
+                                readOnly: widget.readOnly,
+                                onChanged: (newValue) {
+                                  currentList[i] = newValue;
+                                  fieldState.didChange(currentList);
+                                  widget.onChanged(currentList);
+                                },
+                              ),
+                            ),
+                            if (!widget.readOnly)
+                              SizedBox(
+                                width: 48,
+                                height: 48,
+                                child: IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  tooltip: 'Delete item',
+                                  onPressed: () {
+                                    currentList.removeAt(i);
+                                    fieldState.didChange(currentList);
+                                    widget.onChanged(currentList);
+                                  },
+                                ),
+                              ),
+                          ],
+                        ),
+                ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
