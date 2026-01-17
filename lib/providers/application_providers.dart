@@ -212,23 +212,15 @@ class SelectedEditorTableNotifier extends Notifier<AppTable?> {
       final schema = next.value;
       final currentTableId = state?.id;
 
-      if (schema == null) {
+      if (schema == null || currentTableId == null) {
         return;
       }
 
-      // If no table is currently selected and schema has tables, select the first one
-      if (currentTableId == null && schema.tables.isNotEmpty) {
-        state = schema.tables.first;
-        return;
-      }
-
-      // If a table was selected, try to keep it; if it's deleted, set to null
-      if (currentTableId != null) {
-        try {
-          state = schema.tables.firstWhere((t) => t.id == currentTableId);
-        } catch (e) {
-          state = null;
-        }
+      // If a table was selected, try to keep it updated; if it's deleted, set to null
+      try {
+        state = schema.tables.firstWhere((t) => t.id == currentTableId);
+      } catch (e) {
+        state = null;
       }
     });
 
@@ -238,9 +230,6 @@ class SelectedEditorTableNotifier extends Notifier<AppTable?> {
   /// Selects the given [table].
   void select(AppTable? table) {
     state = table;
-
-    if (table == null) return;
-    ref.read(selectedEditorViewProvider.notifier).select(null);
   }
 }
 
@@ -264,12 +253,6 @@ class SelectedEditorViewNotifier extends Notifier<AppView?> {
         return;
       }
 
-      // If no view is currently selected and schema has views, select the first one
-      if (currentViewId == null && schema.views.isNotEmpty) {
-        state = schema.views.first;
-        return;
-      }
-
       // If a view was selected, try to keep it; if it's deleted, set to null
       if (currentViewId != null) {
         try {
@@ -286,9 +269,6 @@ class SelectedEditorViewNotifier extends Notifier<AppView?> {
   /// Selects the given [view].
   void select(AppView? view) {
     state = view;
-
-    if (view == null) return;
-    ref.read(selectedEditorTableProvider.notifier).select(null);
   }
 }
 
