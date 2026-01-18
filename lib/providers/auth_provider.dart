@@ -89,5 +89,11 @@ final authConnectorsProvider = FutureProvider<List<Map<String, dynamic>>>((
 ) async {
   final apiService = ApiService();
   final connectors = await apiService.getConnectors();
-  return connectors.where((c) => c['requiresConnection'] == true).toList();
+
+  return connectors
+      .where(
+        (c) =>
+            c['requiresConnection'] == true && c['connectionOptions'] == null,
+      )
+      .toList();
 });

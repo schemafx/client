@@ -134,4 +134,15 @@ class ApiService {
 
   String getAuthUrl(String connectorName) =>
       '$_baseUrlSchema://$_baseUrl$_baseUrlPath/connectors/$connectorName/auth';
+
+  Future<String> submitConnectionOptions(
+    String connectorId,
+    Map<String, dynamic> options,
+  ) async {
+    final response = await post(
+      'connectors/$connectorId/auth/callback',
+      options,
+    );
+    return response['connectionId'] as String;
+  }
 }
