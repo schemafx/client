@@ -25,6 +25,11 @@ class _ConnectorDiscoveryDialogState
   String? _selectedConnectorName;
   String? _selectedConnectionId;
 
+  // Connection options form state
+  List<Map<String, dynamic>>? _connectionOptions;
+  Map<String, dynamic> _connectionOptionsValues = {};
+  bool _submittingOptions = false;
+
   List<String> _currentPath = [];
   List<Map<String, dynamic>>? _discoveryResults;
 
@@ -153,6 +158,16 @@ class _ConnectorDiscoveryDialogState
       final prevPath = _pathHistory.removeLast();
       final prevNames = _nameHistory.removeLast();
       _queryConnector(path: prevPath, names: prevNames);
+    } else if (_connectionOptions != null) {
+      // Go back from discovery to connection options form
+      setState(() {
+        _discoveryResults = null;
+        _currentPath = [];
+        _pathHistory = [];
+        _nameHistory = [];
+        _currentPathNames = [];
+        _selectedConnectionId = null;
+      });
     } else {
       setState(() {
         _selectedConnectorId = null;
@@ -163,18 +178,92 @@ class _ConnectorDiscoveryDialogState
         _pathHistory = [];
         _nameHistory = [];
         _currentPathNames = [];
+        _connectionOptions = null;
+        _connectionOptionsValues = {};
       });
+    }
+  }
+
+  void _showConnectionOptionsForm(
+    String connectorId,
+    String name,
+    List<Map<String, dynamic>> options,
+  ) {
+    setState(() {
+      _selectedConnectorId = connectorId;
+      _selectedConnectorName = name;
+      _connectionOptions = options;
+      _connectionOptionsValues = {};
+      // Initialize default values
+      for (final option in options) {
+        final id = option['id'] as String;
+        final type = option['type'] as String;
+        if (type == 'boolean') {
+          _connectionOptionsValues[id] = false;
+        }
+      }
+    });
+  }
+
+  Future<void> _submitConnectionOptions() async {
+    if (_selectedConnectorId == null || _connectionOptions == null) return;
+
+    // Validate required fields
+    for (final option in _connectionOptions!) {
+      final id = option['id'] as String;
+      final isOptional = option['optional'] as bool? ?? false;
+      final value = _connectionOptionsValues[id];
+
+      if (!isOptional &&
+          (value == null || (value is String && value.isEmpty))) {
+        setState(() {
+          _error = 'Please fill in all required fields';
+        });
+        return;
+      }
+    }
+
+    setState(() {
+      _submittingOptions = true;
+      _error = null;
+    });
+
+    try {
+      final connectionId = await _apiService.submitConnectionOptions(
+        _selectedConnectorId!,
+        _connectionOptionsValues,
+      );
+
+      if (mounted) {
+        setState(() {
+          _selectedConnectionId = connectionId;
+          _submittingOptions = false;
+        });
+        await _queryConnector();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = 'Failed to connect: $e';
+          _submittingOptions = false;
+        });
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    String title;
+    if (_selectedConnectorId == null) {
+      title = 'Select Connector';
+    } else if (_connectionOptions != null && _selectedConnectionId == null) {
+      title = 'Connect to $_selectedConnectorName';
+    } else {
+      title = 'Browse $_selectedConnectorName';
+    }
+
     return AlertDialog(
-      title: Text(
-        _selectedConnectorId == null
-            ? 'Select Connector'
-            : 'Browse $_selectedConnectorName',
-      ),
+      title: Text(title),
       content: SizedBox(
         width: 600,
         height: 400,
@@ -240,7 +329,102 @@ class _ConnectorDiscoveryDialogState
     }
 
     if (_selectedConnectorId == null) return _buildConnectorList();
+
+    // Show connection options form if options are present and not yet connected
+    if (_connectionOptions != null && _selectedConnectionId == null) {
+      return _buildConnectionOptionsForm();
+    }
+
     return _buildDiscoveryList();
+  }
+
+  Widget _buildConnectionOptionsForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Expanded(
+          child: ListView.builder(
+            itemCount: _connectionOptions!.length,
+            itemBuilder: (context, index) {
+              final option = _connectionOptions![index];
+              final id = option['id'] as String;
+              final name = option['name'] as String? ?? id;
+              final type = option['type'] as String;
+              final isOptional = option['optional'] as bool? ?? false;
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildOptionField(id, name, type, isOptional),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+        FilledButton(
+          onPressed: _submittingOptions ? null : _submitConnectionOptions,
+          child: _submittingOptions
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Text('Connect'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOptionField(
+    String id,
+    String name,
+    String type,
+    bool isOptional,
+  ) {
+    final label = isOptional ? name : '$name *';
+
+    switch (type) {
+      case 'boolean':
+        return SwitchListTile(
+          title: Text(label),
+          value: _connectionOptionsValues[id] as bool? ?? false,
+          onChanged: (value) {
+            setState(() {
+              _connectionOptionsValues[id] = value;
+            });
+          },
+        );
+      case 'number':
+        return TextField(
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          ),
+          enableSuggestions: false,
+          keyboardType: TextInputType.number,
+          onChanged: (value) {
+            setState(() {
+              _connectionOptionsValues[id] = num.tryParse(value);
+            });
+          },
+        );
+      case 'password':
+      case 'text':
+      default:
+        return TextField(
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          ),
+          enableSuggestions: false,
+          obscureText: type == 'password',
+          maxLines: type == 'password' ? 1 : null,
+          onChanged: (value) {
+            setState(() {
+              _connectionOptionsValues[id] = value;
+            });
+          },
+        );
+    }
   }
 
   Widget _buildConnectorList() {
@@ -255,6 +439,11 @@ class _ConnectorDiscoveryDialogState
         final connection = connector['connection'];
         final requiresConnection =
             connector['requiresConnection'] as bool? ?? false;
+        final connectionOptions = connector['connectionOptions'];
+        final hasConnectionOptions =
+            connectionOptions != null &&
+            connectionOptions is List &&
+            connectionOptions.isNotEmpty;
         final name = connector['name'] ?? 'Unknown';
 
         return ListTile(
@@ -266,8 +455,16 @@ class _ConnectorDiscoveryDialogState
           trailing: connection == null && requiresConnection
               ? FilledButton(
                   onPressed: () {
-                    final url = _apiService.getAuthUrl(connector['id']);
-                    launchUrl(Uri.parse(url), webOnlyWindowName: '_self');
+                    if (hasConnectionOptions) {
+                      _showConnectionOptionsForm(
+                        connector['id'],
+                        name,
+                        List<Map<String, dynamic>>.from(connectionOptions),
+                      );
+                    } else {
+                      final url = _apiService.getAuthUrl(connector['id']);
+                      launchUrl(Uri.parse(url), webOnlyWindowName: '_self');
+                    }
                   },
                   child: const Text('Connect'),
                 )
@@ -281,6 +478,12 @@ class _ConnectorDiscoveryDialogState
               );
             } else if (!requiresConnection) {
               _selectConnector(connector['id'], name);
+            } else if (hasConnectionOptions) {
+              _showConnectionOptionsForm(
+                connector['id'],
+                name,
+                List<Map<String, dynamic>>.from(connectionOptions),
+              );
             }
           },
         );
