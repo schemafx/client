@@ -68,6 +68,17 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
     }
   }
 
+  Future<void> handleUnauthorizedAccess() async {
+    state = const AsyncValue.loading();
+    try {
+      final secureStorageService = ref.read(secureStorageServiceProvider);
+      await secureStorageService.deleteToken();
+      state = const AsyncValue.data(AuthState.unauthenticated);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    }
+  }
+
   Future<void> logout() async {
     state = const AsyncValue.loading();
     try {

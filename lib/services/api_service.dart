@@ -37,22 +37,26 @@ class ApiService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return _parseJson(response.body);
-      } else {
-        // Sanitize error messages to avoid leaking server internals
-        String errorMessage =
-            'Request failed with status: ${response.statusCode}';
-
-        try {
-          final errorData = await _parseJson(response.body);
-          if (errorData is Map && errorData.containsKey('message')) {
-            errorMessage = errorData['message'];
-          }
-        } catch (_) {
-          // If body isn't JSON or doesn't have a message, use the generic status message
-        }
-
-        throw Exception(errorMessage);
+      } else if (response.statusCode == 401) {
+        // Clear token and notify user to log in again
+        await _secureStorageService.deleteToken();
+        throw Exception('Unauthorized access. Please log in again.');
       }
+
+      // Sanitize error messages to avoid leaking server internals
+      String errorMessage =
+          'Request failed with status: ${response.statusCode}';
+
+      try {
+        final errorData = await _parseJson(response.body);
+        if (errorData is Map && errorData.containsKey('message')) {
+          errorMessage = errorData['message'];
+        }
+      } catch (_) {
+        // If body isn't JSON or doesn't have a message, use the generic status message
+      }
+
+      throw Exception(errorMessage);
     } catch (e) {
       if (e is Exception && !e.toString().contains('XMLHttpRequest')) {
         rethrow;
