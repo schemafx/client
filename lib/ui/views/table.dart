@@ -34,22 +34,24 @@ class XTableView extends ConsumerWidget {
             rows: records
                 .map(
                   (record) => DataRow(
-                    cells: visibleFields.map((field) {
-                      return DataCell(
-                        _CellWidget(
-                          table: table,
-                          record: record,
-                          field: field,
-                          onTap: () => _showEditDialog(
-                            context,
-                            ref,
-                            table,
-                            record,
-                            field,
+                    cells: visibleFields
+                        .map(
+                          (field) => DataCell(
+                            _CellWidget(
+                              table: table,
+                              record: record,
+                              field: field,
+                              onTap: () => _showEditDialog(
+                                context,
+                                ref,
+                                table,
+                                record,
+                                field,
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
+                        )
+                        .toList(),
                   ),
                 )
                 .toList(),

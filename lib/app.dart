@@ -115,15 +115,14 @@ GoRouterRedirect routeAuthenticate(Ref ref) =>
       if (isAuthenticated && isLoggingIn) {
         final redirectUrl = ref.read(redirectUrlProvider) ?? Uri.parse('/');
         Future.microtask(() => ref.read(redirectUrlProvider.notifier).clear());
-
         return redirectUrl.toString();
       }
 
       return null;
     };
 
-final routerProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
+final routerProvider = Provider<GoRouter>(
+  (ref) => GoRouter(
     initialLocation: '/',
     refreshListenable: _AuthRefreshNotifier(ref),
     redirect: (context, state) {
@@ -180,8 +179,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         ],
       ),
     ],
-  );
-});
+  ),
+);
 
 class _AuthRefreshNotifier extends ChangeNotifier {
   _AuthRefreshNotifier(Ref ref) {

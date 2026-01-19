@@ -99,9 +99,6 @@ class MobileAuthService implements AuthService {
 
 // Provider to get the appropriate auth service based on the platform.
 final authServiceProvider = Provider<AuthService>((ref) {
-  if (kIsWeb) {
-    return WebAuthService(ref);
-  } else {
-    return MobileAuthService(ref);
-  }
+  if (kIsWeb) return WebAuthService(ref);
+  return MobileAuthService(ref);
 });

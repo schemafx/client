@@ -62,42 +62,41 @@ class _SmartFieldState extends ConsumerState<SmartField> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    // We use FormField to participate in the parent Form's validation
-    return FormField<dynamic>(
-      key: _formFieldKey,
-      initialValue: widget.initialValue,
-      validator: (value) => widget.field.validate(value),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      builder: (FormFieldState<dynamic> fieldState) {
-        final showsInternalError =
-            widget.field.type == AppFieldType.text ||
-            widget.field.type == AppFieldType.number ||
-            widget.field.type == AppFieldType.email ||
-            widget.field.type == AppFieldType.date ||
-            widget.field.type == AppFieldType.dropdown ||
-            widget.field.type == AppFieldType.reference;
+  Widget build(BuildContext context) =>
+      // We use FormField to participate in the parent Form's validation
+      FormField<dynamic>(
+        key: _formFieldKey,
+        initialValue: widget.initialValue,
+        validator: (value) => widget.field.validate(value),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        builder: (FormFieldState<dynamic> fieldState) {
+          final showsInternalError =
+              widget.field.type == AppFieldType.text ||
+              widget.field.type == AppFieldType.number ||
+              widget.field.type == AppFieldType.email ||
+              widget.field.type == AppFieldType.date ||
+              widget.field.type == AppFieldType.dropdown ||
+              widget.field.type == AppFieldType.reference;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildInput(fieldState),
-            if (fieldState.hasError && !showsInternalError)
-              Padding(
-                padding: const EdgeInsets.only(top: 5, left: 12),
-                child: Text(
-                  fieldState.errorText!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                    fontSize: 12,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInput(fieldState),
+              if (fieldState.hasError && !showsInternalError)
+                Padding(
+                  padding: const EdgeInsets.only(top: 5, left: 12),
+                  child: Text(
+                    fieldState.errorText!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
-              ),
-          ],
-        );
-      },
-    );
-  }
+            ],
+          );
+        },
+      );
 
   Widget _buildInput(FormFieldState<dynamic> fieldState) {
     switch (widget.field.type) {
@@ -151,9 +150,7 @@ class _SmartFieldState extends ConsumerState<SmartField> {
     // Sync controller if fieldState value changes externally
     if (fieldState.value != _lastSeenValue) {
       final newText = fieldState.value?.toString() ?? '';
-      if (_textController.text != newText) {
-        _textController.text = newText;
-      }
+      if (_textController.text != newText) _textController.text = newText;
       _lastSeenValue = fieldState.value;
     }
 
@@ -180,9 +177,7 @@ class _SmartFieldState extends ConsumerState<SmartField> {
     if (fieldState.value != _lastSeenValue) {
       final dateValue = fieldState.value as DateTime?;
       final dateString = dateValue?.toIso8601String().substring(0, 10) ?? '';
-      if (_textController.text != dateString) {
-        _textController.text = dateString;
-      }
+      if (_textController.text != dateString) _textController.text = dateString;
       _lastSeenValue = fieldState.value;
     }
 
@@ -215,45 +210,43 @@ class _SmartFieldState extends ConsumerState<SmartField> {
     );
   }
 
-  Widget _buildBooleanField(FormFieldState<dynamic> fieldState) {
-    return CheckboxListTile(
-      title: Text(widget.field.name),
-      value: fieldState.value == true,
-      onChanged: widget.readOnly
-          ? null
-          : (newValue) {
-              fieldState.didChange(newValue);
-              widget.onChanged(newValue);
-            },
-      contentPadding: EdgeInsets.zero,
-      controlAffinity: ListTileControlAffinity.leading,
-    );
-  }
+  Widget _buildBooleanField(FormFieldState<dynamic> fieldState) =>
+      CheckboxListTile(
+        title: Text(widget.field.name),
+        value: fieldState.value == true,
+        onChanged: widget.readOnly
+            ? null
+            : (newValue) {
+                fieldState.didChange(newValue);
+                widget.onChanged(newValue);
+              },
+        contentPadding: EdgeInsets.zero,
+        controlAffinity: ListTileControlAffinity.leading,
+      );
 
-  Widget _buildDropdownField(FormFieldState<dynamic> fieldState) {
-    return DropdownButtonFormField<String>(
-      initialValue: fieldState.value?.toString(),
-      isExpanded: true,
-      decoration: InputDecoration(
-        labelText: widget.field.name,
-        border: const OutlineInputBorder(),
-      ),
-      items: widget.field.options
-          ?.map(
-            (option) => DropdownMenuItem(
-              value: option,
-              child: Text(option, overflow: TextOverflow.ellipsis),
-            ),
-          )
-          .toList(),
-      onChanged: widget.readOnly
-          ? null
-          : (String? newValue) {
-              fieldState.didChange(newValue);
-              widget.onChanged(newValue);
-            },
-    );
-  }
+  Widget _buildDropdownField(FormFieldState<dynamic> fieldState) =>
+      DropdownButtonFormField<String>(
+        initialValue: fieldState.value?.toString(),
+        isExpanded: true,
+        decoration: InputDecoration(
+          labelText: widget.field.name,
+          border: const OutlineInputBorder(),
+        ),
+        items: widget.field.options
+            ?.map(
+              (option) => DropdownMenuItem(
+                value: option,
+                child: Text(option, overflow: TextOverflow.ellipsis),
+              ),
+            )
+            .toList(),
+        onChanged: widget.readOnly
+            ? null
+            : (String? newValue) {
+                fieldState.didChange(newValue);
+                widget.onChanged(newValue);
+              },
+      );
 
   Widget _buildReferenceDropdown(FormFieldState<dynamic> fieldState) {
     final relatedTableId = widget.field.referenceTo;
@@ -339,8 +332,8 @@ class _SmartFieldState extends ConsumerState<SmartField> {
             const SizedBox(height: 8),
             if (subFields.isEmpty)
               const Text("No fields defined for this JSON object."),
-            ...subFields.map((subField) {
-              return Padding(
+            ...subFields.map(
+              (subField) => Padding(
                 padding: const EdgeInsets.only(bottom: 12.0),
                 child: SmartField(
                   field: subField,
@@ -352,8 +345,8 @@ class _SmartFieldState extends ConsumerState<SmartField> {
                     widget.onChanged(currentValue);
                   },
                 ),
-              );
-            }),
+              ),
+            ),
           ],
         ),
       ),
@@ -364,6 +357,7 @@ class _SmartFieldState extends ConsumerState<SmartField> {
     final List<dynamic> currentList = fieldState.value is List
         ? List.from(fieldState.value)
         : [];
+
     final childField = widget.field.child;
 
     if (childField == null) {

@@ -92,6 +92,7 @@ class DataRepository {
       ref
           .read(errorProvider.notifier)
           .showError('Failed to load table data: $e');
+
       rethrow;
     }
   }

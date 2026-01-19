@@ -58,9 +58,7 @@ class ApiService {
 
       throw Exception(errorMessage);
     } catch (e) {
-      if (e is Exception && !e.toString().contains('XMLHttpRequest')) {
-        rethrow;
-      }
+      if (e is Exception && !e.toString().contains('XMLHttpRequest')) rethrow;
       throw Exception('A network error occurred. Please try again later.');
     }
   }
@@ -68,9 +66,7 @@ class ApiService {
   /// Decodes JSON on a background isolate if the payload is large (>10KB)
   /// to prevent UI jank.
   Future<dynamic> _parseJson(String body) async {
-    if (body.length > 10000) {
-      return compute(jsonDecode, body);
-    }
+    if (body.length > 10000) return compute(jsonDecode, body);
     return jsonDecode(body);
   }
 
@@ -147,6 +143,7 @@ class ApiService {
       'connectors/$connectorId/auth/callback',
       options,
     );
+
     return response['connectionId'] as String;
   }
 }

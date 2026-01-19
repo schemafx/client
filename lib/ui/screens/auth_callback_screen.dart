@@ -42,6 +42,7 @@ class _AuthCallbackScreenState extends ConsumerState<AuthCallbackScreen> {
           Exception('Authentication failed: No code or error received.'),
         );
       }
+
       ref.read(authCompleterProvider.notifier).clear();
       if (mounted) context.go('/');
       return;
@@ -50,9 +51,7 @@ class _AuthCallbackScreenState extends ConsumerState<AuthCallbackScreen> {
     // On web, the app has performed a full-page redirect. We now handle the
     // code and then navigate to the user's original destination.
     try {
-      if (widget.error != null) {
-        throw Exception(widget.error);
-      }
+      if (widget.error != null) throw Exception(widget.error);
 
       if (widget.code != null) {
         await ref
@@ -62,6 +61,7 @@ class _AuthCallbackScreenState extends ConsumerState<AuthCallbackScreen> {
         // After auth is complete, retrieve and clear the saved redirect URL.
         final redirectUrl =
             web.window.sessionStorage.getItem('post_auth_redirect_url') ?? '/';
+
         web.window.sessionStorage.removeItem('post_auth_redirect_url');
 
         if (mounted) context.go(redirectUrl);
@@ -70,26 +70,21 @@ class _AuthCallbackScreenState extends ConsumerState<AuthCallbackScreen> {
       }
     } catch (e) {
       // If anything goes wrong, just send the user back to the login page.
-      if (mounted) {
-        // You might want to show a SnackBar here with the error.
-        context.go('/login');
-      }
+      if (mounted) context.go('/login');
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Processing...'),
-          ],
-        ),
+  Widget build(BuildContext context) => const Scaffold(
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text('Processing...'),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }

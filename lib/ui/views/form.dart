@@ -49,30 +49,29 @@ class XFormViewState extends ConsumerState<XFormView> {
 
   /// Handles the form submission.
   void _handleSubmit() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState?.save(); // Ensure all values are saved/updated
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    _formKey.currentState?.save(); // Ensure all values are saved/updated
 
-      final newRecord = <String, dynamic>{
-        ..._formValues,
-        '_id': DateTime.now().millisecondsSinceEpoch.toString(),
-      };
+    final newRecord = <String, dynamic>{
+      ..._formValues,
+      '_id': DateTime.now().millisecondsSinceEpoch.toString(),
+    };
 
-      await ref.read(tableActionControllerProvider).executeAction(
-        widget.table.id,
-        widget.table.actions
-            .firstWhere((action) => action.type == AppActionType.add)
-            .id,
-        [newRecord],
-      );
+    await ref.read(tableActionControllerProvider).executeAction(
+      widget.table.id,
+      widget.table.actions
+          .firstWhere((action) => action.type == AppActionType.add)
+          .id,
+      [newRecord],
+    );
 
-      // Reset form
-      // We increment the version to force a complete rebuild of the SmartFields,
-      // ensuring that their internal state (controllers) is wiped clean.
-      setState(() {
-        _formVersion++;
-        _initFormValues();
-      });
-    }
+    // Reset form
+    // We increment the version to force a complete rebuild of the SmartFields,
+    // ensuring that their internal state (controllers) is wiped clean.
+    setState(() {
+      _formVersion++;
+      _initFormValues();
+    });
   }
 
   @override
@@ -88,8 +87,8 @@ class XFormViewState extends ConsumerState<XFormView> {
                 (fieldId) =>
                     widget.table.fields.firstWhere((f) => f.id == fieldId),
               )
-              .map((field) {
-                return Padding(
+              .map(
+                (field) => Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: SmartField(
                     key: ValueKey('${field.id}_$_formVersion'),
@@ -99,8 +98,8 @@ class XFormViewState extends ConsumerState<XFormView> {
                       _formValues[field.id] = newValue;
                     },
                   ),
-                );
-              }),
+                ),
+              ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

@@ -163,6 +163,7 @@ class _ActionListSideSheetState extends ConsumerState<ActionListSideSheet> {
                           name: 'New Action',
                           type: AppActionType.add,
                         );
+
                         await ref
                             .read(schemaProvider.notifier)
                             .addElement(
@@ -208,76 +209,74 @@ class _ActionEditor extends StatefulWidget {
 
 class _ActionEditorState extends State<_ActionEditor> {
   @override
-  Widget build(BuildContext context) {
-    return ResponsiveUtils.buildResponsive(context, (context, width) {
-      final isMobile = ResponsiveUtils.isMobile(width);
-      final padding = ResponsiveUtils.responsivePadding(width);
+  Widget build(BuildContext context) =>
+      ResponsiveUtils.buildResponsive(context, (context, width) {
+        final isMobile = ResponsiveUtils.isMobile(width);
+        final padding = ResponsiveUtils.responsivePadding(width);
 
-      return Column(
-        children: [
-          AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: widget.onBack,
+        return Column(
+          children: [
+            AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: widget.onBack,
+              ),
+              title: Text('Edit ${widget.action.name}'),
             ),
-            title: Text('Edit ${widget.action.name}'),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: padding,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: isMobile ? double.infinity : 600,
-                ),
-                child: Column(
-                  children: [
-                    TextFormField(
-                      initialValue: widget.action.name,
-                      decoration: const InputDecoration(
-                        labelText: 'Name',
-                        border: OutlineInputBorder(),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: padding,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isMobile ? double.infinity : 600,
+                  ),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        initialValue: widget.action.name,
+                        decoration: const InputDecoration(
+                          labelText: 'Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) {
+                          widget.onUpdate(widget.action.copyWith(name: value));
+                        },
                       ),
-                      onChanged: (value) {
-                        widget.onUpdate(widget.action.copyWith(name: value));
-                      },
-                    ),
-                    SizedBox(height: padding.top),
-                    DropdownButtonFormField<AppActionType>(
-                      initialValue: widget.action.type,
-                      decoration: const InputDecoration(
-                        labelText: 'Type',
-                        border: OutlineInputBorder(),
-                      ),
-                      items: AppActionType.values
-                          .map(
-                            (type) => DropdownMenuItem(
-                              value: type,
-                              child: Text(type.name),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) {
-                        if (value != null) {
+                      SizedBox(height: padding.top),
+                      DropdownButtonFormField<AppActionType>(
+                        initialValue: widget.action.type,
+                        decoration: const InputDecoration(
+                          labelText: 'Type',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: AppActionType.values
+                            .map(
+                              (type) => DropdownMenuItem(
+                                value: type,
+                                child: Text(type.name),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (value) {
+                          if (value == null) return;
                           widget.onUpdate(widget.action.copyWith(type: value));
-                        }
-                      },
-                    ),
-                    SizedBox(height: padding.top * 1.5),
-                    if (widget.action.type == AppActionType.process)
-                      _ProcessConfigEditor(
-                        action: widget.action,
-                        allActions: widget.allActions,
-                        onUpdate: widget.onUpdate,
+                        },
                       ),
-                  ],
+                      SizedBox(height: padding.top * 1.5),
+                      if (widget.action.type == AppActionType.process)
+                        _ProcessConfigEditor(
+                          action: widget.action,
+                          allActions: widget.allActions,
+                          onUpdate: widget.onUpdate,
+                        ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      );
-    });
-  }
+          ],
+        );
+      });
 }
 
 class _ProcessConfigEditor extends StatefulWidget {
@@ -305,10 +304,9 @@ class _ProcessConfigEditorState extends State<_ProcessConfigEditor> {
   }
 
   void _initItems() {
-    final actionIds = List<String>.from(widget.action.config['actions'] ?? []);
-    _items = actionIds
-        .map((id) => (key: UniqueKey().toString(), actionId: id))
-        .toList();
+    _items = List<String>.from(
+      widget.action.config['actions'] ?? [],
+    ).map((id) => (key: UniqueKey().toString(), actionId: id)).toList();
   }
 
   @override
@@ -317,11 +315,9 @@ class _ProcessConfigEditorState extends State<_ProcessConfigEditor> {
     final newActionIds = List<String>.from(
       widget.action.config['actions'] ?? [],
     );
-    final currentActionIds = _items.map((e) => e.actionId).toList();
 
-    if (!listEquals(newActionIds, currentActionIds)) {
-      _initItems();
-    }
+    final currentActionIds = _items.map((e) => e.actionId).toList();
+    if (!listEquals(newActionIds, currentActionIds)) _initItems();
   }
 
   void _updateItems() {
@@ -366,9 +362,7 @@ class _ProcessConfigEditorState extends State<_ProcessConfigEditor> {
             physics: const NeverScrollableScrollPhysics(),
             onReorder: (oldIndex, newIndex) {
               setState(() {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
+                if (oldIndex < newIndex) newIndex -= 1;
                 final item = _items.removeAt(oldIndex);
                 _items.insert(newIndex, item);
               });
@@ -391,12 +385,13 @@ class _ProcessConfigEditorState extends State<_ProcessConfigEditor> {
                 .map((a) => DropdownMenuItem(value: a.id, child: Text(a.name)))
                 .toList(),
             onChanged: (value) {
-              if (value != null) {
-                setState(() {
-                  _items.add((key: UniqueKey().toString(), actionId: value));
-                });
-                _updateItems();
-              }
+              if (value == null) return;
+
+              setState(() {
+                _items.add((key: UniqueKey().toString(), actionId: value));
+              });
+
+              _updateItems();
             },
             initialValue: null,
             hint: const Text('Select an action to add'),
@@ -435,6 +430,7 @@ class _ProcessConfigEditorState extends State<_ProcessConfigEditor> {
               setState(() {
                 _items.removeAt(index);
               });
+
               _updateItems();
             },
           ),

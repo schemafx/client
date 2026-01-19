@@ -30,14 +30,13 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
         // This should be your mobile app's custom scheme.
         redirectUri = 'schemafx://auth/callback';
       }
+
       final result = await authService.loginWithConnector(
         connectorName,
         redirectUri,
       );
 
-      if (result.error != null) {
-        throw Exception(result.error);
-      }
+      if (result.error != null) throw Exception(result.error);
 
       if (result.code != null) {
         await handleCodeFromServer(result.code!);
@@ -70,6 +69,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 
   Future<void> handleUnauthorizedAccess() async {
     state = const AsyncValue.loading();
+
     try {
       final secureStorageService = ref.read(secureStorageServiceProvider);
       await secureStorageService.deleteToken();
@@ -81,6 +81,7 @@ class AuthNotifier extends AsyncNotifier<AuthState> {
 
   Future<void> logout() async {
     state = const AsyncValue.loading();
+
     try {
       final secureStorageService = ref.read(secureStorageServiceProvider);
       await secureStorageService.deleteToken();

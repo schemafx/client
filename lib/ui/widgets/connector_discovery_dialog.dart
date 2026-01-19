@@ -51,6 +51,7 @@ class _ConnectorDiscoveryDialogState
 
     try {
       final connectors = await _apiService.getConnectors();
+
       if (mounted) {
         setState(() {
           _connectors = connectors
@@ -95,8 +96,10 @@ class _ConnectorDiscoveryDialogState
             _pathHistory.add(List.from(_currentPath));
             _nameHistory.add(List.from(_currentPathNames));
           }
+
           _discoveryResults = results;
           _currentPath = queryPath;
+
           if (names != null) _currentPathNames = names;
           _loading = false;
         });
@@ -194,13 +197,12 @@ class _ConnectorDiscoveryDialogState
       _selectedConnectorName = name;
       _connectionOptions = options;
       _connectionOptionsValues = {};
+
       // Initialize default values
       for (final option in options) {
         final id = option['id'] as String;
         final type = option['type'] as String;
-        if (type == 'boolean') {
-          _connectionOptionsValues[id] = false;
-        }
+        if (type == 'boolean') _connectionOptionsValues[id] = false;
       }
     });
   }
@@ -219,6 +221,7 @@ class _ConnectorDiscoveryDialogState
         setState(() {
           _error = 'Please fill in all required fields';
         });
+
         return;
       }
     }
@@ -239,6 +242,7 @@ class _ConnectorDiscoveryDialogState
           _selectedConnectionId = connectionId;
           _submittingOptions = false;
         });
+
         await _queryConnector();
       }
     } catch (e) {
@@ -338,41 +342,39 @@ class _ConnectorDiscoveryDialogState
     return _buildDiscoveryList();
   }
 
-  Widget _buildConnectionOptionsForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(
-          child: ListView.builder(
-            itemCount: _connectionOptions!.length,
-            itemBuilder: (context, index) {
-              final option = _connectionOptions![index];
-              final id = option['id'] as String;
-              final name = option['name'] as String? ?? id;
-              final type = option['type'] as String;
-              final isOptional = option['optional'] as bool? ?? false;
+  Widget _buildConnectionOptionsForm() => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Expanded(
+        child: ListView.builder(
+          itemCount: _connectionOptions!.length,
+          itemBuilder: (context, index) {
+            final option = _connectionOptions![index];
+            final id = option['id'] as String;
+            final name = option['name'] as String? ?? id;
+            final type = option['type'] as String;
+            final isOptional = option['optional'] as bool? ?? false;
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: _buildOptionField(id, name, type, isOptional),
-              );
-            },
-          ),
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: _buildOptionField(id, name, type, isOptional),
+            );
+          },
         ),
-        const SizedBox(height: 16),
-        FilledButton(
-          onPressed: _submittingOptions ? null : _submitConnectionOptions,
-          child: _submittingOptions
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Connect'),
-        ),
-      ],
-    );
-  }
+      ),
+      const SizedBox(height: 16),
+      FilledButton(
+        onPressed: _submittingOptions ? null : _submitConnectionOptions,
+        child: _submittingOptions
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Text('Connect'),
+      ),
+    ],
+  );
 
   Widget _buildOptionField(
     String id,

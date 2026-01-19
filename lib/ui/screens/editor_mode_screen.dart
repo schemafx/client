@@ -17,9 +17,9 @@ class EditorModeScreen extends ConsumerWidget {
         return _buildMobileLayout(cardColor);
       } else if (ResponsiveUtils.isTablet(width)) {
         return _buildTabletLayout(cardColor);
-      } else {
-        return _buildDesktopLayout(cardColor);
       }
+
+      return _buildDesktopLayout(cardColor);
     });
   }
 
