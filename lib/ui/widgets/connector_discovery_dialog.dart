@@ -28,6 +28,7 @@ class _ConnectorDiscoveryDialogState
   // Connection options form state
   List<Map<String, dynamic>>? _connectionOptions;
   Map<String, dynamic> _connectionOptionsValues = {};
+  Map<String, TextEditingController> _connectionOptionsControllers = {};
   bool _submittingOptions = false;
 
   List<String> _currentPath = [];
@@ -36,6 +37,14 @@ class _ConnectorDiscoveryDialogState
   List<List<String>> _pathHistory = [];
   List<List<String>> _nameHistory = [];
   List<String> _currentPathNames = [];
+
+  @override
+  void dispose() {
+    for (final controller in _connectionOptionsControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -172,6 +181,12 @@ class _ConnectorDiscoveryDialogState
         _selectedConnectionId = null;
       });
     } else {
+      // Dispose controllers when going back to connector list
+      for (final controller in _connectionOptionsControllers.values) {
+        controller.dispose();
+      }
+      _connectionOptionsControllers = {};
+
       setState(() {
         _selectedConnectorId = null;
         _selectedConnectorName = null;
@@ -192,23 +207,47 @@ class _ConnectorDiscoveryDialogState
     String name,
     List<Map<String, dynamic>> options,
   ) {
+    // Dispose old controllers
+    for (final controller in _connectionOptionsControllers.values) {
+      controller.dispose();
+    }
+    _connectionOptionsControllers = {};
+
     setState(() {
       _selectedConnectorId = connectorId;
       _selectedConnectorName = name;
       _connectionOptions = options;
       _connectionOptionsValues = {};
 
-      // Initialize default values
+      // Initialize default values and controllers
       for (final option in options) {
         final id = option['id'] as String;
         final type = option['type'] as String;
-        if (type == 'boolean') _connectionOptionsValues[id] = false;
+        if (type == 'boolean') {
+          _connectionOptionsValues[id] = false;
+        } else {
+          _connectionOptionsControllers[id] = TextEditingController();
+        }
       }
     });
   }
 
   Future<void> _submitConnectionOptions() async {
     if (_selectedConnectorId == null || _connectionOptions == null) return;
+
+    // Sync controller values to _connectionOptionsValues before validation
+    for (final option in _connectionOptions!) {
+      final id = option['id'] as String;
+      final type = option['type'] as String;
+      final controller = _connectionOptionsControllers[id];
+      if (controller != null) {
+        if (type == 'number') {
+          _connectionOptionsValues[id] = num.tryParse(controller.text);
+        } else {
+          _connectionOptionsValues[id] = controller.text;
+        }
+      }
+    }
 
     // Validate required fields
     for (final option in _connectionOptions!) {
@@ -346,20 +385,19 @@ class _ConnectorDiscoveryDialogState
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Expanded(
-        child: ListView.builder(
-          itemCount: _connectionOptions!.length,
-          itemBuilder: (context, index) {
-            final option = _connectionOptions![index];
-            final id = option['id'] as String;
-            final name = option['name'] as String? ?? id;
-            final type = option['type'] as String;
-            final isOptional = option['optional'] as bool? ?? false;
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: _buildOptionField(id, name, type, isOptional),
-            );
-          },
+        child: ListView(
+          children: [
+            for (final option in _connectionOptions!)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildOptionField(
+                  option['id'] as String,
+                  option['name'] as String? ?? option['id'] as String,
+                  option['type'] as String,
+                  option['optional'] as bool? ?? false,
+                ),
+              ),
+          ],
         ),
       ),
       const SizedBox(height: 16),
@@ -397,6 +435,7 @@ class _ConnectorDiscoveryDialogState
         );
       case 'number':
         return TextField(
+          controller: _connectionOptionsControllers[id],
           decoration: InputDecoration(
             labelText: label,
             border: const OutlineInputBorder(),
@@ -404,15 +443,14 @@ class _ConnectorDiscoveryDialogState
           enableSuggestions: false,
           keyboardType: TextInputType.number,
           onChanged: (value) {
-            setState(() {
-              _connectionOptionsValues[id] = num.tryParse(value);
-            });
+            _connectionOptionsValues[id] = num.tryParse(value);
           },
         );
       case 'password':
       case 'text':
       default:
         return TextField(
+          controller: _connectionOptionsControllers[id],
           decoration: InputDecoration(
             labelText: label,
             border: const OutlineInputBorder(),
@@ -421,9 +459,7 @@ class _ConnectorDiscoveryDialogState
           obscureText: type == 'password',
           maxLines: type == 'password' ? 1 : null,
           onChanged: (value) {
-            setState(() {
-              _connectionOptionsValues[id] = value;
-            });
+            _connectionOptionsValues[id] = value;
           },
         );
     }
