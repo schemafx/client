@@ -96,6 +96,17 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  OutlinedButton.icon(
+                    onPressed: () => _launchUrl('https://docs.schemafx.com'),
+                    icon: const Icon(Icons.menu_book_outlined),
+                    label: const Text('Documentation'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 16,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],
