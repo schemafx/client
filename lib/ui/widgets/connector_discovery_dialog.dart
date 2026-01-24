@@ -492,7 +492,7 @@ class _ConnectorDiscoveryDialogState
               : null,
           trailing: connection == null && requiresConnection
               ? FilledButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (hasConnectionOptions) {
                       _showConnectionOptionsForm(
                         connector['id'],
@@ -500,8 +500,10 @@ class _ConnectorDiscoveryDialogState
                         List<Map<String, dynamic>>.from(connectionOptions),
                       );
                     } else {
-                      final url = _apiService.getAuthUrl(connector['id']);
-                      launchUrl(Uri.parse(url), webOnlyWindowName: '_self');
+                      launchUrl(
+                        await _apiService.getAuthUrl(connector['id']),
+                        webOnlyWindowName: '_self',
+                      );
                     }
                   },
                   child: const Text('Connect'),

@@ -36,7 +36,6 @@ class WebAuthService implements AuthService {
     String redirectUri,
   ) async {
     final apiService = ApiService();
-    final authUrl = Uri.parse(apiService.getAuthUrl(connectorName));
 
     // Before redirecting, save the user's intended final destination.
     final finalRedirectUrl = _ref.read(redirectUrlProvider)?.toString() ?? '/';
@@ -45,12 +44,11 @@ class WebAuthService implements AuthService {
       finalRedirectUrl,
     );
 
-    final authUrlWithRedirect = authUrl.replace(
-      queryParameters: {...authUrl.queryParameters, 'redirectUri': redirectUri},
-    );
-
     // Perform a full-page redirect to the authentication provider.
-    web.window.location.href = authUrlWithRedirect.toString();
+    web.window.location.href = (await apiService.getAuthUrl(
+      connectorName,
+      redirectUri: redirectUri,
+    )).toString();
 
     // This future will never complete because the page is navigating away.
     // It is awaited by the AuthNotifier, which is fine because the app will
@@ -76,15 +74,14 @@ class MobileAuthService implements AuthService {
     String redirectUri,
   ) async {
     final apiService = ApiService();
-    final authUrl = Uri.parse(apiService.getAuthUrl(connectorName));
-    final authUrlWithRedirect = authUrl.replace(
-      queryParameters: {...authUrl.queryParameters, 'redirectUri': redirectUri},
-    );
 
     final completer = Completer<AuthResult>();
     _ref.read(authCompleterProvider.notifier).set(completer);
 
-    if (!await launchUrl(authUrlWithRedirect, mode: LaunchMode.inAppWebView)) {
+    if (!await launchUrl(
+      await apiService.getAuthUrl(connectorName, redirectUri: redirectUri),
+      mode: LaunchMode.inAppWebView,
+    )) {
       throw Exception('Could not launch authentication URL');
     }
 

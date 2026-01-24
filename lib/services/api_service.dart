@@ -141,8 +141,14 @@ class ApiService {
     if (connectionId != null) 'connectionId': connectionId,
   });
 
-  String getAuthUrl(String connectorName) =>
-      '$_baseUrlSchema://$_baseUrl$_baseUrlPath/connectors/$connectorName/auth';
+  Future<Uri> getAuthUrl(String connectorName, {String? redirectUri}) async {
+    final response = await get(
+      'connectors/$connectorName/auth/init',
+      query: {'redirectUri': redirectUri ?? Uri.base.toString()},
+    );
+
+    return Uri.parse(response['href'] as String);
+  }
 
   Future<String> submitConnectionOptions(
     String connectorId,
