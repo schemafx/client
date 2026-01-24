@@ -31,15 +31,19 @@ class ApiService {
     };
   }
 
-  Future<dynamic> _query(Future<http.Response> query) async {
+  Future<dynamic> _query(
+    Future<http.Response> query, {
+    required Map<String, String> headers,
+  }) async {
     try {
       final response = await query;
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return _parseJson(response.body);
-      } else if (response.statusCode == 401) {
+      } else if (response.statusCode == 401 &&
+          headers.containsKey('Authorization')) {
         // Clear token and notify user to log in again
-        await _secureStorageService.deleteToken();
+        //await _secureStorageService.deleteToken();
         throw Exception('Unauthorized access. Please log in again.');
       }
 
@@ -70,37 +74,42 @@ class ApiService {
     return jsonDecode(body);
   }
 
-  Future<dynamic> post(String path, Object body) async => _query(
-    _client.post(
-      Uri.parse('$_baseUrlSchema://$_baseUrl$_baseUrlPath/$path'),
-      headers: await _getHeaders(),
-      body: jsonEncode(body),
-    ),
-  );
+  Future<dynamic> post(String path, Object body) async {
+    final headers = await _getHeaders();
+    return _query(
+      _client.post(
+        Uri.parse('$_baseUrlSchema://$_baseUrl$_baseUrlPath/$path'),
+        headers: headers,
+        body: jsonEncode(body),
+      ),
+      headers: headers,
+    );
+  }
 
   Future<dynamic> delete(String path, {Object? body}) async {
     final uri = _baseUrlSchema == 'http'
         ? Uri.http(_baseUrl, '$_baseUrlPath/$path')
         : Uri.https(_baseUrl, '$_baseUrlPath/$path');
 
+    final headers = await _getHeaders();
     return _query(
-      _client.delete(
-        uri,
-        headers: await _getHeaders(),
-        body: jsonEncode(body ?? {}),
-      ),
+      _client.delete(uri, headers: headers, body: jsonEncode(body ?? {})),
+      headers: headers,
     );
   }
 
-  Future<dynamic> get(String path, {Map<String, String>? query}) async =>
-      _query(
-        _client.get(
-          _baseUrlSchema == 'http'
-              ? Uri.http(_baseUrl, '$_baseUrlPath/$path', query)
-              : Uri.https(_baseUrl, '$_baseUrlPath/$path', query),
-          headers: await _getHeaders(),
-        ),
-      );
+  Future<dynamic> get(String path, {Map<String, String>? query}) async {
+    final headers = await _getHeaders();
+    return _query(
+      _client.get(
+        _baseUrlSchema == 'http'
+            ? Uri.http(_baseUrl, '$_baseUrlPath/$path', query)
+            : Uri.https(_baseUrl, '$_baseUrlPath/$path', query),
+        headers: headers,
+      ),
+      headers: headers,
+    );
+  }
 
   Future<String> getTokenFromCode(String code) async {
     final response = await get('token/$code');
@@ -132,8 +141,14 @@ class ApiService {
     if (connectionId != null) 'connectionId': connectionId,
   });
 
-  String getAuthUrl(String connectorName) =>
-      '$_baseUrlSchema://$_baseUrl$_baseUrlPath/connectors/$connectorName/auth';
+  Future<Uri> getAuthUrl(String connectorName, {String? redirectUri}) async {
+    final response = await get(
+      'connectors/$connectorName/auth/init',
+      query: {'redirectUri': redirectUri ?? Uri.base.toString()},
+    );
+
+    return Uri.parse(response['href'] as String);
+  }
 
   Future<String> submitConnectionOptions(
     String connectorId,
