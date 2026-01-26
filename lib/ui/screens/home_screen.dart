@@ -134,6 +134,39 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 24,
+                alignment: WrapAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () =>
+                        _launchUrl('https://docs.schemafx.com/privacy-policy'),
+                    child: Text(
+                      'Privacy Policy',
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: .6),
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => _launchUrl(
+                      'https://docs.schemafx.com/terms-of-service',
+                    ),
+                    child: Text(
+                      'Terms of Service',
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: .6),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
